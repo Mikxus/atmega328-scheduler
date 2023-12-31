@@ -1,0 +1,10 @@
+# cmake files
+CMakeFiles
+CMakeCache.txt
+*.cmake
+
+# make files
+Makefile
+
+# build files
+build
