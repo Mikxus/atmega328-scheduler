@@ -8,3 +8,5 @@ Makefile
 
 # build files
 build
+*.a
+*.out
