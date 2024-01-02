@@ -1,3 +1,7 @@
+#include "cpu.h"
+
+struct cpu_state regs;
+
 /**
  * @brief Initializes the scheduler before main is called
  */
