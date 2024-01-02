@@ -36,7 +36,10 @@ struct cpu_state
         uint8_t r23;
         uint8_t r24;
         uint8_t r25;
-        
+
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wpedantic"
+
         /* X pointer registers */
         union {
             struct
@@ -137,6 +140,8 @@ struct cpu_state
         /* AVR status register */
         uint8_t sreg;
     };
+
+    #pragma GCC diagnostic pop
 };
 
 #endif
