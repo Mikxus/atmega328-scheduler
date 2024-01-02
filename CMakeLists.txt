@@ -113,6 +113,9 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
+# Define DEBUG for the c/c++ code
+add_compile_definitions("DEBUG=$<CONFIG:Debug>")
+
 ##########################################################################
 # compiler options for all build types
 ##########################################################################
