@@ -13,3 +13,6 @@ build
 
 # editor files
 .vscode
+
+# debugger files
+.gdb_history
