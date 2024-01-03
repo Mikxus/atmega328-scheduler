@@ -1,6 +1,3 @@
 [submodule "submodules/cmake-avr"]
 	path = submodules/cmake-avr
 	url = https://github.com/mkleemann/cmake-avr.git
-[submodule "submodules/AVR-UART-LIB"]
-	path = submodules/AVR-UART-LIB
-	url = https://github.com/jnk0le/AVR-UART-lib.git
