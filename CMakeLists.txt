@@ -119,6 +119,7 @@ add_compile_definitions("DEBUG=$<CONFIG:Debug>")
 ##########################################################################
 # compiler options for all build types
 ##########################################################################
+set_property(TARGET PROPERTY CXX_STANDARD 11)
 add_definitions("-DF_CPU=${MCU_SPEED}")
 add_definitions("-fpack-struct")
 add_definitions("-fshort-enums")
@@ -134,13 +135,13 @@ add_definitions("-c")
 ##########################################################################
 # include search paths
 ##########################################################################
-include_directories(${AVR-CPP-EXAMPLE_SOURCE_DIR}/mycpplib)
+include_directories(${CMAKE_SOURCE_DIR}/lib/singly_linked_list)
 
 ##########################################################################
 # building library and application in their subdirectories
 ##########################################################################
-add_subdirectory(src)
-#add_subdirectory(mylib)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/lib/singly_linked_list)
 
 ##########################################################################
 # use default documentation target
