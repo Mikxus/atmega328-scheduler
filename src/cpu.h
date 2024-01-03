@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 /**
- * @brief Atmega328p's cpu state for context switching
+ * @brief Atmega328p's cpu registers' state for context switching
 */
-struct cpu_state
+struct cpu_registers
 {
     union
     {
