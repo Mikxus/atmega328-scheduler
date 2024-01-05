@@ -135,13 +135,15 @@ add_definitions("-c")
 ##########################################################################
 # include search paths
 ##########################################################################
-include_directories(${CMAKE_SOURCE_DIR}/lib/singly_linked_list)
+include_directories(${CMAKE_SOURCE_DIR})
 
 ##########################################################################
 # building library and application in their subdirectories
 ##########################################################################
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-#add_subdirectory(${CMAKE_SOURCE_DIR}/lib/singly_linked_list)
+find_library(AVR-UART-LIB-${AVR_MCU}
+  HINTS ${CMAKE_SOURCE_DIR}/lib/
+)
 
 ##########################################################################
 # use default documentation target
