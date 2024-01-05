@@ -2,7 +2,7 @@
 #define _TASK_H_
 
 #include <stdint.h>
-#include "singly_linked_list.h"
+#include "lib/singly_linked_list/singly_linked_list.h"
 #include "cpu.h"
 
 
