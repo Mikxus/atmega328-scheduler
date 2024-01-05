@@ -1,5 +1,5 @@
 #include "task.h"
-#include "singly_linked_list.h"
+#include "lib/singly_linked_list/singly_linked_list.h"
 
 /**
  * @brief Initializes the scheduler before main is called
