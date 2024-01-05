@@ -93,6 +93,8 @@ struct cpu_registers
 
             uint16_t z_pointer;
         };
+    
+        uint8_t regs[31];
     };
 
     uint16_t pc;
