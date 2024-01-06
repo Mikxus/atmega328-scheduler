@@ -141,9 +141,8 @@ include_directories(${CMAKE_SOURCE_DIR})
 # building library and application in their subdirectories
 ##########################################################################
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-find_library(AVR-UART-LIB-${AVR_MCU}
-  HINTS ${CMAKE_SOURCE_DIR}/lib/
-)
+add_subdirectory(${CMAKE_SOURCE_DIR}/lib/AVR-UART-LIB/)
+
 
 ##########################################################################
 # use default documentation target
@@ -152,8 +151,13 @@ find_library(AVR-UART-LIB-${AVR_MCU}
 
 
 ##########################################################################
-# Cmake output directories 
+# Cmake output directories @note Doesn't work@note Doesn't work
 ##########################################################################
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+##########################################################################
+# AVR tests using simavr
+##########################################################################
+add_subdirectory(${CMAKE_SOURCE_DIR}/test)
