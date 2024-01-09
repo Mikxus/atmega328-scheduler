@@ -42,6 +42,7 @@ project(ATMEGA328-SCHEDULER)
 ##########################################################################
 # status messages
 ##########################################################################
+message(STATUS "Current build type is: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Current uploadtool is: ${AVR_UPLOADTOOL}")
 message(STATUS "Current programmer is: ${AVR_PROGRAMMER}")
 message(STATUS "Current upload port is: ${AVR_UPLOADTOOL_PORT}")
@@ -110,11 +111,14 @@ endif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_C_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf")
-   set(CMAKE_CXX_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf")
+   set(CMAKE_CXX_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf -w")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
 # Define DEBUG for the c/c++ code
 add_compile_definitions("DEBUG=$<CONFIG:Debug>")
+
+# Also add mcu as compilie time definition
+add_definitions(-DAVR_MCU=${AVR_MCU})
 
 ##########################################################################
 # compiler options for all build types
@@ -132,6 +136,23 @@ add_definitions("-funsigned-bitfields")
 add_definitions("-ffunction-sections")
 add_definitions("-c")
 
+
+# Project configuration settings
+message(STATUS "--- Project configurations ---")
+message(STATUS "Uart driver[ ]:")
+
+# UART DRIVERS
+set(
+    SCHEDULER_UART_BAUD_RATE "115200UL"
+)
+add_definitions(
+  "-DSCHEDULER_UART_BAUD_RATE=${SCHEDULER_UART_BAUD_RATE}"
+)
+
+message(STATUS "            |- Baud rate: ${SCHEDULER_UART_BAUD_RATE}")
+
+
+
 ##########################################################################
 # include search paths
 ##########################################################################
@@ -142,6 +163,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 ##########################################################################
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/lib/AVR-UART-LIB/)
+add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/)
 
 
 ##########################################################################
@@ -160,4 +182,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/lib/AVR-UART-LIB/)
 ##########################################################################
 # AVR tests using simavr
 ##########################################################################
+enable_testing()
 add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+
