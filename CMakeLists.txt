@@ -118,12 +118,12 @@ endif(CMAKE_BUILD_TYPE MATCHES Debug)
 add_compile_definitions("DEBUG=$<CONFIG:Debug>")
 
 # Also add mcu as compilie time definition
-add_definitions(-DAVR_MCU=${AVR_MCU})
+add_definitions(-DSCHEDULER_AVR_MCU=${AVR_MCU})
 
 ##########################################################################
 # compiler options for all build types
 ##########################################################################
-set_property(TARGET PROPERTY CXX_STANDARD 11)
+add_definitions("-std=c++20")
 add_definitions("-DF_CPU=${MCU_SPEED}")
 add_definitions("-fpack-struct")
 add_definitions("-fshort-enums")
