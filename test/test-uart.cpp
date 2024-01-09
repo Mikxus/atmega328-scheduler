@@ -10,7 +10,7 @@
  * Embed mcu data in the generated ELF file.
  * Useful for the simavr simulator. 
  */
-AVR_MCU(F_CPU, STRINGIZE(AVR_MCU));
+AVR_MCU(F_CPU, STRINGIZE(SCHEDULER_AVR_MCU));
 
 int main(void)
 {
