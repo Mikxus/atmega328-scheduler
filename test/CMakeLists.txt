@@ -1,27 +1,43 @@
-# include simavr's avr headers
-include_directories(
-    "${CMAKE_SOURCE_DIRl}/submodules/simavr/simavr/sim/"
-)
+# Include simavr source files
+include_directories(${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/)
 
-# Create AVR executables for each test
-add_avr_executable(
-    test-uart
-    test-uart.cpp
-)
+# Get all .cpp files in the current directory
+file(GLOB ALL_CPP_FILES *.cpp)
 
-# Make sure simavr's source is compiled for the tests later on
-add_dependencies(
-    test-uart-${AVR_MCU}.elf
-    simavr
-)
+# Lists to hold the AVR and test files
+set(AVR_FILES "")
+set(TEST_FILES "")
 
-# Link test executables to the library
-link_libraries(
-    test-uart-${AVR_MCU}
-    libscheduler-uart-lib-${AVR_MCU}
-)
+# Iterate over all .cpp files
+foreach(FILE ${ALL_CPP_FILES})
+    # Get the filename without the directory
+    get_filename_component(NAME ${FILE} NAME)
 
-# Add test
-add_test(
-    NAME test-uart
-    COMMAND simavr test-uart-${AVR_MCU}.elf)
+    # Check if the filename starts with "test-"
+    if(NAME MATCHES "^test-.*")
+        # Add it to the list of test files
+        list(APPEND TEST_FILES ${FILE})
+    else()
+        # Add it to the list of AVR files
+        list(APPEND AVR_FILES ${FILE})
+    endif()
+endforeach()
+
+# For each AVR file, create an AVR executable
+foreach(FILE ${AVR_FILES})
+    get_filename_component(NAME ${FILE} NAME_WE)
+    add_avr_executable(${NAME} ${FILE})
+    avr_target_link_libraries(
+        ${NAME}
+        scheduler-${AVR_MCU}
+        )
+endforeach()
+
+# For each test file, create an executable and add it to the tests
+foreach(FILE ${TEST_FILES})
+    get_filename_component(NAME ${FILE} NAME_WE)
+    add_custom_target(${NAME}
+        COMMAND cd ${CMAKE_SOURCE_DIR}/test; make FILE=${NAME}.cpp ARGS=${CMAKE_CXX_FLAGS}
+    )
+    add_test(NAME ${NAME} COMMAND ${NAME})
+endforeach()
