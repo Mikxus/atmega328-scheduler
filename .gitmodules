@@ -3,4 +3,4 @@
 	url = https://github.com/mkleemann/cmake-avr.git
 [submodule "submodules/simavr"]
 	path = submodules/simavr
-	url = https://github.com/buserror/simavr.git
+	url = https://github.com/gatk555/simavr.git

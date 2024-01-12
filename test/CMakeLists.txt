@@ -1,3 +1,9 @@
+# Include simavr source files
+include_directories(${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/)
+
+# Get all .cpp files in the current directory
+file(GLOB ALL_CPP_FILES *.cpp)
+
 # Lists to hold the AVR and test files
 set(AVR_FILES "")
 set(TEST_FILES "")
@@ -23,15 +29,17 @@ foreach(FILE ${AVR_FILES})
     add_avr_executable(${NAME} ${FILE})
     message(STATUS "Adding AVR test ${NAME}")
     message(STATUS "Adding AVR test ${FILE}")
+
     avr_target_link_libraries(
         ${NAME}
         scheduler-${AVR_MCU}
-        )
+    )
 endforeach()
 
 # For each test file, create an executable and add it to the tests
 foreach(FILE ${TEST_FILES})
     get_filename_component(NAME ${FILE} NAME_WE)
+
     message(STATUS "Adding test ${NAME}")
     message(STATUS "Adding test ${FILE}")
 

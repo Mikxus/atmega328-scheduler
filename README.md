@@ -1,4 +1,4 @@
-# atmega328-scheduler v0.1.2
+# atmega328-scheduler v0.1.3
 scheduler for atmega328p. Hobby project.
 
 ## Getting started

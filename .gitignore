@@ -3,6 +3,11 @@ CMakeFiles
 CMakeCache.txt
 *.cmake
 
+# Ctest files
+Testing
+CTestCostData.txt
+*.log
+
 # make files
 Makefile
 
@@ -10,6 +15,11 @@ Makefile
 build
 *.a
 *.out
+*.elf
+*.hex
+*.lst
+*.map
+
 
 # editor files
 .vscode
