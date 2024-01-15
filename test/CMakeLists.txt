@@ -31,12 +31,7 @@ foreach(FILE ${AVR_FILES})
         )
 
     set_target_properties(${NAME} PROPERTIES DEPENDS test-${NAME})
-
-    message(STATUS "test file: test-${NAME}")
-
-    message(STATUS "Adding AVR test ${NAME}")
-    message(STATUS "Adding AVR test ${FILE}")
-
+    
     avr_target_link_libraries(
         ${NAME}
         scheduler-${AVR_MCU}
