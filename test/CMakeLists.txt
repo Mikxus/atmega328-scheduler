@@ -55,7 +55,11 @@ foreach(FILE ${TEST_FILES})
         COMMENT "Building ${NAME} with Makefile"
     )
 
+    # Add the output file as an imported target
     set_target_properties(${NAME} PROPERTIES IMPORTED_LOCATION ${OUTPUT_FILE})
+
+    # Add the output file to the clean files
+    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${OUTPUT_FILE})
 
     # Make the test depend on the custom target
     add_test(NAME ${NAME} COMMAND ${NAME})
