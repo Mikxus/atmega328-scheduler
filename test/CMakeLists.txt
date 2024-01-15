@@ -29,8 +29,6 @@ foreach(FILE ${AVR_FILES})
     add_avr_executable(
         ${NAME} ${FILE}
         )
-
-    set_target_properties(${NAME} PROPERTIES DEPENDS test-${NAME})
     
     avr_target_link_libraries(
         ${NAME}
@@ -52,7 +50,7 @@ foreach(FILE ${TEST_FILES})
         ${NAME}
         COMMAND make -C ${CMAKE_SOURCE_DIR}/test OUTFILE=${OUTPUT_FILE} CC=gcc CXX=g++ FILE=${FILE} 
         DEPENDS ${FILE} simavr
-        COMMENT "Building ${NAME} with Makefile"
+        COMMENT "Building host test ${NAME} with custom Makefile"
     )
 
     # Add the output file as an imported target
