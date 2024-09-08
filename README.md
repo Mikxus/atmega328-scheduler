@@ -5,7 +5,7 @@ scheduler for atmega328p. Hobby project.
 
 Clone the repository and cd in to the repo
 ```bash
-git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328p-scheduler
+git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328-scheduler
 ```
 
 Create build directory
