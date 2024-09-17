@@ -20,6 +20,8 @@ build
 *.lst
 *.map
 
+# submodule files
+submodules/simavr/**
 
 # editor files
 .vscode
