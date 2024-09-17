@@ -50,17 +50,11 @@ foreach(FILE ${TEST_FILES})
     add_custom_command(
         OUTPUT ${OUTPUT_FILE}
         COMMAND CC=gcc CXX=g++ make -C ${CMAKE_SOURCE_DIR}/test FILE=${FILE}
-        DEPENDS ${FILE}
         COMMENT "Building ${NAME} with Makefile"
     )
 
     # Add an executable target
-    add_executable(${NAME} IMPORTED GLOBAL)
-    set_target_properties(${NAME} PROPERTIES IMPORTED_LOCATION ${OUTPUT_FILE})
+    add_executable(${NAME} ${FILE})
 
-    # Add a custom target that depends on the custom command
-    add_custom_target("HOST_TARGET_${NAME}" DEPENDS ${OUTPUT_FILE})
-
-    # Make the test depend on the custom target
-    add_test(NAME ${NAME} COMMAND ${NAME})
+    add_test(NAME "HOST_TARGET_${NAME}" COMMAND ${NAME})
 endforeach()
