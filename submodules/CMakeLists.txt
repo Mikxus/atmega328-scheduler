@@ -1,7 +1,23 @@
-# Generate simavr
-add_custom_target(
-    simavr
+
+add_library(simavr OBJECT ${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/libsimavr.a)
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/libsimavr.a
     COMMAND make build-simavr
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/submodules/simavr/
+    DEPENDS simavr
+)
+# Generate simavr
+#add_custom_target(
+#    simavr
+#    COMMAND make build-simavr
+#    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/submodules/simavr/
+#)
+
+add_custom_target(
+    simavr-tests
+    DEPENDS simavr
+    COMMAND make build-tests
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/submodules/simavr/
 )
 
