@@ -1,8 +1,13 @@
-# Include simavr source files
-include_directories(${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/)
+
+include_directories(${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/sim)
+include_directories(${CMAKE_SOURCE_DIR}/submodules/simavr/include)
+include_directories(${CMAKE_SOURCE_DIR}/submodules/simavr/simavr)
+
+# add subdirectories
+add_subdirectory(tools)
 
 # Get all .cpp files in the current directory
-file(GLOB ALL_CPP_FILES *.cpp)
+file(GLOB ALL_CPP_FILES *.cpp *.c)
 
 # Lists to hold the AVR and test files
 set(AVR_FILES "")
@@ -46,15 +51,13 @@ foreach(FILE ${TEST_FILES})
     # Define the output file
     set(OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${NAME}")
 
-    # Add a custom command that will be executed during the build phase
-    add_custom_command(
-        OUTPUT ${OUTPUT_FILE}
-        COMMAND CC=gcc CXX=g++ make -C ${CMAKE_SOURCE_DIR}/test FILE=${FILE}
-        COMMENT "Building ${NAME} with Makefile"
-    )
 
     # Add an executable target
     add_executable(${NAME} ${FILE})
 
-    add_test(NAME "HOST_TARGET_${NAME}" COMMAND ${NAME})
+    set_target_properties(${NAME} PROPERTIES COMPILE_OPTIONS "-Wno-pedantic")
+    
+    # ensure simavr is built.
+    add_dependencies(${NAME} test-runner)
+
 endforeach()
