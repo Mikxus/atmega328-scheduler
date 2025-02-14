@@ -9,7 +9,7 @@
 # Matthias Kleemann
 ##########################################################################
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.30)
 
 ### TOOLCHAIN SETUP AREA #################################################
 # Set any variables used in the toolchain prior project() call. In that
@@ -95,23 +95,26 @@ set(CMAKE_SYSTEM_LIBRARY_PATH "${CMAKE_FIND_ROOT_PATH}/lib")
 message(STATUS "Set CMAKE_FIND_ROOT_PATH to ${CMAKE_FIND_ROOT_PATH}")
 message(STATUS "Set CMAKE_SYSTEM_INCLUDE_PATH to ${CMAKE_SYSTEM_INCLUDE_PATH}")
 message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
-
 ##########################################################################
 # set compiler options for build types
 ##########################################################################
+
+# default flags for avr builds
+set(AVR_DEFAULT_FLAGS "-fpack-struct -fshort-enums -Wall -Werror -pedantic -pedantic-errors -funsigned-char -funsigned-bitfields -ffunction-sections")
+
 if(CMAKE_BUILD_TYPE MATCHES Release)
-   set(CMAKE_C_FLAGS_RELEASE "-Os")
-   set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++20")
+   set(CMAKE_C_FLAGS_RELEASE "-Os ")
+   set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++11")
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
 if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf")
-   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf -std=c++20")
+   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf -std=c++11")
 endif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_C_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf")
-   set(CMAKE_CXX_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf -w -std=c++20")
+   set(CMAKE_CXX_FLAGS_DEBUG "-O0 -save-temps -g -gdwarf-3 -gstrict-dwarf -w -std=c++11")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
 # Define DEBUG for the c/c++ code
@@ -121,19 +124,9 @@ add_compile_definitions("DEBUG=$<CONFIG:Debug>")
 add_definitions(-DSCHEDULER_AVR_MCU=${AVR_MCU})
 
 ##########################################################################
-# compiler options for all build types
+# Custom flags for the project
 ##########################################################################
 add_definitions("-DF_CPU=${MCU_SPEED}")
-add_definitions("-fpack-struct")
-add_definitions("-fshort-enums")
-add_definitions("-Wall")
-add_definitions("-Werror")
-add_definitions("-pedantic")
-add_definitions("-pedantic-errors")
-add_definitions("-funsigned-char")
-add_definitions("-funsigned-bitfields")
-add_definitions("-ffunction-sections")
-add_definitions("-c")
 
 
 # Project configuration settings
@@ -163,20 +156,6 @@ include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/lib/AVR-UART-LIB/)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/)
-
-
-##########################################################################
-# use default documentation target
-##########################################################################
-#include("${PROJECT_SOURCE_DIR}/../Modules/defaultDocuTarget.cmake")
-
-
-##########################################################################
-# Cmake output directories @note Doesn't work@note Doesn't work
-##########################################################################
-#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 ##########################################################################
 # AVR tests using simavr
