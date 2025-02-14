@@ -1,5 +1,9 @@
 
-add_library(simavr OBJECT ${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/libsimavr.a)
+add_library(simavr STATIC IMPORTED )
+
+set_target_properties(simavr PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/libsimavr.a
+)
 
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/libsimavr.a
