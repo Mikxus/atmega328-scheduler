@@ -9,7 +9,7 @@ add_avr_library (
 )
 
 # Link libraries
-link_libraries(
+avr_target_link_libraries(
     scheduler-${AVR_MCU}
-    libAVR-UART-LIB-${AVR_MCU} # Probably not needed to manually link.
+    scheduler-uart-lib-${AVR_MCU}
 )
