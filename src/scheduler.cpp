@@ -6,7 +6,5 @@
 __attribute__((constructor)) void _scheduler_init(void) 
 {
     initialize_uart();
-    printf("uart initialized\n");
-
     return;
 }
