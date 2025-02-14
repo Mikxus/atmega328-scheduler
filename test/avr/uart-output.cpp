@@ -14,9 +14,10 @@ AVR_MCU(F_CPU, STRINGIZE(SCHEDULER_AVR_MCU));
 
 int main(void)
 {
-    printf("Hello World!\n");
+    _scheduler_init();
+    sei();
+    printf("Hellou!\n");
 
-    cli();
     sleep_cpu();
     return 0;
 }
