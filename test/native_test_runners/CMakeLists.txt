@@ -9,16 +9,11 @@ set(CMAKE_STRIP "/usr/bin/strip")
 set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_ASM_COMPILER "/usr/bin/as")
 
-message(status "CMAKE_CXX_FLAGS BEFORE: ${CMAKE_CXX_FLAGS}")
-
 # Overwrite the global C/C++ flags explicitly
 set(NEW_C_FLAGS "-O2 -Wall -Werror")
 set(NEW_CXX_FLAGS "-O2 -std=gnu++11 -Wall -Werror")
 
 project(native_test_runners)
-
-
-message(status "CMAKE_C_FLAGS after: ${CMAKE_CXX_FLAGS}")
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 11)
