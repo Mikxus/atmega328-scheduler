@@ -38,6 +38,14 @@ Now you can run the tests.
 ```bash
 make test
 ```
+**Note:**
+```bash
+error while loading shared libraries: libsimavr.so.1: cannot open shared object file: No such file or directory
+```
+If you get this error, you need to add the path to the library to your LD_LIBRARY_PATH.
+```bash
+export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+```
 
 ## License
 This library is under the [MIT license](https://github.com/Mikxus/atmega328-scheduler/blob/main/LICENSE) except the test folder. The code under test folder is licensed under [GPL v3.0](https://github.com/Mikxus/atmega328-scheduler/blob/main/test/LICENSE) since it uses simavr's source code.
