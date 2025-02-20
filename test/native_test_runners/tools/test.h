@@ -9,14 +9,24 @@ extern "C" {
 #endif
 
 #include <stdio.h> 
-#include <string.h> 
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "sim_elf.h"
 #include "sim_avr.h"
 #include "sim_core.h"
 #include "sim_hex.h"
+#include "avr_uart.h"
 
+#include "debug.h"
 
+struct uart_receive_buffer
+{
+    char *buffer;
+    unsigned int size;
+    unsigned int index;
+};
 
 int validate_args(const int argc, char *argv[]);
 
@@ -30,6 +40,18 @@ int validate_args(const int argc, char *argv[]);
  */
 avr_t *init_avr(const char *elf_name, const char *mcu, const int frequency);
 
+void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param);
+
+/**
+ * @brief  Run avr until specified timeout
+ * @note   
+ * @param  *avr: 
+ * @param  timeout_ms: 
+ * @retval 1 if avr crashes or timeout reached 0 success
+ */
+bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms);
+
+bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_cycles);
 
 #ifdef __cplusplus
 }
