@@ -43,8 +43,9 @@ foreach(FILE ${NATIVE_TEST_FILES})
     # Add an executable target
     add_executable(${NAME} ${FILE})
 
-    target_link_libraries(${NAME} simavr test-runner-lib)
-
+    target_link_libraries(${NAME} PRIVATE simavr test-runner-lib)
+    add_dependencies(${NAME} build-simavr)
+    
     target_compile_options(${NAME} PRIVATE "${CMAKE_NEW_C_FLAGS}")
 
     # Generate the avr hex file's name 
