@@ -1,5 +1,5 @@
 /* 
- * test-uart-output.cpp
+ * test-uart-output.c
  * This file is used to test the uart output
  * 
  */
@@ -25,18 +25,9 @@ int main(int argc, char *argv[]) {
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
 
-    if (!avr)
+    if (test_uart_receive(avr, "Hello World!\r\n", 2000))
     {
         return 1;
-    }
-
-    for (;;)
-    {
-        int state = avr_run(avr);
-        if (state == cpu_Done || state == cpu_Crashed)
-        {
-            break;
-        }
     }
 
     return 0;
