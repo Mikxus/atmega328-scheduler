@@ -11,6 +11,13 @@ foreach(FILE ${AVR_SRC_FILES})
     # Add the AVR executable
     add_avr_executable(${NAME} ${FILE})
 
+    # Set the compile flags
+    set_target_properties(
+        ${NAME}
+        PROPERTIES
+        COMPILE_FLAGS "${AVR_COMPILE_FLAGS}"
+    )
+
     # Link necessary libraries
     avr_target_link_libraries(${NAME} scheduler-${AVR_MCU})
 
