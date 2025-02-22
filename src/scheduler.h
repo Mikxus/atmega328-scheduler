@@ -6,6 +6,6 @@
 #include "drivers/uart/uart.h" 
 #include "drivers/clock/clock.h"
 
-__attribute__((constructor)) void _scheduler_init(void);
+void _scheduler_init(void);
 
 #endif
