@@ -8,11 +8,6 @@ Clone the repository and cd in to the repo
 git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328-scheduler
 ```
 
-Create build directory
-```bash
-mkdir build
-```
-
 Generate out of source build system with cmake
 ```bash
 cmake -Bbuild -S. 
