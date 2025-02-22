@@ -69,9 +69,11 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
             return 1;
         }
 
-        if (avr->state == cpu_Done) break;
+        if (avr->state == cpu_Done) return 0;
     }
-    return 0;
+
+    ERROR("avr timeout reached");
+    return 1;
 }
 
 bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_ms)
@@ -79,7 +81,7 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
     struct uart_receive_buffer buffer;
 
     buffer.buffer = calloc(sizeof(char), 2048);
-    buffer.size = sizeof(char) * 2048;
+        ERROR("Failed to allocate uart receive buffer of %lu bytes", sizeof(char) * 2048);
     buffer.index = 0;
     if (!buffer.buffer)
     {
@@ -110,7 +112,58 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
             strlen(buffer.buffer),
             buffer.buffer
         );
+        dump_avr_core(avr);
         return 1;
     }
     return 0;
+}
+
+void hex_dump(const uint8_t *data, const uint64_t data_len,
+     const uint8_t width, const char *description)
+{
+    uint64_t index = 0;
+
+    if (!data)
+    {
+        ERROR("Data is NULL\n");
+        return;
+    }
+
+    printf("Dump of function values\
+        data: %p\
+        data_len: %lu\
+        width: %d\
+        description: %s\n",
+        data,
+        data_len,
+        width,
+        description
+    );
+
+    printf("Dump of %s\nDump lenght %d\n",
+        description,
+        data_len
+    );
+
+    for (uint64_t row = data_len / width; row != 0; row--)
+    {
+        // print line
+        for (uint64_t i = 0; i < width; i++)
+        {
+            printf("row %lu index %lu\n", row, index);
+            fflush(stdout);
+            if (index == data_len) break;
+
+            printf("%#x ", data[index]);
+            index += 1;
+        }
+        printf("\r\n");
+    }
+}
+
+void dump_avr_core(avr_t *avr)
+{
+    if (!avr) return;
+
+    hex_dump(avr->flash, avr->ramend, 20, "ram");
 }

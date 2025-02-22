@@ -53,6 +53,11 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms);
 
 bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_cycles);
 
+/**
+ * Prints out a dump of the avr's cpu state
+ */
+void dump_avr_core(avr_t *avr);
+
 #ifdef __cplusplus
 }
 #endif
