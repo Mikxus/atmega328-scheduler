@@ -25,6 +25,8 @@ ISR(TIMER0_OVF_vect)
 
 void initialize_clock(void)
 {
+    uint8_t sreg = SREG;
+
     cli();
     /* Set CTC mode
      * Allows to use OCR0A as top value
@@ -40,6 +42,7 @@ void initialize_clock(void)
     OCR0A = 0xFF;
 
 
+    SREG = sreg;
 }
 
 
