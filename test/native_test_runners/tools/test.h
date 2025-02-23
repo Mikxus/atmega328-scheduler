@@ -13,6 +13,17 @@ extern "C" {
 #include <string.h>
 #include <stdbool.h>
 
+/* simavr build config */
+#include "sim_core_config.h"
+
+/*
+ * simavr's makefile.common defines this
+ *
+ */
+#ifndef CONFIG_PULL_UPS
+#define CONFIG_PULL_UPS 1
+#endif
+
 #include "sim_elf.h"
 #include "sim_avr.h"
 #include "sim_core.h"

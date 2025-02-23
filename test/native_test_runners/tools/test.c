@@ -13,10 +13,9 @@ int validate_args(const int argc, char *argv[])
 
 avr_t *init_avr(const char *elf_name, const char *mcu, const int frequency)
 {
-    elf_firmware_t firmware = {0};
+    elf_firmware_t firmware = {};
 
     firmware.frequency = frequency;
-
     if (sizeof(firmware.mmcu) <= strlen(mcu))
     {
         ERROR("MCU name too long");
@@ -26,10 +25,18 @@ avr_t *init_avr(const char *elf_name, const char *mcu, const int frequency)
     strcpy(firmware.mmcu, mcu);
 
     sim_setup_firmware(elf_name, 0, &firmware, "test");
+
+    if (!firmware.flash)
+    {
+        ERROR("Failed to load firmware");
+        return NULL;
+    }
+
     avr_t *avr = avr_make_mcu_by_name(firmware.mmcu);
 
     if (!avr)
     {
+        ERROR("AVR '%s' not known", firmware.mmcu);
         return avr;
     }
     
@@ -79,13 +86,12 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
 bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_ms)
 {
     struct uart_receive_buffer buffer;
-
     buffer.buffer = calloc(sizeof(char), 2048);
-        ERROR("Failed to allocate uart receive buffer of %lu bytes", sizeof(char) * 2048);
     buffer.index = 0;
+
     if (!buffer.buffer)
     {
-        ERROR("Failed to allocate uart receive buffer of %d bytes", sizeof(char) * 2048);
+        ERROR("Failed to allocate uart receive buffer of %lu bytes", sizeof(char) * 2048);
         return 1;
     } 
 
@@ -112,7 +118,7 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
             strlen(buffer.buffer),
             buffer.buffer
         );
-        dump_avr_core(avr);
+        //dump_avr_core(avr);
         return 1;
     }
     return 0;
@@ -129,29 +135,11 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
         return;
     }
 
-    printf("Dump of function values\
-        data: %p\
-        data_len: %lu\
-        width: %d\
-        description: %s\n",
-        data,
-        data_len,
-        width,
-        description
-    );
-
-    printf("Dump of %s\nDump lenght %d\n",
-        description,
-        data_len
-    );
-
     for (uint64_t row = data_len / width; row != 0; row--)
     {
         // print line
         for (uint64_t i = 0; i < width; i++)
         {
-            printf("row %lu index %lu\n", row, index);
-            fflush(stdout);
             if (index == data_len) break;
 
             printf("%#x ", data[index]);
@@ -164,6 +152,8 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
 void dump_avr_core(avr_t *avr)
 {
     if (!avr) return;
+    
+    uint16_t sram_size = avr->ramend - avr->io_offset;
 
-    hex_dump(avr->flash, avr->ramend, 20, "ram");
+    hex_dump(avr->data + avr->io_offset, avr->ramend, 20, "ram");
 }
