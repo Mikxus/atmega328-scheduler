@@ -4,5 +4,5 @@ add_library(
     test.h
     debug.c
 )
-target_compile_options(test-runner-lib PRIVATE "-Wno-pedantic")
+target_compile_options(test-runner-lib PRIVATE -g)
 link_libraries(test-runner-lib PRIVATE simavr)
