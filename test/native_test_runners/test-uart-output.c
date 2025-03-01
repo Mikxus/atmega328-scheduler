@@ -24,11 +24,5 @@ int main(int argc, char *argv[]) {
     }
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
-
-    if (test_uart_receive(avr, "Hello World!\r\n", 2000))
-    {
-        return 1;
-    }
-
-    return 0;
+    return test_uart_receive(avr, "Hello World!\r\n", 2000);
 }
