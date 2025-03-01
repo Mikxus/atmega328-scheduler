@@ -129,28 +129,36 @@ void set_terminal_color(debug_level_t level, bool reset_color);
  */
 void debug_print(debug_level_t debug_level, newline_t newline, const char *fmt, ...);
 
+#ifndef DEBUG
 #if CONF_ENABLE_DEBUG == 1
 #define DEBUG(...) debug_print(debug, newline, __VA_ARGS__)
 #else
 #define DEBUG(...)
 #endif
+#endif
 
+#ifndef ERROR
 #if CONF_ENABLE_ERROR == 1
 #define ERROR(...) debug_print(error, newline, __VA_ARGS__)
 #else
 #define ERROR(...)
 #endif
+#endif
 
+#ifndef INFO
 #if CONF_ENABLE_INFO == 1
 #define INFO(...) debug_print(info, newline, __VA_ARGS__)
 #else
 #define INFO(...)
 #endif
+#endif
 
+#ifndef WARN
 #if CONF_ENABLE_WARN == 1
 #define WARN(...) debug_print(warn, newline, __VA_ARGS__)
 #else
 #define WARN(...)
+#endif
 #endif
 
 #pragma GCC diagnostic pop
