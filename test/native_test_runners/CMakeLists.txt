@@ -10,9 +10,6 @@ set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_ASM_COMPILER "/usr/bin/as")
 
 # Overwrite the global C/C++ flags explicitly
-set(NEW_C_FLAGS "-O2 -Wall -Werror")
-set(NEW_CXX_FLAGS "-O2 -std=gnu++11 -Wall -Werror")
-
 project(native_test_runners)
 
 # C++ standard
@@ -46,7 +43,7 @@ foreach(FILE ${NATIVE_TEST_FILES})
     target_link_libraries(${NAME} PRIVATE simavr test-runner-lib)
     add_dependencies(${NAME} build-simavr)
     
-    target_compile_options(${NAME} PRIVATE "${CMAKE_NEW_C_FLAGS}")
+    target_compile_options(${NAME} PRIVATE -Wall -Werror -W)
 
     # Generate the avr hex file's name 
     string(REPLACE "test-" "" AVR_TEST_NAME ${NAME})
