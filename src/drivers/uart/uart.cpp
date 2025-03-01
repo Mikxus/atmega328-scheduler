@@ -3,6 +3,7 @@
 void initialize_uart(void)
 {
     // Init code here
+    cli();
     uart_init(BAUD_CALC(SCHEDULER_UART_BAUD_RATE));
 
     /* Attach UART to stdin and stdout */

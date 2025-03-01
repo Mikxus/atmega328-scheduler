@@ -3,10 +3,9 @@
 /**
  * @brief Initializes the scheduler before main is called
  */
-__attribute__((constructor)) void _scheduler_init(void) 
+void _scheduler_init(void) 
 {
     initialize_uart();
-    printf("uart initialized\n");
-
+    initialize_clock();
     return;
 }

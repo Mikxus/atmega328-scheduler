@@ -6,7 +6,7 @@
 /**
  * @brief Atmega328p's cpu registers' state for context switching
 */
-struct cpu_registers
+volatile struct cpu_registers
 {
     union
     {

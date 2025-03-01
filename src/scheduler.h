@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include "lib/singly_linked_list/singly_linked_list.h"
 #include "drivers/uart/uart.h" 
+#include "drivers/clock/clock.h"
 
-__attribute__((constructor)) void _scheduler_init(void);
+void _scheduler_init(void);
 
 #endif

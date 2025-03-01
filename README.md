@@ -5,12 +5,7 @@ scheduler for atmega328p. Hobby project.
 
 Clone the repository and cd in to the repo
 ```bash
-git clone https://github.com/Mikxus/atmega328p-scheduler.git --recurse-submodules; cd atmega328p-scheduler
-```
-
-Create build directory
-```bash
-mkdir build
+git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328-scheduler
 ```
 
 Generate out of source build system with cmake
@@ -21,6 +16,30 @@ Now you can build the project inside the build folder, using your preferred buil
 For example.
 ```bash
 make
+```
+
+### Running tests
+Symlink AVR's header files to simavr since it doesn't come with them.
+```bash
+ln -s /usr/avr/include/avr/ submodules/simavr/simavr/cores/avr
+```
+
+Install simavr to run the tests.
+**Remember to run the make commands inside the build directory**
+```bash
+make simavr-install
+```
+Now you can run the tests.
+```bash
+make test
+```
+**Note:**
+```bash
+error while loading shared libraries: libsimavr.so.1: cannot open shared object file: No such file or directory
+```
+If you get this error, you need to add the path to the library to your LD_LIBRARY_PATH.
+```bash
+export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
 ```
 
 ## License
