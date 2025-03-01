@@ -73,6 +73,7 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
         if (avr->state == cpu_Stopped || avr->state == cpu_Crashed)
         {
             ERROR("Avr failed\r\n");
+            dump_avr_core(avr);
             return 1;
         }
 
@@ -80,6 +81,7 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
     }
 
     ERROR("avr timeout reached");
+    dump_avr_core(avr);
     return 1;
 }
 
@@ -118,7 +120,6 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
             strlen(buffer.buffer),
             buffer.buffer
         );
-        //dump_avr_core(avr);
         return 1;
     }
     return 0;
@@ -135,25 +136,31 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
         return;
     }
 
+    INFO("Dumping %s", description);
     for (uint64_t row = data_len / width; row != 0; row--)
     {
         // print line
+        printf("%04x: ", index);
         for (uint64_t i = 0; i < width; i++)
         {
             if (index == data_len) break;
 
-            printf("%#x ", data[index]);
+            printf("%02x ", data[index]);
             index += 1;
         }
         printf("\r\n");
     }
+
+    INFO("End of %s", description);
 }
 
 void dump_avr_core(avr_t *avr)
 {
     if (!avr) return;
-    
-    uint16_t sram_size = avr->ramend - avr->io_offset;
-
+    INFO("Dumping AVR core");
+    INFO("mcu: %s", avr->mmcu);
+    INFO("frequency: %lu", (unsigned long) avr->frequency);
+    INFO("cycle: %lu", (unsigned long) avr->cycle);
+    INFO("pc: %#04x", (unsigned long) avr->pc);
     hex_dump(avr->data + avr->io_offset, avr->ramend, 20, "ram");
 }
