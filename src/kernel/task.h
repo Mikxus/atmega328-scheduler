@@ -28,7 +28,7 @@ public:
     uint16_t id;
 
     task_state_t state;
-    cpu_registers cpu_state;
+    volatile cpu_registers cpu_state;
 
     uint32_t last_exec_time_ms;
     uint16_t burst_time_ms;
