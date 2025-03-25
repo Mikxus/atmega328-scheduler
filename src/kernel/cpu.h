@@ -6,7 +6,7 @@
 /**
  * @brief Atmega328p's cpu registers' state for context switching
 */
-volatile struct cpu_registers
+struct cpu_registers
 {
     union
     {
@@ -144,6 +144,17 @@ volatile struct cpu_registers
     };
 
     #pragma GCC diagnostic pop
+
+    /**
+     * @brief Get the task's program counter
+     * @note We're expecting to be called from the context switch interrupt.
+     *       So our pc is in the stack somewhere.
+     */
+    __attribute__((always_inline)) uint16_t get_last_pc(void)
+    {
+        // todo: implement this
+        return pc;
+    }
 };
 
 #endif
