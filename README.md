@@ -12,6 +12,12 @@ Generate out of source build system with cmake
 ```bash
 cmake -Bbuild -S. 
 ```
+
+To build debug version, add the flag:
+```bash
+cmake -Bbuild -S. -DCMAKE_BUILD_TYPE=Debug
+```
+
 Now you can build the project inside the build folder, using your preferred build system.
 For example.
 ```bash
@@ -29,9 +35,9 @@ Install simavr to run the tests.
 ```bash
 make simavr-install
 ```
-Now you can run the tests.
+Now you can run the tests with:
 ```bash
-make test
+ctest --rerun-failed --output-on-failure
 ```
 **Note:**
 ```bash
