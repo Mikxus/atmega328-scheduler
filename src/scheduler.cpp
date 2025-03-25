@@ -16,7 +16,7 @@ void _scheduler_init(void)
 }
 
 // Save the current task's context
-__attribute__((always_inline)) void _save_context(void)
+__attribute__((always_inline)) inline void _save_context(void)
 {
     volatile struct task_data *task = c_task;
 
