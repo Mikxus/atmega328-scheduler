@@ -4,9 +4,3 @@ add_avr_library(
     timer.cpp
     timer.h
 )
-
-set_target_properties(
-    timer-lib
-    PROPERTIES
-    COMPILE_FLAGS "${AVR_COMPILE_FLAGS}"
-)

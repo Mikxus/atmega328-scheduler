@@ -1,3 +1,8 @@
+# add compile options
+add_compile_options(
+    ${AVR_DEFAULT_FLAGS}
+)
+
 # Include subdirectories
 add_subdirectory(drivers/uart)
 add_subdirectory(drivers/timer)

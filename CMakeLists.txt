@@ -100,7 +100,7 @@ message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 ##########################################################################
 
 # default flags for avr builds
-set(AVR_DEFAULT_FLAGS "-fpack-struct -fshort-enums -Wall -Werror -pedantic -pedantic-errors -funsigned-char -funsigned-bitfields -ffunction-sections")
+set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -funsigned-char -funsigned-bitfields -ffunction-sections -flto)
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")

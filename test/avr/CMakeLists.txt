@@ -1,7 +1,7 @@
 # Get all AVR source files
 file(GLOB AVR_SRC_FILES *.cpp)
 
-set(CMAKE_CXX_FLAGS "-Wno-c++20-extensionsi ${AVR_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wno-c++20-extensions ${AVR_CXX_FLAGS}")
 
 foreach(FILE ${AVR_SRC_FILES})
     get_filename_component(NAME ${FILE} NAME_WE)
