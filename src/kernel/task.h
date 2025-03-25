@@ -18,6 +18,28 @@ typedef enum
     UNDEFINED
 } task_state_t;
 
+/**
+ * @brief Task memory data structure
+ */
+struct task_memory
+{
+    uint8_t * memory_ptr;
+    uint16_t size;
+
+    uint8_t * get_ram_end()
+    {
+        return memory_ptr + size;
+    }
+
+    uint8_t * get_ram_start()
+    {
+        return memory_ptr;
+    }
+};
+
+/**
+ * @brief Task data structure
+ */
 struct task_data
 {
 private:
@@ -27,11 +49,12 @@ private:
 public:
     uint16_t id;
 
-    task_state_t state;
+    struct task_memory memory;
+    volatile task_state_t state;
     volatile cpu_registers cpu_state;
 
-    uint32_t last_exec_time_ms;
-    uint16_t burst_time_ms;
+    volatile uint32_t last_exec_time_ms;
+    volatile uint16_t burst_time_ms;
 };
 
 #endif
