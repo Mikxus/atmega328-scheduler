@@ -137,18 +137,42 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
     }
 
     INFO("Dumping %s", description);
-    for (uint64_t row = data_len / width; row != 0; row--)
+    for (uint64_t row = 1 + (data_len / width); row != 0; row--)
     {
-        // print line
+        uint64_t offset = 0;
+
+        // print address
         printf("%04x: ", index);
+        
+        // print data
         for (uint64_t i = 0; i < width; i++)
         {
-            if (index == data_len) break;
+            printf("%02x ", data[index + offset]);
 
-            printf("%02x ", data[index]);
-            index += 1;
+            if (index + offset == data_len) break;
+            offset += 1;
+        }
+
+        offset = 0;
+
+        // print ascii representation
+        for (uint64_t i = 0; i < width; i++)
+        {
+
+            if (data[index + offset] >= 0x21 && data[index + offset] <= 0x7e)
+            {
+                printf("%c", data[index + offset]);
+            }
+            else
+            {
+                printf(".");
+            }
+
+            if (index + offset == data_len) break;
+            offset += 1;
         }
         printf("\r\n");
+        index += offset;
     }
 
     INFO("End of %s", description);
@@ -162,5 +186,5 @@ void dump_avr_core(avr_t *avr)
     INFO("frequency: %lu", (unsigned long) avr->frequency);
     INFO("cycle: %lu", (unsigned long) avr->cycle);
     INFO("pc: %#04x", (unsigned long) avr->pc);
-    hex_dump(avr->data + avr->io_offset, avr->ramend, 20, "ram");
+    hex_dump(avr->data, avr->ramend, 20, "ram");
 }
