@@ -62,6 +62,15 @@ void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param);
  */
 bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms);
 
+/**
+ * @brief  Run avr until an interrupt is triggered
+ * @note   
+ * @param  *avr: 
+ * @param  timeout_ms: max ms to run avr 
+ * @retval 1 if avr crashes or timeout.
+ */
+bool run_avr_until_interrupt(avr_t *avr, const unsigned long timeout_ms, bool volatile *interrupt_state);
+
 bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_cycles);
 
 /**
