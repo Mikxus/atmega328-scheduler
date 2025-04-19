@@ -43,7 +43,7 @@ foreach(FILE ${NATIVE_TEST_FILES})
     target_link_libraries(${NAME} PRIVATE simavr test-runner-lib)
     add_dependencies(${NAME} build-simavr)
     
-    target_compile_options(${NAME} PRIVATE -Wall -Werror -W)
+    target_compile_options(${NAME} PRIVATE -Wall -Werror -W -Wno-error=unused-parameter)
 
     # Generate the avr hex file's name 
     string(REPLACE "test-" "" AVR_TEST_NAME ${NAME})
