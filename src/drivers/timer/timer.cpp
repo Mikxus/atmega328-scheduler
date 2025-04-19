@@ -17,12 +17,22 @@ void timer0_set_clock_source(timer0_clock_select_t clock_source)
     TCCR0B |= clock_source;
 }
 
+void enable_timer0_interrupt(timer0_interrupt_t interrupt)
+{
+    TIMSK0 |= interrupt;
+}
+
+void disable_timer0_interrupt(timer0_interrupt_t interrupt)
+{
+    TIMSK0 &= ~interrupt;
+}
+
 void enable_timer0(void)
 {
-    PRR |= (1 << PRTIM0);
+    PRR &= ~(1 << PRTIM0);
 }
 
 void disable_timer0(void)
 {
-    PRR &= ~(1 << PRTIM0);
+    PRR |= (1 << PRTIM0);
 }

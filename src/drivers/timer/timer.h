@@ -43,6 +43,13 @@ typedef enum
 
 typedef enum
 {
+    COMPA_INTERRUPT = (1 << OCIE0B),
+    COMPB_INTERRUPT = (1 << OCIE0A),
+    OVERFLOW_INTERRUPT = (1 << TOIE0)
+} timer0_interrupt_t;
+
+typedef enum
+{
    NO_CLOCK_SOURCE = 0,
    NO_PRESCALER =                   (0 << CS02) | (0 << CS01) | (1 << CS00),
    PRESCALER_8 =                    (0 << CS02) | (1 << CS01) | (0 << CS00),
@@ -69,7 +76,21 @@ void timer0_set_waveform_generation_mode(timer0_waveform_generation_mode_t mode)
  */
 void timer0_set_clock_source(timer0_clock_select_t clock_source);
 
+/**
+ * @brief  Enable timer0 interrupt
+ * @note   
+ * @param  interrupt: 
+ * @retval None
+ */
+void enable_timer0_interrupt(timer0_interrupt_t interrupt);
 
+/**
+ * @brief  Disable timer0 interrupt
+ * @note   
+ * @param  interrupt: 
+ * @retval None
+ */
+void disable_timer0_interrupt(timer0_interrupt_t interrupt);
 
 /**
  * @brief  Enable timer0 
