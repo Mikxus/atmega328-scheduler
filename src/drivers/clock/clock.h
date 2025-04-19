@@ -14,11 +14,18 @@
 
 
 /**
- * @brief  Initialize the clock
+ * @brief Initializes timers needed for the scehduler  
  * @note   
  * @retval None
  */
 void initialize_clock(void);
     
+/**
+ * @brief Returns the uptime in milliseconds
+ * @note   
+ * @retval 
+ */
+uint32_t get_ms(void);
+
 
 #endif

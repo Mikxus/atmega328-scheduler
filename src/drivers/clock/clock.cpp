@@ -23,6 +23,17 @@ ISR(TIMER0_OVF_vect)
 	timer0_overflow_counter++;
 }
 
+uint32_t get_ms(void)
+{
+    uint32_t ms;
+    uint8_t sreg = SREG;
+    
+    cli();
+    ms = timer0_ms;
+    SREG = sreg;
+    return ms;
+}
+
 void initialize_clock(void)
 {
     uint8_t sreg = SREG;
@@ -39,8 +50,9 @@ void initialize_clock(void)
      */
     timer0_set_clock_source(PRESCALER_64);
 
-    OCR0A = 0xFF;
+    enable_timer0_interrupt(OVERFLOW_INTERRUPT);
 
+    enable_timer0();
 
     SREG = sreg;
 }
