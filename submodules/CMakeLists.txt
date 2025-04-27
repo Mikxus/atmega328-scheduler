@@ -8,7 +8,7 @@ set_target_properties(simavr PROPERTIES
 
 # Build simavr
 add_custom_target(build-simavr ALL 
-    COMMAND make build-simavr
+    COMMAND make build-simavr CFLAGS=-I/usr/include/libdwarf
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/submodules/simavr/
     COMMENT "Building simavr"
 )
