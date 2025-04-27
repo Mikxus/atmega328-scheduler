@@ -25,7 +25,7 @@ jobs:
       
     - name: Symlink simavr
       # Symlink avr's header files to simavr
-      run: ln -s /usr/avr/include/avr/ ${{github.workspace}}/submodules/simavr/simavr/cores/avr
+      run: ln -s /usr/avr/include/avr/ /submodules/simavr/simavr/cores/avr
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
