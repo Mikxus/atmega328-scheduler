@@ -9,7 +9,7 @@ on:
 env:
   BUILD_TYPE: Release
   LD_LIBRARY_PATH: /lib:/usr/lib:/usr/local/lib
-
+  CMAKE_C_FLAGS: -I/usr/include/libdwarf
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
