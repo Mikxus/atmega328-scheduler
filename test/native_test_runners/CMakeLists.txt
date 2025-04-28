@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.22)
 
 # Explicitly set the Native compilers and tools for x86_64
 set(CMAKE_C_COMPILER "/usr/bin/gcc" )
