@@ -8,44 +8,47 @@ Clone the repository and cd in to the repo
 git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328-scheduler
 ```
 
+```bash
+mkdir build
+```
+
 Generate out of source build system with cmake
 ```bash
-cmake -Bbuild -S. 
+cmake -Bbuild/release -DCMAKE_BUILD_TYPE=Release
+# Or debug build
+cmake -Bbuild/debug -DCMAKE_BUILD_TYPE=Debug
 ```
 
-To build debug version, add the flag:
-```bash
-cmake -Bbuild -S. -DCMAKE_BUILD_TYPE=Debug
-```
+To build the project as release or debug:
 
-Now you can build the project inside the build folder, using your preferred build system.
-For example.
 ```bash
-make
+cmake --build build/release --config CMAKE_BUILD_TYPE=Release
+ 
+cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
 ```
 
 ### Running tests
+**Note**: these commands need to be run at the root of the project
+
 Symlink AVR's header files to simavr since it doesn't come with them.
 ```bash
 ln -s /usr/avr/include/avr/ submodules/simavr/simavr/cores/avr
 ```
 
-Install simavr to run the tests.
-**Remember to run the make commands inside the build directory**
+Build the project
 ```bash
-make simavr-install
+cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
 ```
+Export LD_LIBRARY_PATH to find simavr's shared library
+
+**Note**: change the path if you are not on x86_64-pc-linux-gnu
+```bash
+export LD_LIBRARY_PATH=/lib:$(pwd)/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/
+```
+
 Now you can run the tests with:
 ```bash
-ctest --rerun-failed --output-on-failure
-```
-**Note:**
-```bash
-error while loading shared libraries: libsimavr.so.1: cannot open shared object file: No such file or directory
-```
-If you get this error, you need to add the path to the library to your LD_LIBRARY_PATH.
-```bash
-export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+ctest --test-dir build/debug --rerun-failed --output-on-failure
 ```
 
 ## License
