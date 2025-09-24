@@ -40,10 +40,19 @@ foreach(FILE ${NATIVE_TEST_FILES})
     # Add an executable target
     add_executable(${NAME} ${FILE})
 
-    target_link_libraries(${NAME} PRIVATE simavr test-runner-lib)
     add_dependencies(${NAME} build-simavr)
+
+    # check if math.h needs libm to be linked
+    set(POW_LIBS "")
+    include(CheckLibraryExists)
+    check_library_exists(m pow "" LIBM)
+    if(LIBM)
+        list(APPEND POW_LIBS "m")
+    endif()
+
+    target_link_libraries(${NAME} PRIVATE simavr test-runner-lib ${POW_LIBS})
     
-    target_compile_options(${NAME} PRIVATE -Wall -Werror -W -Wno-error=unused-parameter)
+    target_compile_options(${NAME} PRIVATE -Wall -Werror -W -Wno-error=unused-parameter -DCONFIF_PULL_UP=1)
 
     # Generate the avr hex file's name 
     string(REPLACE "test-" "" AVR_TEST_NAME ${NAME})
