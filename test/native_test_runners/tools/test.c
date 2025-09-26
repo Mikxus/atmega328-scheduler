@@ -85,7 +85,9 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
     return 1;
 }
 
-bool run_avr_until_interrupt(avr_t *avr, const unsigned long timeout_ms, bool volatile *interrupt_state)
+bool run_avr_until_interrupt(avr_t *avr,
+    const unsigned long timeout_ms,
+    bool volatile *interrupt_state)
 {
     avr_cycle_count_t timeout = avr->cycle + (avr->frequency / 1000) * timeout_ms; 
 
@@ -95,14 +97,12 @@ bool run_avr_until_interrupt(avr_t *avr, const unsigned long timeout_ms, bool vo
 
         if (*interrupt_state) return 0;
 
-        if (avr->state == cpu_Stopped || avr->state == cpu_Crashed)
+        if (avr->state == cpu_Stopped || avr->state == cpu_Crashed ||avr->state == cpu_Done )
         {
             ERROR("Avr failed\r\n");
             dump_avr_core(avr);
             return 1;
         }
-
-        if (avr->state == cpu_Done) return 0;
     }
 
     ERROR("avr timeout reached");

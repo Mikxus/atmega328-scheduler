@@ -51,7 +51,6 @@ int validate_args(const int argc, char *argv[]);
  */
 avr_t *init_avr(const char *elf_name, const char *mcu, const int frequency);
 
-void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param);
 
 /**
  * @brief  Run avr until specified timeout
@@ -70,6 +69,15 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms);
  * @retval 1 if avr crashes or timeout.
  */
 bool run_avr_until_interrupt(avr_t *avr, const unsigned long timeout_ms, bool volatile *interrupt_state);
+
+/**
+ * @brief Callback function for receiving chars from simulated uart
+ * 
+ * @param irq 
+ * @param value char value
+ * @param param pointer to struct uart_receive_buffer
+ */
+void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param);
 
 bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_cycles);
 
