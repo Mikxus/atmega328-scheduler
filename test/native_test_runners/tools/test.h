@@ -82,6 +82,17 @@ void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param);
 bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_cycles);
 
 /**
+ * @brief Create hex dump from address  
+ * @note   
+ * @param  *data: 
+ * @param  data_len: 
+ * @param  width: 
+ * @param  *description: 
+ * @retval None
+ */
+void hex_dump(const uint8_t *data, const uint64_t data_len,
+     const uint8_t width, const char *description);
+/**
  * Prints out a dump of the avr's cpu state
  */
 void dump_avr_core(avr_t *avr);
