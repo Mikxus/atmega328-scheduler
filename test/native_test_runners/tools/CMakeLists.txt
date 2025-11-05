@@ -4,6 +4,7 @@ add_library(
     test.h
     debug.c
     math.c
+    cpu.c
 )
 
 # check if math.h needs libm to be linked
