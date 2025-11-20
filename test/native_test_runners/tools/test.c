@@ -125,6 +125,7 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
     if (!avr)
     {
         ERROR("AVR not initialized");
+        free(buffer.buffer);
         return 1;
     }
 
@@ -145,8 +146,10 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
             strlen(buffer.buffer),
             buffer.buffer
         );
+        free(buffer.buffer);
         return 1;
     }
+    free(buffer.buffer);
     return 0;
 }
 
