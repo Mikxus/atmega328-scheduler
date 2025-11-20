@@ -12,7 +12,7 @@ int main(void)
     memcpy((void *) 0x0, &identifier, sizeof(identifier));
 
     /* Copy identifier to end of sram */
-    memcpy((void *) RAMEND - sizeof(identifier), &identifier, sizeof(identifier));
+    memcpy((uint8_t *)RAMEND - sizeof(identifier), &identifier, sizeof(identifier));
 
     cli();
     sleep_cpu();
