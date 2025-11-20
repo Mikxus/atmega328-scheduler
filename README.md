@@ -4,6 +4,7 @@ scheduler for atmega328p. Hobby project.
 ## Getting started
 Dependencies:
 * avr-gcc
+* gcc
 * cmake
 * libelf (simavr)
 * libdwarf (simavr)
