@@ -165,6 +165,6 @@ int main(int argc, char *argv[]) {
         976.57f,
         976.50f,
         976.62f,
-        0.02f,
+        0.03f,
         0.021f );
 }
