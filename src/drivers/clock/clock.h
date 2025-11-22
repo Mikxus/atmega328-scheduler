@@ -15,7 +15,7 @@
 
 /**
  * @brief Initializes timers needed for the scehduler  
- * @note   
+ * @note  Uses timer0's overflow interrupt
  * @retval None
  */
 void initialize_clock(void);
@@ -27,5 +27,6 @@ void initialize_clock(void);
  */
 uint32_t get_ms(void);
 
+uint32_t get_us(void);
 
 #endif
