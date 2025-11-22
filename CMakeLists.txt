@@ -105,20 +105,21 @@ set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -funsigned-char -funsign
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")
    set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++11")
+   add_definitions("-DRELEASE")
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
 if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf")
    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf -std=c++11")
+   add_definitions("-DRELWITHDEBINFO")
 endif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_C_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf")
    set(CMAKE_CXX_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf -w -std=c++11")
+   add_definitions("-DDEBUG")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
-# Define DEBUG for the c/c++ code
-add_compile_definitions("DEBUG=$<CONFIG:Debug>")
 
 # Also add mcu as compilie time definition
 add_definitions(-DSCHEDULER_AVR_MCU=${AVR_MCU})
