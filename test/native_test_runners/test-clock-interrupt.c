@@ -5,8 +5,9 @@
 #include <stddef.h>
 #include <stdio.h> 
 #include <stdlib.h>
-#include <float.h>
 #include <stdbool.h>
+#include <string.h>
+#include <float.h>
 
 /* internal tools */
 #include "tools/debug.h"
@@ -37,9 +38,11 @@ struct timings_data
 static void timer0_comp_ovf_cb(struct avr_irq_t *irq, uint32_t value, void *param)
 {
     /*
-     * Check if TIMER0 overflow triggered the interrupt
+     * Make sure it was the correct interrupt
+     * It seems that simavr internally uses compa's interrupt for the overflow interrupt?
+     * maybe a bug? or specified behavior on datasheet?
      */
-    if (value > 1) return;
+    if (strcmp(irq->name, ">avr.timer0.compa") != 0) return;
 
     interrupt_state = 1;
 }
@@ -130,14 +133,12 @@ int main(int argc, char *argv[]) {
     timings_data.avg = 0.0F;
 
     if (validate_args(argc, argv))
-    {
         return 1;
-    }
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
 
-    /* Register interrupt for TIMER0 COMPARE overflow interrupt
-     * our callback function then checks if it was triggered by the timer0 overflow interrupt 
+    /* Register callback for TIMER0 COMPARE overflow interrupt in simavr
+     * our callback function then checks if it was triggered by the correct interrupt 
      */
     avr_irq_register_notify(
         avr_io_getirq(avr, AVR_IOCTL_TIMER_GETIRQ('0'), TIMER_IRQ_OUT_COMP),
