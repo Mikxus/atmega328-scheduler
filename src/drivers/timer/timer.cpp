@@ -1,6 +1,6 @@
 #include "timer.h"
 
-void timer0_set_waveform_generation_mode(timer0_waveform_generation_mode_t mode)
+void timer0_set_waveform_generation_mode(timer0_2_waveform_generation_mode_t mode)
 {
     /*
     * waveform generation mode is split between TCCR0A and TCCR0B registers 
