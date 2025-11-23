@@ -1,5 +1,17 @@
 # atmega328-scheduler v0.1.3
 scheduler for atmega328p. Hobby project.
+## Architecture
+Notes:
+- Preemptive scheduler (timer0 interrupt based)
+- task CPU context sould be saved on the stack maybe? (need to research more)
+  - Or maybe in per task struct?
+- Task slice is 1 ms (not configurable without hassle)
+- Maybe round robin scheduling
+
+## Features
+- Fully working test suite with simavr 
+- No preexisting HAL
+- UART driver
 
 ## Getting started
 Dependencies:
