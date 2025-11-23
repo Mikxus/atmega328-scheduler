@@ -39,14 +39,14 @@ struct task_memory
 
 /**
  * @brief Task data structure
+ * @note: No initializers, or methods
+ *      This structure has to standard layout for offsetof to work correctly
  */
-struct task_data
+typedef struct task_data_t
 {
-private:
     /* singly linked list node for the current task */
-    sl_list::node<task_data> task_node = sl_list::node<task_data>(this, nullptr);
+    sl_list::node<task_data_t> task_node;
 
-public:
     uint16_t id;
 
     struct task_memory memory;
