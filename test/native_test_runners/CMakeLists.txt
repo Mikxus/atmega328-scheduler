@@ -31,6 +31,9 @@ file(GLOB NATIVE_TEST_FILES *.c)
 foreach(FILE ${NATIVE_TEST_FILES})
     get_filename_component(NAME ${FILE} NAME_WE)
 
+    # Generate the avr hex file's name 
+    string(REPLACE "test-" "" AVR_TEST_NAME ${NAME})
+
     message(STATUS "Adding native test ${NAME}")
     message(STATUS "Adding native test ${FILE}")
 
@@ -40,7 +43,7 @@ foreach(FILE ${NATIVE_TEST_FILES})
     # Add an executable target
     add_executable(${NAME} ${FILE})
 
-    add_dependencies(${NAME} build-simavr)
+    add_dependencies(${NAME} build-simavr ${AVR_TEST_NAME})
 
     # check if math.h needs libm to be linked
     set(POW_LIBS "")
@@ -54,7 +57,5 @@ foreach(FILE ${NATIVE_TEST_FILES})
     
     target_compile_options(${NAME} PRIVATE -Wall -Werror -W -Wno-error=unused-parameter -DCONFIF_PULL_UP=1)
 
-    # Generate the avr hex file's name 
-    string(REPLACE "test-" "" AVR_TEST_NAME ${NAME})
     add_test(NAME ${NAME} COMMAND ${OUTPUT_FILE} ${CMAKE_BINARY_DIR}/test/avr/${AVR_TEST_NAME}-${AVR_MCU}.hex ${AVR_MCU} ${MCU_SPEED})
 endforeach()
