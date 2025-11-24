@@ -16,6 +16,15 @@ add_avr_library (
     scheduler.h
 )
 
+# Add dependencies
+# might not be needed
+add_dependencies(
+    scheduler
+    scheduler-uart-lib-${AVR_MCU}
+    timer-lib-${AVR_MCU}
+    clock-lib-${AVR_MCU}
+)
+
 set_target_properties(
     scheduler
     PROPERTIES
