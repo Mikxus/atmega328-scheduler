@@ -84,17 +84,21 @@ ISR(TIMER0_COMPB_vect)
             [sreg_offset]   "n" (offsetof(task_data_t, cpu_state.sreg)),
             [sp_offset]     "n" (offsetof(task_data_t, cpu_state.sp)),
             [r0_offset]     "n" (offsetof(task_data_t, cpu_state.regs[0]))
-        : "memory"
+        : 
+            "r0","r1","r2","r3","r4","r5","r6","r7","r8","r9","r10",
+            "r11","r12","r13","r14","r15","r16","r17","r18","r19","r20",
+            "r21","r22","r23","r24","r25","r26","r27","r28","r29","r30","r31","memory","cc"
     );
     /* 
      * I think we can write c++ code from here on
      */
+    asm volatile ("clr r1" ::: "memory");
 
     // schedule next task
     // for now just re-run the same task
     
     /* Schedule next 1ms time slice */
-    OCR0B = FREQ_TO_TIMER_VALUE(1000, 64) + TCNT0; // 1 ms task switch interval
+    OCR0B = FREQ_TO_TIMER_VALUE(1000, 64) + TCNT0; // ~1 ms task switch interval
 
     asm volatile (
         "lds    r30, %[ctask]           \n\t" // setup z pointer with new ctask
