@@ -34,8 +34,7 @@ foreach(FILE ${NATIVE_TEST_FILES})
     # Generate the avr hex file's name 
     string(REPLACE "test-" "" AVR_TEST_NAME ${NAME})
 
-    message(STATUS "Adding native test ${NAME}")
-    message(STATUS "Adding native test ${FILE}")
+    message(STATUS "Adding native test ${NAME} ${FILE}")
 
     # Define the output file
     set(OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${NAME}")
@@ -43,7 +42,7 @@ foreach(FILE ${NATIVE_TEST_FILES})
     # Add an executable target
     add_executable(${NAME} ${FILE})
 
-    add_dependencies(${NAME} build-simavr ${AVR_TEST_NAME})
+    add_dependencies(${NAME} build-simavr ${AVR_TEST_NAME} scheduler-${AVR_MCU})
 
     # check if math.h needs libm to be linked
     set(POW_LIBS "")
