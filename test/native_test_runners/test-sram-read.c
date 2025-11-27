@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
 
-    run_avr_ms(avr, 2000);
+    run_avr_ms(avr, 2, 1);
 
     memcpy(&ram_start_buffer[0], avr->data, sizeof(identifier));
     memcpy(&ram_end_buffer[0], avr->data + avr->ramend - sizeof(identifier), sizeof(identifier));

@@ -29,9 +29,9 @@ int main(int argc, char *argv[])
     }
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
-    run_avr_ms(avr, 2000);
+    run_avr_ms(avr, 2000, 1);
 
-    for (int i = 0; i < 31; i++)
+    for (int i = 0; i < 32; i++)
     {
         if (register_values[i] != read_register(avr, i))
         {
