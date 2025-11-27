@@ -131,20 +131,39 @@ add_definitions("-DF_CPU=${MCU_SPEED}")
 
 
 # Project configuration settings
-message(STATUS "--- Project configurations ---")
-message(STATUS "Uart driver[ ]:")
 
 # UART DRIVERS
 set(
-    SCHEDULER_UART_BAUD_RATE "115200UL"
+    SCHEDULER_UART_BAUD_RATE "921600UL"
 )
 add_definitions(
   "-DSCHEDULER_UART_BAUD_RATE=${SCHEDULER_UART_BAUD_RATE}"
 )
+# Task settings
+set(
+    SCHEDULER_TASK_NAME_MAX_LENGTH "15"
+)
+add_definitions(
+  "-DSCHEDULER_TASK_NAME_MAX_LENGTH=${SCHEDULER_TASK_NAME_MAX_LENGTH}"
+)
 
+# track task cpu time
+set(
+    SCHEDULER_TASK_TRACK_STATISTICS "1"
+)
+add_definitions(
+  "-DSCHEDULER_TASK_TRACK_STATISTICS=${SCHEDULER_TASK_TRACK_STATISTICS}"
+)
+
+message(STATUS "------- Project configurations -------")
+message(STATUS "Uart driver[ ]:")
 message(STATUS "            |- Baud rate: ${SCHEDULER_UART_BAUD_RATE}")
-
-
+message(STATUS "")
+message(STATUS "Task settings[ ]:")
+message(STATUS "              |- Name max length: ${SCHEDULER_TASK_NAME_MAX_LENGTH}")
+message(STATUS "              |- Track statistics: ${SCHEDULER_TASK_TRACK_STATISTICS}")
+message(STATUS "")
+message(STATUS "------- End of configurations ---------")
 
 ##########################################################################
 # include search paths
