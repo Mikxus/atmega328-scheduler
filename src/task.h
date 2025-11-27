@@ -21,40 +21,42 @@ typedef enum
 /**
  * @brief Task memory data structure
  */
-struct task_memory
+typedef struct
 {
     uint8_t * memory_ptr;
     uint16_t size;
-
-    uint8_t * get_ram_end()
-    {
-        return memory_ptr + size;
-    }
-
-    uint8_t * get_ram_start()
-    {
-        return memory_ptr;
-    }
-};
+} task_stack_t;
 
 /**
  * @brief Task data structure
  * @note: No initializers, or methods
- *      This structure has to standard layout for offsetof to work correctly
+ *      This structure must be standard layout for offsetof to work correctly
  */
 typedef struct task_data_t
 {
     /* singly linked list node for the current task */
     sl_list::node<task_data_t> task_node;
 
-    uint16_t id;
+    char name[SCHEDULER_TASK_NAME_MAX_LENGTH];
+    uint8_t priority;
 
-    struct task_memory memory;
     volatile task_state_t state;
+    volatile task_stack_t stack;
     volatile cpu_registers cpu_state;
 
-    volatile uint32_t last_exec_time_ms;
-    volatile uint16_t burst_time_ms;
+    #if SCHEDULER_TASK_TRACK_STATISTICS == 1
+    /*
+     * Task execution time represented in 38 bits
+     * Overflows in ~50.9 days
+     */
+    volatile uint32_t exec_time_us;
+    volatile uint8_t  exec_time_overflow_count;
+
+    /* Start time of current execution slice */
+    volatile uint32_t exec_start_time_us;
+    #endif
+    uint8_t time_slice_ms;
+
 };
 
 #endif

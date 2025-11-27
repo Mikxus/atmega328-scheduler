@@ -18,7 +18,10 @@ void _scheduler_init(void)
     initialize_clock();
 
     c_task = &init_task;
-    init_task.burst_time_ms = 1;
+    init_task.exec_start_time_us = 0;
+    init_task.exec_time_us = 0;
+    init_task.exec_time_overflow_count = 0;
+    init_task.time_slice_ms = 1;
     init_task.state = UNDEFINED;
 
     initialize_context_switch_timer(1);
