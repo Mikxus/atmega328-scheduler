@@ -11,7 +11,39 @@ int validate_args(const int argc, char *argv[])
     return 0;
 }
 
-avr_t *init_avr(const char *elf_name, const char *mcu, const int frequency)
+uint16_t find_offset_off(avr_t *avr, uint8_t *array, uint16_t size)
+{
+    uint16_t count = 0;
+
+    if (avr == NULL) return 0;
+    INFO("avr-ioffset: %u", avr->io_offset);
+    for (uint16_t i = avr->io_offset - 1; i < avr->ramend; i++)
+    {
+        if (avr->data[i] != array[count]) {
+            count = 0;
+        }
+
+        count += 1;
+        if (count == size)
+            return i - size + 1;
+    }
+    WARN("find_offset_off: magic value not found");
+    return 0;
+}
+
+uint8_t read_ram(avr_t *avr, uint16_t index)
+{
+    if (index > avr->ramend)
+    {
+        WARN("Outof bounds avr data read: index %u, ramend: %u", index, avr->ramend);
+        return 0;
+    }
+    return avr->data[index];
+}
+
+avr_t *init_avr(const char *elf_name,
+    const char *mcu,
+    const int frequency)
 {
     elf_firmware_t firmware = {};
 
@@ -45,6 +77,19 @@ avr_t *init_avr(const char *elf_name, const char *mcu, const int frequency)
     return avr;
 }
 
+void enter_gdb_debug(avr_t *avr, const int port)
+{
+    avr->state = cpu_Stopped;
+    avr->gdb_port = port;
+    avr_gdb_init(avr);
+
+    for (;;) {
+        int state = avr_run(avr);
+        if (state == cpu_Done || state == cpu_Crashed)
+            break;
+    } 
+}
+
 void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param)
 {
     struct uart_receive_buffer *buf = param;
@@ -62,14 +107,15 @@ void uart_receive_cb(struct avr_irq_t *irq, uint32_t value, void *param)
     return;
 }
 
-bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
+bool run_avr_cycles(avr_t *avr,
+    avr_cycle_count_t cycles,
+    const bool timeout_fatal)
 {
-    avr_cycle_count_t timeout = (avr->frequency / 1000) * timeout_ms; 
+    cycles += avr->cycle;
 
-    while (avr->cycle < timeout)
+    while (avr->cycle < cycles)
     {
         avr_run(avr);
-
         if (avr->state == cpu_Stopped || avr->state == cpu_Crashed)
         {
             ERROR("Avr failed\r\n");
@@ -80,14 +126,33 @@ bool run_avr_ms(avr_t *avr, const unsigned long timeout_ms)
         if (avr->state == cpu_Done) return 0;
     }
 
-    ERROR("avr timeout reached");
-    dump_avr_core(avr);
-    return 1;
+    if (timeout_fatal) {
+        ERROR("avr timeout reached: %llu", cycles);
+        dump_avr_core(avr);
+        return 1;
+    }
+
+    return 0;
+}
+
+bool run_avr_us(avr_t *avr,
+    const uint64_t timeout_us,
+    const bool timeout_fatal)
+{
+    avr_cycle_count_t timeout_cycles = (avr->frequency / 1000000) * timeout_us;
+    return run_avr_cycles(avr, timeout_cycles, timeout_fatal);
+}
+
+bool run_avr_ms(avr_t *avr,
+    const unsigned long timeout_ms,
+    const bool timeout_fatal)
+{
+    return run_avr_us(avr, timeout_ms * 1000, timeout_fatal);
 }
 
 bool run_avr_until_interrupt(avr_t *avr,
     const unsigned long timeout_ms,
-    bool volatile *interrupt_state)
+    volatile bool *interrupt_state)
 {
     avr_cycle_count_t timeout = avr->cycle + (avr->frequency / 1000) * timeout_ms; 
 
@@ -105,12 +170,14 @@ bool run_avr_until_interrupt(avr_t *avr,
         }
     }
 
-    ERROR("avr timeout reached");
+    ERROR("avr timeout reached: %lu", timeout_ms);
     dump_avr_core(avr);
     return 1;
 }
 
-bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long timeout_ms)
+bool test_uart_receive(avr_t *avr,
+    const char *expected,
+    const unsigned long timeout_ms)
 {
     struct uart_receive_buffer buffer;
     buffer.buffer = calloc(sizeof(char), 2048);
@@ -135,7 +202,7 @@ bool test_uart_receive(avr_t *avr, const char *expected, const unsigned long tim
         &buffer
     );
 
-    run_avr_ms(avr, timeout_ms);
+    run_avr_ms(avr, timeout_ms, 1);
 
     buffer.buffer[buffer.index + 1] = '\0';
     if (strcmp(buffer.buffer, expected) != 0)
