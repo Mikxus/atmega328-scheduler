@@ -22,6 +22,7 @@ build
 
 # submodule files
 submodules/simavr/**
+Libs.mk
 
 # editor files
 .vscode

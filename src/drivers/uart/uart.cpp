@@ -2,7 +2,7 @@
 
 void initialize_uart(void)
 {
-    // Init code here
+    uint8_t sreg = SREG;
     cli();
     uart_init(BAUD_CALC(SCHEDULER_UART_BAUD_RATE));
 
@@ -10,6 +10,6 @@ void initialize_uart(void)
     stdout = &uart0_io;
     stdin = &uart0_io;
 
-    sei();
+    SREG = sreg;
     return;
 }

@@ -1,45 +1,72 @@
-# atmega328-scheduler v0.1.3
+# atmega328-scheduler v0.2.0
 scheduler for atmega328p. Hobby project.
+## Architecture
+Notes:
+- Preemptive scheduler (timer0 interrupt based)
+- task CPU context sould be saved on the stack maybe? (need to research more)
+  - Or maybe in per task struct?
+- Task slice is 1 ms (not configurable without hassle)
+- Maybe round robin scheduling
+
+## Features
+- Fully working test suite with simavr 
+- No preexisting HAL
+- UART driver
 
 ## Getting started
+Dependencies:
+* avr-gcc
+* gcc
+* cmake
+* libelf (simavr)
+* libdwarf (simavr)
 
 Clone the repository and cd in to the repo
 ```bash
 git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328-scheduler
 ```
 
+```bash
+mkdir build
+```
+
 Generate out of source build system with cmake
 ```bash
-cmake -Bbuild -S. 
+cmake -Bbuild/release -DCMAKE_BUILD_TYPE=Release
+# Or debug build
+cmake -Bbuild/debug -DCMAKE_BUILD_TYPE=Debug
 ```
-Now you can build the project inside the build folder, using your preferred build system.
-For example.
+
+To build the project as release or debug:
+
 ```bash
-make
+cmake --build build/release --config CMAKE_BUILD_TYPE=Release
+ 
+cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
 ```
 
 ### Running tests
+**Note**: these commands need to be run at the root of the project
+
 Symlink AVR's header files to simavr since it doesn't come with them.
 ```bash
 ln -s /usr/avr/include/avr/ submodules/simavr/simavr/cores/avr
 ```
 
-Install simavr to run the tests.
-**Remember to run the make commands inside the build directory**
+Build the project
 ```bash
-make simavr-install
+cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
 ```
-Now you can run the tests.
+Export LD_LIBRARY_PATH to find simavr's shared library
+
+**Note**: change the path if you are not on x86_64-pc-linux-gnu
 ```bash
-make test
+export LD_LIBRARY_PATH=/lib:$(pwd)/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/
 ```
-**Note:**
+
+Now you can run the tests with:
 ```bash
-error while loading shared libraries: libsimavr.so.1: cannot open shared object file: No such file or directory
-```
-If you get this error, you need to add the path to the library to your LD_LIBRARY_PATH.
-```bash
-export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+ctest --test-dir build/debug --rerun-failed --output-on-failure
 ```
 
 ## License

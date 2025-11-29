@@ -61,7 +61,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 ##########################################################################
 # needs to be defined for AVR toolchain
 ##########################################################################
-set(MCU_SPEED "16000000UL")
+set(MCU_SPEED "16000000")
 
 ##########################################################################
 # some cmake cross-compile necessities
@@ -100,25 +100,26 @@ message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 ##########################################################################
 
 # default flags for avr builds
-set(AVR_DEFAULT_FLAGS "-fpack-struct -fshort-enums -Wall -Werror -pedantic -pedantic-errors -funsigned-char -funsigned-bitfields -ffunction-sections")
+set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -funsigned-char -funsigned-bitfields -ffunction-sections -flto)
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")
    set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++11")
+   add_definitions("-DRELEASE")
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
 if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf")
    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf -std=c++11")
+   add_definitions("-DRELWITHDEBINFO")
 endif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_C_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf")
    set(CMAKE_CXX_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf -w -std=c++11")
+   add_definitions("-DDEBUG")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
-# Define DEBUG for the c/c++ code
-add_compile_definitions("DEBUG=$<CONFIG:Debug>")
 
 # Also add mcu as compilie time definition
 add_definitions(-DSCHEDULER_AVR_MCU=${AVR_MCU})
@@ -130,20 +131,39 @@ add_definitions("-DF_CPU=${MCU_SPEED}")
 
 
 # Project configuration settings
-message(STATUS "--- Project configurations ---")
-message(STATUS "Uart driver[ ]:")
 
 # UART DRIVERS
 set(
-    SCHEDULER_UART_BAUD_RATE "115200UL"
+    SCHEDULER_UART_BAUD_RATE "921600UL"
 )
 add_definitions(
   "-DSCHEDULER_UART_BAUD_RATE=${SCHEDULER_UART_BAUD_RATE}"
 )
+# Task settings
+set(
+    SCHEDULER_TASK_NAME_MAX_LENGTH "15"
+)
+add_definitions(
+  "-DSCHEDULER_TASK_NAME_MAX_LENGTH=${SCHEDULER_TASK_NAME_MAX_LENGTH}"
+)
 
+# track task cpu time
+set(
+    SCHEDULER_TASK_TRACK_STATISTICS "1"
+)
+add_definitions(
+  "-DSCHEDULER_TASK_TRACK_STATISTICS=${SCHEDULER_TASK_TRACK_STATISTICS}"
+)
+
+message(STATUS "------- Project configurations -------")
+message(STATUS "Uart driver[ ]:")
 message(STATUS "            |- Baud rate: ${SCHEDULER_UART_BAUD_RATE}")
-
-
+message(STATUS "")
+message(STATUS "Task settings[ ]:")
+message(STATUS "              |- Name max length: ${SCHEDULER_TASK_NAME_MAX_LENGTH}")
+message(STATUS "              |- Track statistics: ${SCHEDULER_TASK_TRACK_STATISTICS}")
+message(STATUS "")
+message(STATUS "------- End of configurations ---------")
 
 ##########################################################################
 # include search paths

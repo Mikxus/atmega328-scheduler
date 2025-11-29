@@ -14,11 +14,19 @@
 
 
 /**
- * @brief  Initialize the clock
- * @note   
+ * @brief Initializes timers needed for the scehduler  
+ * @note  Uses timer0's overflow interrupt
  * @retval None
  */
 void initialize_clock(void);
     
+/**
+ * @brief Returns the uptime in milliseconds
+ * @note   
+ * @retval 
+ */
+uint32_t get_ms(void);
+
+uint32_t get_us(void);
 
 #endif
