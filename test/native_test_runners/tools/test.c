@@ -16,7 +16,7 @@ uint16_t find_offset_off(avr_t *avr, uint8_t *array, uint16_t size)
     uint16_t count = 0;
 
     if (avr == NULL) return 0;
-    INFO("avr-ioffset: %u", avr->io_offset);
+
     for (uint16_t i = avr->io_offset - 1; i < avr->ramend; i++)
     {
         if (avr->data[i] != array[count]) {
@@ -35,7 +35,7 @@ uint8_t read_ram(avr_t *avr, uint16_t index)
 {
     if (index > avr->ramend)
     {
-        WARN("Outof bounds avr data read: index %u, ramend: %u", index, avr->ramend);
+        WARN("Out of bounds read: index: %u, ramend: %u", index, avr->ramend);
         return 0;
     }
     return avr->data[index];
@@ -83,7 +83,7 @@ void enter_gdb_debug(avr_t *avr, const int port)
     avr->gdb_port = port;
     avr_gdb_init(avr);
 
-    for (;;) {
+    while (1) {
         int state = avr_run(avr);
         if (state == cpu_Done || state == cpu_Crashed)
             break;
@@ -162,7 +162,7 @@ bool run_avr_until_interrupt(avr_t *avr,
 
         if (*interrupt_state) return 0;
 
-        if (avr->state == cpu_Stopped || avr->state == cpu_Crashed ||avr->state == cpu_Done )
+        if (avr->state == cpu_Stopped || avr->state == cpu_Crashed || avr->state == cpu_Done )
         {
             ERROR("Avr failed\r\n");
             dump_avr_core(avr);
