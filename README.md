@@ -13,13 +13,27 @@ Notes:
 - No preexisting HAL
 - UART driver
 
-## Getting started
+## Building the project
 Dependencies:
 * avr-gcc
 * gcc
 * cmake
+* make
+* pkg-config
 * libelf (simavr)
 * libdwarf (simavr)
+
+### Installing dependencies
+Ubuntu/debian:
+```bash
+sudo apt-get install git gcc-avr avr-libc gcc g++ cmake make libelf-dev libdwarf-dev
+``` 
+
+Arch linux:
+```bash
+sudo pacman -S --needed git avr-gcc avr-libc gcc cmake make libelf libdwarf base-devel
+```
+
 
 Clone the repository and cd in to the repo
 ```bash
