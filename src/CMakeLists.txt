@@ -12,6 +12,7 @@ add_subdirectory(drivers/clock)
 add_avr_library (
     scheduler
     context_switch.cpp
+    task.cpp
     scheduler.cpp
     scheduler.h
 )
