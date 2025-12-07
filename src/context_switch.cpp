@@ -95,7 +95,7 @@ ISR(TIMER0_COMPB_vect)
     asm volatile ("clr r1" ::: "memory");
 
     // schedule next task
-    // for now just re-run the same task
+    simple_schedule_next_task();
     
     /* Schedule next 1ms time slice */
     OCR0B = FREQ_TO_TIMER_VALUE(1000, 64) + TCNT0; // ~1 ms task switch interval
@@ -159,6 +159,23 @@ ISR(TIMER0_COMPB_vect)
 
         : "memory"
     );
+}
+
+/**
+ * @brief simplest way of scheduling
+ * 
+ */
+void simple_schedule_next_task(void) 
+{
+    task_data_t volatile *node = _get_next_task(c_task);
+
+    /* if last node */
+    if (node == nullptr) {
+        c_task = _get_head_task();
+        return;
+    }
+
+    c_task = node;
 }
 
 void initialize_context_switch_timer(uint8_t burst_lenght)

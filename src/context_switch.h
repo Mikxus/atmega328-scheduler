@@ -21,6 +21,8 @@
  */
 void initialize_context_switch_timer(uint8_t burst_lenght);
 
+void simple_schedule_next_task(void);
+
 uint8_t get_context_switch_burst_length(uint8_t ms);
 
 #endif // _CONTEXT_SWITCH_H_
