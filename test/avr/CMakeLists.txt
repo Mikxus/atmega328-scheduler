@@ -17,6 +17,4 @@ foreach(FILE ${AVR_SRC_FILES})
 
     # Link necessary libraries
     avr_target_link_libraries(${NAME} scheduler-${AVR_MCU})
-
-
 endforeach()
