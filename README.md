@@ -1,6 +1,9 @@
 # atmega328-scheduler v0.2.0
+
 scheduler for atmega328p. Hobby project.
+
 ## Architecture
+
 Notes:
 - Preemptive scheduler (timer0 interrupt based)
 - task CPU context sould be saved on the stack maybe? (need to research more)
@@ -9,11 +12,13 @@ Notes:
 - Maybe round robin scheduling
 
 ## Features
+
 - Fully working test suite with simavr 
 - No preexisting HAL
 - UART driver
 
 ## Building the project
+
 Dependencies:
 * avr-gcc
 * gcc
@@ -23,28 +28,46 @@ Dependencies:
 * libelf (simavr)
 * libdwarf (simavr)
 
-### Installing dependencies
+### Setting up development environment
+
+#### Installing dependencies
+
 Ubuntu/debian:
+
 ```bash
-sudo apt-get install git gcc-avr avr-libc gcc g++ cmake make libelf-dev libdwarf-dev
-``` 
+sudo apt-get install git gcc-avr avr-libc gcc g++ cmake make libelf-dev libdwarf-dev pkg-config
+```
 
 Arch linux:
+
 ```bash
 sudo pacman -S --needed git avr-gcc avr-libc gcc cmake make libelf libdwarf base-devel
 ```
 
+#### Building the project
 
 Clone the repository and cd in to the repo
+
 ```bash
 git clone https://github.com/Mikxus/atmega328-scheduler.git --recurse-submodules; cd atmega328-scheduler
 ```
 
+Symlink AVR's header files to simavr since it doesn't come with them.
+
+Arch linux:
+
 ```bash
-mkdir build
+ln -s /usr/avr/include/avr/ submodules/simavr/simavr/cores/avr
+```
+
+Ubuntu/debian:
+
+```bash
+ln -s /usr/lib/avr/include/avr/ submodules/simavr/simavr/cores/avr
 ```
 
 Generate out of source build system with cmake
+
 ```bash
 cmake -Bbuild/release -DCMAKE_BUILD_TYPE=Release
 # Or debug build
@@ -60,25 +83,23 @@ cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
 ```
 
 ### Running tests
-**Note**: these commands need to be run at the root of the project
-
-Symlink AVR's header files to simavr since it doesn't come with them.
-```bash
-ln -s /usr/avr/include/avr/ submodules/simavr/simavr/cores/avr
-```
 
 Build the project
+
 ```bash
 cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
 ```
+
 Export LD_LIBRARY_PATH to find simavr's shared library
 
 **Note**: change the path if you are not on x86_64-pc-linux-gnu
+
 ```bash
 export LD_LIBRARY_PATH=/lib:$(pwd)/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/
 ```
 
 Now you can run the tests with:
+
 ```bash
 ctest --test-dir build/debug --rerun-failed --output-on-failure
 ```
