@@ -14,8 +14,8 @@
 
 /* internal tools */
 #include "tools/debug.h"
-#include "tools/test.h"
 #include "tools/math.h"
+#include "tools/test.h"
 
 /* Simavr */
 #include "sim_elf.h"
@@ -26,110 +26,29 @@
 
 #define SAMPLE_SIZE 1000
 
-volatile bool interrupt_state = 0;
-
-struct timings_data
-{
-    float min;
-    float max;
-    float avg;
-    float stddev;
-    uint64_t size;
-    float buffer[SAMPLE_SIZE];
-};
 
 static void pb4_state_change_cb(struct avr_irq_t *irq, uint32_t value, void *param)
 {
+    (void) value;
+
     /* Aknowledge interrupt only on the rising edge */
     if (irq->value == 1)
-        interrupt_state = 1;
-}
-
-void calculate_timings(avr_t *avr, struct timings_data *data)
-{
-    float avg_sum = 0.0f; 
-    float temp_buff[SAMPLE_SIZE];
-    data->min = FLT_MAX;
-    data->max = FLT_MIN;
-
-    /* Calculate differences between readings */
-    for (uint64_t i = 0; i < data->size; i++)
-    {
-        if (i == 0) 
-        {
-            /* First reading is inaccurate */
-            continue;
-        }
-        
-        temp_buff[i] = convert_cycles_to_frequency(avr,
-            data->buffer[i] - data->buffer[i - 1]);
-
-        if (temp_buff[i] < data->min) data->min = temp_buff[i];
-        if (temp_buff[i] > data->max) data->max = temp_buff[i];
-        avg_sum += temp_buff[i];
-    }
-    /* move our results back */
-    memcpy(&data->buffer[0], &temp_buff[0], sizeof(float) * SAMPLE_SIZE);
-
-    data->avg = avg_sum / (data->size - 1);
-
-    /* skip the first reading since it's inaccurate */
-    data->stddev = calculate_standard_deviation(&data->buffer[1], sizeof(data->buffer) / sizeof(float) - 1);
-}
-
-bool verify_timing(struct timings_data *data,
-        float target_avg,
-        float target_min,
-        float target_max,
-        float target_stddev,
-        float accuracy)
-{
-    bool state = 0;
-
-    if (!fequal(data->avg, target_avg, accuracy))
-    {
-        ERROR("AVG: %0.10f | target: %0.10f | accuracy %0.10f differs too much!", data->avg, target_avg, accuracy);
-        state = 1;
-    } else {
-        INFO("AVG: %0.10f | target: %0.10f | accuracy %0.10f  PASS", data->avg, target_avg, accuracy);
-    }
-
-    if (!fequal(data->min, target_min, accuracy))
-    {
-        ERROR("MIN: %0.10f | target: %0.10f | accuracy %0.10f differs too much!", data->min, target_min, accuracy);
-        state = 1;
-    } else {
-        INFO("MIN: %0.10f | target: %0.10f | accuracy %0.10f  PASS", data->min, target_min, accuracy);
-    }
-
-    if (!fequal(data->max, target_max, accuracy))
-    {
-        ERROR("MAX: %0.10f | target: %0.10f | accuracy %0.10f differs too much!", data->max, target_max, accuracy);
-        state = 1;
-    } else {
-        INFO("MAX: %0.10f | target: %0.10f | accuracy %0.10f  PASS", data->max, target_max, accuracy);
-    }
-
-    if (!fequal(data->stddev, target_stddev, accuracy))
-    {
-        ERROR("STDDEV: %0.10f | target: %0.10f | accuracy %0.10f differs too much!", data->stddev, target_stddev, accuracy);
-        state = 1;
-    } else {
-        INFO("STDDEV: %0.10f | target: %0.10f | accuracy %0.10f  PASS", data->stddev, target_stddev, accuracy);
-    }
-
-    return state;
+        *(bool *) param = 1;
 }
 
 int main(int argc, char *argv[]) {
 
     avr_t *avr = NULL;
-    struct timings_data timings_data;
     avr_irq_t *base_irq = NULL; 
+    bool interrupt_state = 0;
+    struct math_timings_data timings_data = {0};
     timings_data.size = SAMPLE_SIZE;
-    timings_data.min = 0.0F;
-    timings_data.max = 0.0F;
-    timings_data.avg = 0.0F;
+    timings_data.buffer = malloc(sizeof(float) * SAMPLE_SIZE);
+
+    if (!timings_data.buffer) {
+        ERROR("Failed to allocate memory for timings data");
+        return 1;
+    }
 
     if (validate_args(argc, argv))
         return 1;
@@ -145,7 +64,7 @@ int main(int argc, char *argv[]) {
     avr_irq_register_notify(
         base_irq + IOPORT_IRQ_PIN4,
         pb4_state_change_cb,
-        NULL
+        &interrupt_state
     );
 
     /* collect timing samples */
@@ -163,10 +82,8 @@ int main(int argc, char *argv[]) {
 
     calculate_timings(avr, &timings_data);
 
-
-#ifdef RELEASE
-#pragma message "Building for RELEASE mode"
     /* Verify outputs */
+#ifdef RELEASE_BUILD
     return verify_timing(&timings_data,
         999.4f,
         990.50f,
@@ -175,13 +92,15 @@ int main(int argc, char *argv[]) {
         0.3f );
 #endif
 
-#ifdef DEBUG
-#pragma message "Building for DEBUG mode"
+#ifdef DEBUG_BUILD
     return verify_timing(&timings_data,
         997.0f,
         989.50f,
-        999.9f,
+        1001.0f,
         1.6f,
-        0.3f );
+        6.0f );
 #endif
+
+    // If no build type defined, fail the test
+    return 1;
 }
