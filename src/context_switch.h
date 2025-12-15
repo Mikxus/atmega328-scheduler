@@ -24,9 +24,19 @@ constexpr uint8_t freq_to_timer_comp_value(uint16_t freq, uint16_t prescaler) {
  */
 void start_context_switch_timer(void);
 
-void yield_task(void);
+/**
+ * @brief yields the currently running task by triggering timer0 COMPB match
+ * @note It is not quaranteed that the task will yield immediately,
+ */
+void soft_yield_task(void);
+
 void calculate_task_execution_time(task_data_t volatile *task);
-void simple_schedule_next_task(void);
+
+/**
+ * @brief Most basic scheduling every task gets to run in a round robin fashion
+ * 
+ */
+void schedule_round_robin(void);
 
 uint8_t get_context_switch_burst_length(uint8_t ms);
 
@@ -46,7 +56,7 @@ uint8_t get_context_switch_burst_length(uint8_t ms);
  *  sp[1]   : r30
  *  sp[2]   : r31
  */
-#define _SAVE_CTX_ISR()                       \
+#define _SAVE_CTX()                       \
     asm volatile (                            \
         "cli                            \n\t" \
         "push r29                       \n\t" \
@@ -110,7 +120,7 @@ uint8_t get_context_switch_burst_length(uint8_t ms);
     );
 
 
-#define _RESTORE_CTX_ISR()                                                                  \
+#define _RESTORE_CTX()                                                                      \
     asm volatile (                                                                          \
         "lds    r30, %[ctask]           \n\t"                                               \
         "lds    r31, %[ctask]+1         \n\t"                                               \
@@ -156,7 +166,6 @@ uint8_t get_context_switch_burst_length(uint8_t ms);
         "ldd    r29, Z+%[r0_offset]+29  \n\t"                                               \
         "pop    r31                     \n\t"                                               \
         "pop    r30                     \n\t"                                               \
-        "reti                           \n\t"                                               \
         :                                                                                   \
         :                                                                                   \
             [ctask]         "m" (c_task),                                                   \
