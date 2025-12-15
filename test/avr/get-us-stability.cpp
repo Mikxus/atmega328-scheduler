@@ -6,7 +6,7 @@
 
 int main(void)
 {
-    _scheduler_init();
+    init_scheduler();
    
     // Set PB4 as output
     DDRB = 0b00010000;
