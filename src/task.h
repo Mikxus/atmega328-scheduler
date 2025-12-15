@@ -11,12 +11,12 @@
 typedef struct task_data_t task_data_t;
 
 /* Currently running task */
-extern task_data_t volatile *c_task;
+extern task_data_t* volatile c_task;
 
 /**
  * @brief Enum for task's possible states
  */
-typedef enum
+typedef enum 
 {
     READY,
     RUNNING,
@@ -42,7 +42,7 @@ typedef struct
 typedef struct task_data_t
 {
     /* singly linked list node for the current task */
-    task_data_t volatile *next_node;
+    task_data_t* volatile next_node;
 
     char name[SCHEDULER_TASK_NAME_MAX_LENGTH];
     uint8_t priority;
@@ -63,42 +63,39 @@ typedef struct task_data_t
     volatile uint32_t exec_start_time_us;
     #endif
     uint8_t time_slice_ms;
-
 };
 
 /**
- * @brief Create task & initialize it
+ * @brief get task's stack usage in bytes
  * 
  * @param task 
- * @param name 
- * @param priority 
- * @param slice_ms 
- * @param entry 
- * @return true 
- * @return false 
+ * @return uintptr_t 
  */
-bool create_task(
-    task_data_t &task,
-    volatile uint8_t *stack_array,
-    const uint16_t stack_size,
-    const char *name,
-    const uint8_t priority,
-    const uint8_t slice_ms,
-    const void *(entry)(void));
+uint16_t _get_task_stack_usage(
+    task_data_t *task);
+
+/**
+ * @brief Get task's stack size in bytes
+ * 
+ * @param task 
+ * @return uintptr_t 
+ */
+uint16_t _get_task_stack_size(
+    task_data_t *task);
 
 /**
  * @brief get task list's head
  * 
  * @return task_data_t* 
  */
-task_data_t volatile *_get_head_task();
+task_data_t *_get_head_task();
 
 /**
  * @brief get task list's tail
  * 
  * @return task_data_t* 
  */
-task_data_t volatile *_get_tail();
+task_data_t *_get_tail();
 
 /**
  * @brief Get next task 
@@ -106,8 +103,8 @@ task_data_t volatile *_get_tail();
  * @param task 
  * @return task_data_t* 
  */
-task_data_t volatile *_get_next_task(
-    task_data_t volatile *task);
+task_data_t *_get_next_task(
+    task_data_t *task);
 
 /**
  * @brief Find preceding task
@@ -115,8 +112,8 @@ task_data_t volatile *_get_next_task(
  * @param target_task 
  * @return task_data_t* 
  */
-task_data_t volatile *_find_preceding_task(
-    task_data_t volatile* target_task);
+task_data_t  *_find_preceding_task(
+    task_data_t * target_task);
 
 /**
  * @brief Find task
@@ -124,9 +121,9 @@ task_data_t volatile *_find_preceding_task(
  * @param target_task 
  * @return task_data_t* 
  */
-task_data_t volatile *_fing_task(
-    task_data_t volatile *target_task);
+task_data_t *_fing_task(
+    task_data_t *target_task);
 
-void _add_task(task_data_t volatile *new_node);
+void _add_task(task_data_t *new_node);
 
 #endif
