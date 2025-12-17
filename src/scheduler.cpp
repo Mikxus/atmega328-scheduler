@@ -31,7 +31,7 @@ bool create_task(
     uint8_t sreg = SREG;
     cli();
 
-    #if SCHEDULER_TASK_TRACK_STATISTICS == 1
+    #if CONF_TRACK_TASK_CPU_TIME == 1
     task.priority = priority;
     task.time_slice_ms = slice_ms;
     task.exec_time_us = 0;
@@ -46,7 +46,7 @@ bool create_task(
 
     task.next_node = nullptr;
 
-    if (strlen(name) >= SCHEDULER_TASK_NAME_MAX_LENGTH)
+    if (strlen(name) >= CONF_TASK_NAME_MAX_LENGTH)
         return 1;
 
     strcpy(task.name, name);
@@ -66,4 +66,36 @@ bool create_task(
 
     SREG = sreg;
     return 0;
+}
+
+void soft_yield(void)
+{
+    OCR0B = TCNT0;
+}
+
+void __attribute__((hot, flatten, naked)) yield(void)
+{
+    _SAVE_CTX();
+    asm volatile ("clr r1" ::: "memory");
+
+    calculate_task_execution_time(c_task);
+
+    schedule_next_task();
+
+    OCR0B = freq_to_timer_comp_value(1000, 64) + TCNT0; // ~1 ms task switch interval
+    
+    /* it is possible that task's time slice had
+     *  run out while we're switching task. So lets clear the flag
+     */
+    if (TIFR0 & (1 << OCF0B))
+        TIFR0 |= (1 << OCF0B); // clered by writing 1 to it
+
+    #if CONF_TRACK_TASK_CPU_TIME == 1
+    c_task->exec_start_time_us = get_us();
+    #endif
+
+    _RESTORE_CTX();
+    sei();
+    asm volatile("ret" ::: "memory");
+    __builtin_unreachable();
 }

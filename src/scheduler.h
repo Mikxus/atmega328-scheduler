@@ -40,4 +40,16 @@ bool create_task(
     const uint8_t slice_ms,
     void (entry)(void));
 
-#endif
+/**
+ * @brief yields the currently running task by triggering timer0 COMPB match
+ * @note It is not quaranteed that the task will yield immediately,
+ */
+void soft_yield(void);
+
+/**
+ * @brief yields the currently running task immediately
+ * 
+ */
+void __attribute__((hot, flatten, naked)) yield(void);
+
+#endif // _SCHEDULER_H_
