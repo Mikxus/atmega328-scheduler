@@ -2,6 +2,7 @@
 file(GLOB AVR_SRC_FILES *.cpp)
 
 set(CMAKE_CXX_FLAGS "-Wno-c++20-extensions ${CMAKE_CXX_FLAGS}")
+add_subdirectory(tools)
 
 foreach(FILE ${AVR_SRC_FILES})
     get_filename_component(NAME ${FILE} NAME_WE)
@@ -16,5 +17,5 @@ foreach(FILE ${AVR_SRC_FILES})
     )
 
     # Link necessary libraries
-    avr_target_link_libraries(${NAME} scheduler-${AVR_MCU})
+    avr_target_link_libraries(${NAME} scheduler-${AVR_MCU} unittest-${AVR_MCU})
 endforeach()
