@@ -13,8 +13,9 @@
 #include "sim_core.h"
 #include "sim_hex.h"
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[]) 
+{
+    const char *expected = "Hello World!\r\nHello World!\r\nHello World!\r\nHello World!\r\nHello World!\r\n";
     avr_t *avr = NULL;
 
     if (validate_args(argc, argv))
@@ -23,5 +24,5 @@ int main(int argc, char *argv[]) {
     }
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
-    return test_uart_receive(avr, "Hello World!\r\n", 2000);
+    return test_uart_receive(avr, expected, 4000);
 }

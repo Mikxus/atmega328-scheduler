@@ -7,6 +7,10 @@ int main(void)
     init_scheduler();
 
     printf("Hello World!\n");
+    printf("Hello World!\n");
+    printf("Hello World!\n");
+    printf("Hello World!\n");
+    printf("Hello World!\n");
     uart0_flush();
     
     cli();
