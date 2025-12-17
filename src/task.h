@@ -44,14 +44,14 @@ typedef struct task_data_t
     /* singly linked list node for the current task */
     task_data_t* volatile next_node;
 
-    char name[SCHEDULER_TASK_NAME_MAX_LENGTH];
+    char name[CONF_TASK_NAME_MAX_LENGTH];
     uint8_t priority;
 
     volatile task_state_t state;
     volatile task_stack_t stack;
     volatile cpu_registers cpu_state;
 
-    #if SCHEDULER_TASK_TRACK_STATISTICS == 1
+    #if CONF_TRACK_TASK_CPU_TIME == 1
     /*
      * Task execution time represented in 38 bits
      * Overflows in ~50.9 days
