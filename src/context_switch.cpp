@@ -13,11 +13,13 @@ ISR(TIMER0_COMPB_vect)
 
     calculate_task_execution_time(c_task);
 
-    // schedule next task
-    schedule_round_robin();
+    _schedule_next_task();
 
     OCR0B = freq_to_timer_comp_value(1000, 64) + TCNT0; // ~1 ms task switch interval
+
+    #if CONF_TRACK_TASK_CPU_TIME == 1
     c_task->exec_start_time_us = get_us();
+    #endif
 
     _RESTORE_CTX();
     asm volatile ("reti"  ::: "memory");
@@ -25,7 +27,7 @@ ISR(TIMER0_COMPB_vect)
 
 void calculate_task_execution_time(task_data_t volatile *task)
 {
-    #if SCHEDULER_TASK_TRACK_STATISTICS == 1
+    #if CONF_TRACK_TASK_CPU_TIME == 1
     if (task == nullptr)
         return;
 
@@ -51,24 +53,13 @@ void calculate_task_execution_time(task_data_t volatile *task)
     #endif
 } 
 
-void soft_yield_task(void)
+void schedule_next_task(void)
 {
-    OCR0B = TCNT0;
-}
-
-/*
- * @brief simplest way of scheduling
- * 
- */
-void schedule_round_robin(void) 
-{
-    task_data_t* node = _get_next_task(c_task);
-    
-    /* if last node */
-    if (node == nullptr)
-        node = _get_head_task();
-
-    c_task = node;
+    #if CONF_SCHEDULER_ALGO_ROUND_ROBIN == 1
+    schedule_round_robin();
+    #else
+    #error "No scheduling algorithm defined"
+    #endif
 }
 
 void start_context_switch_timer(void)

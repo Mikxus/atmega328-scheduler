@@ -9,6 +9,7 @@
 #include "task.h"
 #include "drivers/clock/clock.h"
 #include "drivers/timer/timer.h"
+#include "drivers/scheduling/sched.h"
 
 /**
  * @brief Converts frequency to timer compare value
@@ -24,21 +25,25 @@ constexpr uint8_t freq_to_timer_comp_value(uint16_t freq, uint16_t prescaler) {
  */
 void start_context_switch_timer(void);
 
-/**
- * @brief yields the currently running task by triggering timer0 COMPB match
- * @note It is not quaranteed that the task will yield immediately,
- */
-void soft_yield_task(void);
 
+/**
+ * @brief calculates task execution time and updates task statistics
+ * 
+ * @param task current task
+ */
 void calculate_task_execution_time(task_data_t volatile *task);
+
+/**
+ * @brief Schedules the next task to run
+ * 
+ */
+void schedule_next_task(void);
 
 /**
  * @brief Most basic scheduling every task gets to run in a round robin fashion
  * 
  */
 void schedule_round_robin(void);
-
-uint8_t get_context_switch_burst_length(uint8_t ms);
 
 /**
  * @brief Saves the current task context into c_task structure
