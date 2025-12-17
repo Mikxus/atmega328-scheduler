@@ -76,6 +76,13 @@ avr_t *init_avr(const char *elf_name,
     const int frequency);
 
 /**
+ * @brief Reads unittest result from avr's ram
+ * 
+ * @return uint8_t 
+ */
+uint8_t unittest_result(avr_t *avr);
+
+/**
  * @brief Enter gdb debug
  * @note   
  * @param  *avr: 

@@ -77,6 +77,11 @@ avr_t *init_avr(const char *elf_name,
     return avr;
 }
 
+uint8_t unittest_result(avr_t *avr)
+{
+    return read_ram(avr, (uint16_t) avr->ramend);
+}
+
 void enter_gdb_debug(avr_t *avr, const int port)
 {
     avr->state = cpu_Stopped;
@@ -123,11 +128,12 @@ bool run_avr_cycles(avr_t *avr,
             return 1;
         }
 
-        if (avr->state == cpu_Done) return 0;
+        if (avr->state == cpu_Done ) 
+            return 0;
     }
 
     if (timeout_fatal) {
-        ERROR("avr timeout reached: %llu", cycles);
+        ERROR("avr timeout reached: %llu cycles", cycles);
         dump_avr_core(avr);
         return 1;
     }
