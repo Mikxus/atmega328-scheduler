@@ -9,6 +9,8 @@ add_avr_library (
     drivers/uart/uart.cpp
     drivers/timer/timer.cpp
     drivers/clock/clock.cpp
+    drivers/synchronization/mutex.cpp
+    drivers/scheduling/sched.cpp
     context_switch.cpp
     scheduler.cpp
     task.cpp
