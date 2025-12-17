@@ -134,35 +134,59 @@ add_definitions("-DF_CPU=${MCU_SPEED}")
 
 # UART DRIVERS
 set(
-    SCHEDULER_UART_BAUD_RATE "921600UL"
+    CONF_UART_BAUD_RATE "921600UL"
 )
+
+# enable u2x mode for uart0
+set(
+    USART0_U2X_SPEED "0"
+)
+
+# Define uart definitions
+if ({USART0_U2X_SPEED} STREQUAL "1")
+  add_definitions("-DUSART0_U2X_SPEED")
+endif()
+
 add_definitions(
-  "-DSCHEDULER_UART_BAUD_RATE=${SCHEDULER_UART_BAUD_RATE}"
+  "-DCONF_UART_BAUD_RATE=${CONF_UART_BAUD_RATE}"
 )
+
+
 # Task settings
 set(
-    SCHEDULER_TASK_NAME_MAX_LENGTH "15"
+    CONF_TASK_NAME_MAX_LENGTH "15"
 )
 add_definitions(
-  "-DSCHEDULER_TASK_NAME_MAX_LENGTH=${SCHEDULER_TASK_NAME_MAX_LENGTH}"
+  "-DCONF_TASK_NAME_MAX_LENGTH=${CONF_TASK_NAME_MAX_LENGTH}"
 )
 
 # track task cpu time
 set(
-    SCHEDULER_TASK_TRACK_STATISTICS "1"
+    CONF_TRACK_TASK_CPU_TIME "1"
 )
 add_definitions(
-  "-DSCHEDULER_TASK_TRACK_STATISTICS=${SCHEDULER_TASK_TRACK_STATISTICS}"
+  "-DCONF_TRACK_TASK_CPU_TIME=${CONF_TRACK_TASK_CPU_TIME}"
+)
+
+## scheduler settings
+set(
+  "CONF_SCHEDULER_ALGO_ROUND_ROBIN" "1"
+)
+add_definitions(
+  "-DCONF_SCHEDULER_ALGO_ROUND_ROBIN=${CONF_SCHEDULER_ALGO_ROUND_ROBIN}"
 )
 
 message(STATUS "------- Project configurations -------")
 message(STATUS "Uart driver[ ]:")
-message(STATUS "            |- Baud rate: ${SCHEDULER_UART_BAUD_RATE}")
+message(STATUS "            |- Baud rate: ${CONF_UART_BAUD_RATE}")
+message(STATUS "            |- U2X mode enabled: ${CONF_UART_USE_U2X_MODE}")
 message(STATUS "")
 message(STATUS "Task settings[ ]:")
-message(STATUS "              |- Name max length: ${SCHEDULER_TASK_NAME_MAX_LENGTH}")
-message(STATUS "              |- Track statistics: ${SCHEDULER_TASK_TRACK_STATISTICS}")
+message(STATUS "              |- Name max length: ${CONF_TASK_NAME_MAX_LENGTH}")
+message(STATUS "              |- Track cpu time: ${CONF_TRACK_TASK_CPU_TIME}")
 message(STATUS "")
+message(STATUS "Scheduler settings[ ]:")
+message(STATUS "                   |- Round robin algo enabled: ${CONF_SCHEDULER_ALGO_ROUND_ROBIN}")
 message(STATUS "------- End of configurations ---------")
 
 ##########################################################################
