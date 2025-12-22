@@ -6,11 +6,11 @@
 template <typename T>
 struct fifo_t
 {
-    T *buffer;
-    int size;
-    int count;
-    int head;
-    int tail;
+    volatile T *buffer;
+    volatile int size;
+    volatile int count;
+    volatile int head;
+    volatile int tail;
 
     bool increment_head()
     {
@@ -35,7 +35,7 @@ struct fifo_t
     }
 
 public:
-    void init(T *buf, size_t n)
+    void init(volatile T *buf, size_t n)
     {
         buffer = buf;
         size = n;
@@ -63,7 +63,7 @@ public:
         return count;
     }
 
-    void is_full()
+    bool is_full()
     {
         return get_used_size() == size;
     }
