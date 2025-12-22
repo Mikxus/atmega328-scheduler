@@ -5,7 +5,7 @@
 #include <avr/cpufunc.h>
 
 #include "task.h"
-#include "context_switch.h"
+#include "kernel.h"
 #include "drivers/uart/uart.h" 
 #include "drivers/clock/clock.h"
 
@@ -39,17 +39,5 @@ bool create_task(
     const uint8_t priority,
     const uint8_t slice_ms,
     void (entry)(void));
-
-/**
- * @brief yields the currently running task by triggering timer0 COMPB match
- * @note It is not quaranteed that the task will yield immediately,
- */
-void soft_yield(void);
-
-/**
- * @brief yields the currently running task immediately
- * 
- */
-void __attribute__((hot, flatten, naked)) yield(void);
 
 #endif // _SCHEDULER_H_

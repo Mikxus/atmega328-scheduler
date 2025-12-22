@@ -13,9 +13,7 @@ void init_scheduler(void)
 
 void __attribute__((noreturn)) start_scheduler(void)
 {
-    start_context_switch_timer();
-    _RESTORE_CTX();
-    asm volatile ("ret" ::: "memory");
+    kernel_start();
     __builtin_unreachable();
 }
 
@@ -68,34 +66,3 @@ bool create_task(
     return 0;
 }
 
-void soft_yield(void)
-{
-    OCR0B = TCNT0;
-}
-
-void __attribute__((hot, flatten, naked)) yield(void)
-{
-    _SAVE_CTX();
-    asm volatile ("clr r1" ::: "memory");
-
-    calculate_task_execution_time(c_task);
-
-    schedule_next_task();
-
-    OCR0B = freq_to_timer_comp_value(1000, 64) + TCNT0; // ~1 ms task switch interval
-    
-    /* it is possible that task's time slice had
-     *  run out while we're switching task. So lets clear the flag
-     */
-    if (TIFR0 & (1 << OCF0B))
-        TIFR0 |= (1 << OCF0B); // clered by writing 1 to it
-
-    #if CONF_TRACK_TASK_CPU_TIME == 1
-    c_task->exec_start_time_us = get_us();
-    #endif
-
-    _RESTORE_CTX();
-    sei();
-    asm volatile("ret" ::: "memory");
-    __builtin_unreachable();
-}

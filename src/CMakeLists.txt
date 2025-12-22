@@ -11,10 +11,9 @@ add_avr_library (
     drivers/clock/clock.cpp
     drivers/synchronization/mutex.cpp
     drivers/scheduling/sched.cpp
-    context_switch.cpp
+    kernel.cpp
     scheduler.cpp
     task.cpp
-    scheduler.h
 )
 
 # Link libraries
