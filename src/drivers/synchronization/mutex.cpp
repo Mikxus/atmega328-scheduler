@@ -1,12 +1,12 @@
 #include "mutex.h"
 
-void mutex_init(mutex_t *mtx)
+void mtx_init(mutex_t *mtx)
 {
     mtx->owner = nullptr;
     mtx->blocked_tasks_head = nullptr;
 }
 
-void mutex_acquire(mutex_t *mtx)
+void mtx_lock(mutex_t *mtx)
 {
     uint8_t sreg = SREG;
     cli();
@@ -26,18 +26,22 @@ void mutex_acquire(mutex_t *mtx)
     SREG = sreg;
 }
 
-mutex_errno_t mutex_try_acquire(mutex_t *mtx)
+mutex_errno_t mtx_try_lock(mutex_t *mtx)
 {
     uint8_t sreg = SREG;
     cli();
 
-    if (c_task != mtx->owner) {
+    if (mtx->owner != nullptr) {
         SREG = sreg;
-        return MUTEX_ERR_NOT_OWNER;
+        return MUTEX_ERR_ALREADY_LOCKED;
     }
+
+    mtx->owner = c_task;
+    SREG = sreg;
+    return MUTEX_OK;
 }
 
-mutex_errno_t mutex_release(mutex_t *mtx)
+mutex_errno_t mtx_release(mutex_t *mtx)
 {
     uint8_t sreg = SREG;
     cli();

@@ -17,8 +17,8 @@ typedef enum
 
 typedef struct
 {
-    task_data_t *owner;
-    task_data_t *blocked_tasks_head;
+    task_data_t* volatile owner;
+    task_data_t* volatile blocked_tasks_head;
 } mutex_t; 
 
 /**
@@ -26,17 +26,31 @@ typedef struct
  * 
  * @param mtx 
  */
-void mutex_init(mutex_t *mtx);
+void mtx_init(mutex_t *mtx);
 
 /**
  * @brief Blocks until mutex is acquired
  * 
  * @param mtx 
  */
-void mutex_acquire(mutex_t *mtx);
+void mtx_lock(mutex_t *mtx);
 
-mutex_errno_t mutex_try_acquire(mutex_t *mtx);
+/**
+ * @brief Tries to acquire mutex without blocking  
+ * @note   
+ * @param  *mtx: 
+ * @retval  MUTEX_OK: Acquired successfully
+ *          MUTEX_ERR_ALREADY_LOCKED: Mutex already locked by another task
+ */
+mutex_errno_t mtx_try_lock(mutex_t *mtx);
 
-mutex_errno_t mutex_release(mutex_t *mtx);
+/**
+ * @brief Releases mutex  
+ * @note   
+ * @param  *mtx: 
+ * @retval MUTEX_OK: Released successfully
+ *         MUTEX_ERR_NOT_OWNER: Current task is not the owner of the mutex
+ */
+mutex_errno_t mtx_release(mutex_t *mtx);
 
-#endif _MUTEX_H_
+#endif // _MUTEX_H_
