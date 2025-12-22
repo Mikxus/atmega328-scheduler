@@ -23,7 +23,7 @@ int main(void)
 
     /* Manually initialize scheduler */
     initialize_clock();
-    start_context_switch_timer();
+    kernel_init_timer();
     /* set cpu registers to a known state before interrupt */
     __asm__ __volatile__ (
         "ldi r16, 0x61 \n\t"
