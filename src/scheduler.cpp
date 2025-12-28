@@ -29,9 +29,11 @@ bool create_task(
     uint8_t sreg = SREG;
     cli();
 
-    #if CONF_TRACK_TASK_CPU_TIME == 1
+    #if SCHEDULER_HAS_PRIORITIES == 1
     task.priority = priority;
+    #endif
     task.time_slice_ms = slice_ms;
+    #if CONF_TRACK_TASK_CPU_TIME == 1
     task.exec_time_us = 0;
     task.exec_time_overflow_count = 0;
     task.exec_start_time_us = 0;
