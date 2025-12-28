@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
 
-    //enter_gdb_debug(avr, 1234);
     run_avr_ms(avr, 500, 1);
 
     return unittest_result(avr);
