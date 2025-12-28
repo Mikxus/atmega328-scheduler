@@ -1,5 +1,17 @@
 #include "debug.h"
 
+debug_data_t debug_data = {0};
+
+void set_debug_file(const char *file)
+{
+    debug_data.file = file;
+}
+
+const char *get_debug_file(void)
+{
+    return debug_data.file;
+}
+
 void set_terminal_color(debug_level_t level, bool reset_color)
 {
 #if CONF_ENABLE_TERMINAL_COLOR == 1
