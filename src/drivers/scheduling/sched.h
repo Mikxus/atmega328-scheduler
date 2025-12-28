@@ -4,9 +4,9 @@
 
 void schedule_round_robin(void);
 
-
 #if CONF_SCHEDULER_ALGO_ROUND_ROBIN == 1
     #define _schedule_next_task() schedule_round_robin()
+    #define SCHEDULER_HAS_PRIORITIES 0
 #else
     #error "No scheduling algorithm defined"
 #endif
