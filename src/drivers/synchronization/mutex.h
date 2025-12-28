@@ -18,7 +18,7 @@ typedef enum
 typedef struct
 {
     task_data_t* volatile owner;
-    task_data_t* volatile blocked_tasks_head;
+    task_data_t* volatile blocked_head;
 } mutex_t; 
 
 /**

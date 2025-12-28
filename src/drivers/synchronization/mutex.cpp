@@ -3,7 +3,7 @@
 void mtx_init(mutex_t *mtx)
 {
     mtx->owner = nullptr;
-    mtx->blocked_tasks_head = nullptr;
+    mtx->blocked_head = nullptr;
 }
 
 void mtx_lock(mutex_t *mtx)
