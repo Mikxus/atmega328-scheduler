@@ -9,7 +9,6 @@ int main(void)
 {
     fifo_t<uint8_t> fifo;
     uint8_t buffer[FIFO_SIZE];
-    uint8_t temp = 0;
 
     init_unittest();
     initialize_uart();
