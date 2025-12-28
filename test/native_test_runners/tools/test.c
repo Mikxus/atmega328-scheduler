@@ -71,7 +71,7 @@ avr_t *init_avr(const char *elf_name,
         ERROR("AVR '%s' not known", firmware.mmcu);
         return avr;
     }
-    
+    set_debug_file(elf_name);
     avr_init(avr);
     avr_load_firmware(avr, &firmware);
     return avr;
@@ -281,11 +281,19 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
 
 void dump_avr_core(avr_t *avr)
 {
+    char func_name[128];
+        
     if (!avr) return;
     INFO("Dumping AVR core");
     INFO("mcu: %s", avr->mmcu);
     INFO("frequency: %lu", (unsigned long) avr->frequency);
-    INFO("cycle: %lu", (unsigned long) avr->cycle);
-    INFO("pc: %#04x", (unsigned long) avr->pc);
+    INFO("cycle: %lu (%.4fs)", (unsigned long) avr->cycle, (double) avr->cycle / avr->frequency);
+    elf_resolve_flash_address_to_function(
+        get_debug_file(),
+        avr->pc,
+        &func_name[0],
+        sizeof(func_name));
+
+    INFO("pc: %#04x %s", (unsigned long) avr->pc, func_name);
     hex_dump(avr->data, avr->ramend, 20, "ram");
 }

@@ -33,6 +33,7 @@ extern "C" {
 #include "sim_core.h"
 
 #include "debug.h"
+#include "elf.h"
 
 
 struct uart_receive_buffer
