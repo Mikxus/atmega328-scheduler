@@ -1,0 +1,79 @@
+#include <avr/io.h>
+#include "src/scheduler.h"
+#include "src/drivers/synchronization/mutex.h"
+#include "src/drivers/uart/uart.h"
+
+#define STACK_SIZE 128
+#define FIFO_SIZE 5
+
+void task_1(void);
+void task_2(void);
+
+task_data_t task1, task2;
+uint8_t stack1[STACK_SIZE];
+uint8_t stack2[STACK_SIZE];
+mutex_t mtx;
+
+int main(void)
+{
+    cli();
+    init_scheduler();
+    DDRB |= (1 << DDB4) | (1 << DDB3);
+
+    mtx_init(&mtx); 
+
+    create_task(
+        task1,
+        stack1,
+        sizeof(stack1),
+        "task1",
+        1,
+        1,
+        &task_1);
+
+    create_task(
+        task2,
+        stack2,
+        sizeof(stack2),
+        "task1",
+        1,
+        1,
+        &task_2);
+
+    sei();
+    start_scheduler();
+}
+
+void task_1(void)
+{
+    while (1)
+    {
+        mtx_lock(&mtx);
+        PORTB |= (1u << PB4);
+
+        for (uint8_t i = 0; i < 255; i++)
+            _NOP();
+
+        PORTB &= ~(1 << PB4);
+        if (mtx_release(&mtx) == MUTEX_ERR_NOT_OWNER)
+        {
+            printf("MUTEX_ERR_NOT_OWNER");
+            uart0_flush();
+        }
+    }
+}
+
+void task_2(void)
+{
+    while (1) 
+    {
+        mtx_lock(&mtx);
+        PORTB |= (1u << PB3);
+
+        for (uint8_t i = 0; i < 255; i++)
+            _NOP();
+
+        PORTB &= ~(1 << PB3);
+        mtx_release(&mtx);
+    }
+}
