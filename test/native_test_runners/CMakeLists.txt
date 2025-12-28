@@ -52,9 +52,9 @@ foreach(FILE ${NATIVE_TEST_FILES})
         list(APPEND POW_LIBS "m")
     endif()
 
-    target_link_libraries(${NAME} PRIVATE simavr test-runner-lib ${POW_LIBS})
+    target_link_libraries(${NAME} PRIVATE simavr test-runner-lib ${POW_LIBS} elf)
     
     target_compile_options(${NAME} PRIVATE -Wall -Werror -W -Wno-error=unused-parameter -DCONFIF_PULL_UP=1)
 
-    add_test(NAME ${NAME} COMMAND ${OUTPUT_FILE} ${CMAKE_BINARY_DIR}/test/avr/${AVR_TEST_NAME}-${AVR_MCU}.hex ${AVR_MCU} ${MCU_SPEED})
+    add_test(NAME ${NAME} COMMAND ${OUTPUT_FILE} ${CMAKE_BINARY_DIR}/test/avr/${AVR_TEST_NAME}-${AVR_MCU}.elf ${AVR_MCU} ${MCU_SPEED})
 endforeach()
