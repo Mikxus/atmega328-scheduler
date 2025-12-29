@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdio.h> 
 #include <stdlib.h>
+#include <math.h>
 
 #include "tools/test.h"
 #include "avr_ioport.h"
@@ -18,7 +19,7 @@
 struct pin_state_change
 {
     int pin_number;
-    int value;
+    unsigned int value;
     bool state_changed;
     int change_count;
 };
@@ -31,7 +32,7 @@ void pb4_state_change_cb(struct avr_irq_t *irq,
     struct pin_state_change *ptr = (struct pin_state_change *) param;
 
     ptr->pin_number = 4;
-    ptr->value = irq->value;
+    ptr->value = !irq->value;
     ptr->state_changed = 1;
     ptr->change_count += 1;
 }
@@ -44,7 +45,13 @@ void pb3_state_change_cb(struct avr_irq_t *irq,
     struct pin_state_change *ptr = (struct pin_state_change *) param;
 
     ptr->pin_number = 3;
-    ptr->value = irq->value;
+
+    /* Invert irq->value as it seems that simavr returns inverted value?
+    *  i have no idea wtf. Atleast on the scope the pb4 % pb3 signals aren't inverted
+    *  Maybe its due to some kind of pullup resistor simulation?  
+    *  I don't think i've enabled any pullups
+    */
+    ptr->value = !irq->value; 
     ptr->state_changed = 1;
     ptr->change_count += 1;
 }
@@ -83,6 +90,7 @@ bool test_mutex_violation(avr_t *avr,
 
     while (avr->cycle < test_timeout_cycles)
     {
+        high_count = 0;
         if (run_avr_until_pin_change(avr, pb_change, pin_count, pin_change_timeout_ms))
             return 1;
 
@@ -95,19 +103,19 @@ bool test_mutex_violation(avr_t *avr,
 
         // Check for mutex violation
         if (high_count > 1) {
-            ERROR("Mutex violation");
+            ERROR("Mutex violation high count: %d", high_count);
             for (size_t i = 0; i < pin_count; i++)
             {
                 INFO("PIN%d: value: %d change count: %d",
                     pb_change[i].pin_number,
-                    pb_change->value,
+                    pb_change[i].value,
                     pb_change[i].change_count);
             }
             dump_avr_core(avr);
+            //enter_gdb_debug(avr, 1234);
             return 1;
         }
 
-        high_count = 0;
     }
 
     // Check if all tasks acuired mutex atleast once
