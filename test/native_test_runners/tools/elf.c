@@ -129,6 +129,7 @@ void elf_resolve_flash_address_to_function(const char *file,
      */
     size_t symbol_count = shdr.sh_size / shdr.sh_entsize;
     uint64_t closest_addr = 0;
+    size_t closest_index = 0;
     GElf_Sym sym;
     for (size_t i = 0; i < symbol_count; i++)
     {
@@ -140,8 +141,19 @@ void elf_resolve_flash_address_to_function(const char *file,
         if (GELF_ST_TYPE(sym.st_info) != STT_FUNC)
             continue;
 
-        if (sym.st_value <= address && sym.st_value >= closest_addr)
+        if (sym.st_value <= address && sym.st_value >= closest_addr) {
+            closest_index = i;
             closest_addr = sym.st_value;
+        }
+    }
+
+    // Retrieve closest symbol
+    if (gelf_getsym(data, (int)closest_index, &sym) == NULL) {
+        ERROR("%s: gelf_getsym() failed: %s", __func__, elf_errmsg(-1));
+        snprintf(func_name, name_size, "Unknown");
+        elf_end(elf_obj);
+        close(file_desc);
+        return;
     }
      
     /* Closest function found. Update func_name */
