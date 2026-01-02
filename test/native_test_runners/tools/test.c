@@ -84,6 +84,7 @@ uint8_t unittest_result(avr_t *avr)
 
 void enter_gdb_debug(avr_t *avr, const int port)
 {
+    char func_name[128];
     avr->state = cpu_Stopped;
     avr->gdb_port = port;
     avr_gdb_init(avr);
@@ -92,6 +93,15 @@ void enter_gdb_debug(avr_t *avr, const int port)
         int state = avr_run(avr);
         if (state == cpu_Done || state == cpu_Crashed)
             break;
+
+        if (state == cpu_StepDone) {
+            elf_resolve_flash_address_to_function(
+                get_debug_file(),
+                avr->pc,
+                &func_name[0],
+                sizeof(func_name));
+            INFO("Stopped at pc: %#04x %s", (unsigned long) avr->pc, func_name);
+        }
     } 
 }
 
