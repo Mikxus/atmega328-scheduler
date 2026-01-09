@@ -16,7 +16,7 @@ int main(void)
             PORTB = 0b00010000;
             // Busy wait for a bit to ensure get_us returns
             // different value next time
-            for (volatile uint32_t i = 0; i < 10; i++);
+            for (volatile uint32_t i = 0; i < 10; i++)
                 _NOP();
             PORTB = 0b00000000;
             last_us = get_us();
