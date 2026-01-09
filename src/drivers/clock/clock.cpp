@@ -68,15 +68,8 @@ void initialize_clock(void)
     uint8_t sreg = SREG;
 
     cli();
-    /* Set CTC mode
-     * Allows to use OCR0A as top value
-     */
     timer0_set_waveform_generation_mode(NORMAL);
 
-    /*
-     * 16,000,000 / (2 * prescaler (1+OCR0A))    
-     *  
-     */
     timer0_set_clock_source(PRESCALER_64);
 
     enable_timer0_interrupt(OVERFLOW_INTERRUPT);
