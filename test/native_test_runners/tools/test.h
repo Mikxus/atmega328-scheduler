@@ -163,6 +163,14 @@ bool test_uart_receive(avr_t *avr,
  */
 void hex_dump(const uint8_t *data, const uint64_t data_len,
      const uint8_t width, const char *description);
+
+/**
+ * @brief  Dump register state
+ * @note   
+ * @retval None
+ */
+void dump_registers(avr_t *avr);
+
 /**
  * Prints out a dump of the avr's cpu state
  */

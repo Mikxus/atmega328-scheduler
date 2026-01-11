@@ -289,6 +289,24 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
     INFO("End of %s", description);
 }
 
+void dump_registers(avr_t *avr)
+{
+    INFO("---- Dump of Registers ----");
+    for (uint8_t i = 0; i < 32; i++)
+    {
+        if (i % 10 == 0 && i != 0)
+            printf("\n");
+
+        printf("R%02d: 0x%02x", i, read_ram(avr, i));
+
+        if (i != 31)
+            printf(", ");
+        else
+            printf("\n");
+    }
+    INFO("---- End of register dump ----");
+}
+
 void dump_avr_core(avr_t *avr)
 {
     char func_name[128];
@@ -305,5 +323,6 @@ void dump_avr_core(avr_t *avr)
         sizeof(func_name));
 
     INFO("pc: %#04x %s", (unsigned long) avr->pc, func_name);
+    dump_registers(avr);
     hex_dump(avr->data, avr->ramend, 20, "ram");
 }
