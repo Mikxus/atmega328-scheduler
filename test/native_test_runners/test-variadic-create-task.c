@@ -1,6 +1,6 @@
 /* 
- * test-fifo.c
- * This file is used to test the fifo data structure 
+ * test-variadic-create-task.c
+ * Test runner for variadic create_task function
  */
 #include <stddef.h>
 #include <stdio.h> 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
 
-    run_avr_ms(avr, 500, 1);
+    run_avr_ms(avr, 100, 1);
 
     return unittest_result(avr);
 }
