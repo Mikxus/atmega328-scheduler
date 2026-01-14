@@ -1,7 +1,7 @@
 add_library(
     test-runner-lib
+    elf.c
     test.c
-    test.h
     debug.c
     math.c
     cpu.c
@@ -16,4 +16,4 @@ if(LIBM)
 endif()
 
 target_compile_options(test-runner-lib PRIVATE -g)
-link_libraries(test-runner-lib PRIVATE simavr ${POW_LIBS})
+link_libraries(test-runner-lib PRIVATE simavr ${POW_LIBS} elf)

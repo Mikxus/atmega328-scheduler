@@ -1,7 +1,6 @@
 /* 
- * test-uart-output.c
- * This file is used to test the uart output
- * 
+ * test-two-tasks-gpio.c
+ * Test preemptive multitasking with two tasks toggling GPIO pins 
  */
 #include <stddef.h>
 #include <stdio.h> 
@@ -13,9 +12,8 @@
 #include "sim_core.h"
 #include "sim_hex.h"
 
-int main(int argc, char *argv[]) 
-{
-    const char *expected = "Hello World!\r\nHello World!\r\nHello World!\r\nHello World!\r\nHello World!\r\n";
+int main(int argc, char *argv[]) {
+
     avr_t *avr = NULL;
 
     if (validate_args(argc, argv))
@@ -24,5 +22,5 @@ int main(int argc, char *argv[])
     }
 
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
-    return test_uart_receive(avr, expected, 4000);
+    return run_avr_ms(avr, 2*1000, 0);
 }

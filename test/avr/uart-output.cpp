@@ -4,8 +4,12 @@
 
 int main(void)
 {
-    _scheduler_init();
+    init_scheduler();
 
+    printf("Hello World!\n");
+    printf("Hello World!\n");
+    printf("Hello World!\n");
+    printf("Hello World!\n");
     printf("Hello World!\n");
     uart0_flush();
     

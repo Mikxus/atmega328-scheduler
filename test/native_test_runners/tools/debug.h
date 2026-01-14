@@ -29,6 +29,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include "sim_elf.h"
 
 /* Manual config for our use case */
 #define CONF_ENABLE_TERMINAL_COLOR 1
@@ -47,6 +48,13 @@
 #define PRINT_FILE_NAME 0
 #define CONF_FLUSH_DEBUG 1
 
+/* Additional debug data */
+typedef struct
+{
+    /* Currently running file */
+    const char *file;
+
+} debug_data_t;
 typedef enum
 {
     no_newline,
@@ -118,6 +126,20 @@ typedef enum
  * @param reset_color when true restores terminal color to default
  */
 void set_terminal_color(debug_level_t level, bool reset_color);
+
+/**
+ * @brief Sets the current debug file name
+ *
+ * @param file_name File name string
+ */
+void set_debug_file(const char *file_name);
+
+/**
+ * @brief Gets the current debug file name
+ *
+ * @return Current debug file name
+ */
+const char *get_debug_file();
 
 /**
  * @brief Converted debug_print for C.

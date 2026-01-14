@@ -1,7 +1,8 @@
 # Get all AVR source files
 file(GLOB AVR_SRC_FILES *.cpp)
 
-set(CMAKE_CXX_FLAGS "-Wno-c++20-extensions ${AVR_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wno-c++20-extensions ${CMAKE_CXX_FLAGS}")
+add_subdirectory(tools)
 
 foreach(FILE ${AVR_SRC_FILES})
     get_filename_component(NAME ${FILE} NAME_WE)
@@ -11,14 +12,10 @@ foreach(FILE ${AVR_SRC_FILES})
     add_avr_executable(${NAME} ${FILE})
 
     # Set the compile flags
-    set_target_properties(
-        ${NAME}
-        PROPERTIES
-        COMPILE_FLAGS "${AVR_COMPILE_FLAGS}"
+    add_compile_options(
+       ${AVR_DEFAULT_FLAGS} 
     )
 
     # Link necessary libraries
-    avr_target_link_libraries(${NAME} scheduler-${AVR_MCU})
-
-
+    avr_target_link_libraries(${NAME} scheduler-${AVR_MCU} unittest-${AVR_MCU})
 endforeach()

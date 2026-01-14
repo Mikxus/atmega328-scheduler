@@ -3,38 +3,21 @@ add_compile_options(
     ${AVR_DEFAULT_FLAGS}
 )
 
-# Include subdirectories
-add_subdirectory(drivers/uart)
-add_subdirectory(drivers/timer)
-add_subdirectory(drivers/clock)
-
 # Generate a library from the scheduler source 
 add_avr_library (
     scheduler
-    context_switch.cpp
+    drivers/uart/uart.cpp
+    drivers/timer/timer.cpp
+    drivers/clock/clock.cpp
+    drivers/synchronization/mutex.cpp
+    drivers/scheduling/sched.cpp
+    kernel.cpp
     scheduler.cpp
-    scheduler.h
-)
-
-# Add dependencies
-# might not be needed
-add_dependencies(
-    scheduler
-    scheduler-uart-lib-${AVR_MCU}
-    timer-lib-${AVR_MCU}
-    clock-lib-${AVR_MCU}
-)
-
-set_target_properties(
-    scheduler
-    PROPERTIES
-    COMPILE_FLAGS "${AVR_COMPILE_FLAGS}"
+    task.cpp
 )
 
 # Link libraries
 avr_target_link_libraries(
     scheduler-${AVR_MCU}
-    scheduler-uart-lib-${AVR_MCU}
-    timer-lib-${AVR_MCU}
-    clock-lib-${AVR_MCU}
+    AVR-UART-LIBRARY-${AVR_MCU}
 )

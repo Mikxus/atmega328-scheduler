@@ -16,7 +16,7 @@ uint16_t find_offset_off(avr_t *avr, uint8_t *array, uint16_t size)
     uint16_t count = 0;
 
     if (avr == NULL) return 0;
-    INFO("avr-ioffset: %u", avr->io_offset);
+
     for (uint16_t i = avr->io_offset - 1; i < avr->ramend; i++)
     {
         if (avr->data[i] != array[count]) {
@@ -35,7 +35,7 @@ uint8_t read_ram(avr_t *avr, uint16_t index)
 {
     if (index > avr->ramend)
     {
-        WARN("Outof bounds avr data read: index %u, ramend: %u", index, avr->ramend);
+        WARN("Out of bounds read: index: %u, ramend: %u", index, avr->ramend);
         return 0;
     }
     return avr->data[index];
@@ -71,22 +71,37 @@ avr_t *init_avr(const char *elf_name,
         ERROR("AVR '%s' not known", firmware.mmcu);
         return avr;
     }
-    
+    set_debug_file(elf_name);
     avr_init(avr);
     avr_load_firmware(avr, &firmware);
     return avr;
 }
 
+uint8_t unittest_result(avr_t *avr)
+{
+    return read_ram(avr, (uint16_t) avr->ramend);
+}
+
 void enter_gdb_debug(avr_t *avr, const int port)
 {
+    char func_name[128];
     avr->state = cpu_Stopped;
     avr->gdb_port = port;
     avr_gdb_init(avr);
 
-    for (;;) {
+    while (1) {
         int state = avr_run(avr);
         if (state == cpu_Done || state == cpu_Crashed)
             break;
+
+        if (state == cpu_StepDone) {
+            elf_resolve_flash_address_to_function(
+                get_debug_file(),
+                avr->pc,
+                &func_name[0],
+                sizeof(func_name));
+            INFO("Stopped at pc: %#04x %s", (unsigned long) avr->pc, func_name);
+        }
     } 
 }
 
@@ -123,11 +138,12 @@ bool run_avr_cycles(avr_t *avr,
             return 1;
         }
 
-        if (avr->state == cpu_Done) return 0;
+        if (avr->state == cpu_Done ) 
+            return 0;
     }
 
     if (timeout_fatal) {
-        ERROR("avr timeout reached: %llu", cycles);
+        ERROR("avr timeout reached: %llu cycles", cycles);
         dump_avr_core(avr);
         return 1;
     }
@@ -162,7 +178,7 @@ bool run_avr_until_interrupt(avr_t *avr,
 
         if (*interrupt_state) return 0;
 
-        if (avr->state == cpu_Stopped || avr->state == cpu_Crashed ||avr->state == cpu_Done )
+        if (avr->state == cpu_Stopped || avr->state == cpu_Crashed || avr->state == cpu_Done )
         {
             ERROR("Avr failed\r\n");
             dump_avr_core(avr);
@@ -273,13 +289,40 @@ void hex_dump(const uint8_t *data, const uint64_t data_len,
     INFO("End of %s", description);
 }
 
+void dump_registers(avr_t *avr)
+{
+    INFO("---- Dump of Registers ----");
+    for (uint8_t i = 0; i < 32; i++)
+    {
+        if (i % 10 == 0 && i != 0)
+            printf("\n");
+
+        printf("R%02d: 0x%02x", i, read_ram(avr, i));
+
+        if (i != 31)
+            printf(", ");
+        else
+            printf("\n");
+    }
+    INFO("---- End of register dump ----");
+}
+
 void dump_avr_core(avr_t *avr)
 {
+    char func_name[128];
+        
     if (!avr) return;
     INFO("Dumping AVR core");
     INFO("mcu: %s", avr->mmcu);
     INFO("frequency: %lu", (unsigned long) avr->frequency);
-    INFO("cycle: %lu", (unsigned long) avr->cycle);
-    INFO("pc: %#04x", (unsigned long) avr->pc);
+    INFO("cycle: %lu (%.4fs)", (unsigned long) avr->cycle, (double) avr->cycle / avr->frequency);
+    elf_resolve_flash_address_to_function(
+        get_debug_file(),
+        avr->pc,
+        &func_name[0],
+        sizeof(func_name));
+
+    INFO("pc: %#04x %s", (unsigned long) avr->pc, func_name);
+    dump_registers(avr);
     hex_dump(avr->data, avr->ramend, 20, "ram");
 }

@@ -1,14 +1,16 @@
 
 # some trickery to get simavr's libsimavr.a to be recognized by CMake
-add_library(simavr STATIC IMPORTED )
+add_library(simavr STATIC IMPORTED GLOBAL)
 
 set_target_properties(simavr PROPERTIES
     IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/libsimavr.so.1
 )
 
+add_dependencies(simavr build-simavr)
+
 # Build simavr
 add_custom_target(build-simavr ALL 
-    COMMAND make 
+    COMMAND make
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/submodules/simavr/
     COMMENT "Building simavr"
 )

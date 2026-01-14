@@ -5,15 +5,25 @@
 
 int main(void)
 {
-    volatile task_data_t task;
-    task.exec_time_us = 0xFAFA;
-    task.exec_time_overflow_count = 0xDD;
-    task.state = READY;
-    c_task = &task;
+    task_data_t task;
+
+    /* Create initial task 
+     * Should inherit current cpu context on first switch 
+     */
+    create_task(
+        task,
+        (volatile uint8_t *) 0x00, // use current stack
+        100,
+        "init_task",
+        0,
+        1,
+        nullptr);
 
     cli();
+
+    /* Manually initialize scheduler */
     initialize_clock();
-    initialize_context_switch_timer(1);
+    kernel_init_timer();
     /* set cpu registers to a known state before interrupt */
     __asm__ __volatile__ (
         "ldi r16, 0x61 \n\t"

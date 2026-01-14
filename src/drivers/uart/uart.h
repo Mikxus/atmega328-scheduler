@@ -6,8 +6,8 @@
 #include <avr/interrupt.h>
 #include "lib/AVR-UART-LIB/usart.h"
 
-#ifndef SCHEDULER_UART_BAUD_RATE
-    #error "SCHEDULER_UART_BAUD_RATE not defined"
+#ifndef CONF_UART_BAUD_RATE
+    #error "CONF_UART_BAUD_RATE not defined"
 #endif
 
 /**

@@ -6,7 +6,7 @@
 
 int main(void)
 {
-    _scheduler_init();
+    init_scheduler();
     while(true){
         printf("uptime: %lu\n", get_ms());
     }

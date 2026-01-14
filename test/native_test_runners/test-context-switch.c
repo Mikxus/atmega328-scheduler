@@ -19,14 +19,13 @@
 
 void timer0_compb_cb(struct avr_irq_t *irq, uint32_t value, void *param)
 {
-    bool *interrupt_fired = (bool *) param;
-
+    (void) value;
     if (strcmp(irq->name, ">avr.timer0.compb") != 0) {
         WARN("Incorrect ISR registered: %s should be: >avr.timer0.compb", irq->name);
         return;
     }
 
-    (*interrupt_fired) = 1;
+    *(bool *) param = 1;
 }
 
 int main(int argc, char *argv[])
