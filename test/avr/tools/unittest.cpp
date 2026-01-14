@@ -18,7 +18,6 @@ __attribute__((noreturn)) void exit_unittest(void)
     while (1);
 }
 
-
 void expect_equal(int expected, int actual, const char* message)
 {
     if (expected != actual) {
@@ -28,4 +27,17 @@ void expect_equal(int expected, int actual, const char* message)
         printf("PASS: %s\n", message);
     }
     uart0_flush();
+    return;
+}
+
+void expect(int cond, const char* message)
+{
+    if (cond == 0) {
+        printf("FAIL: %s\n", message);
+        unittest_state++;
+    } else {
+        printf("PASS: %s\n", message);
+    }
+    uart0_flush();
+    return;
 }
