@@ -69,6 +69,13 @@ typedef struct task_data_t
 };
 
 /**
+ * @brief Returns the task currently running  
+ * @note   
+ * @retval 
+ */
+task_data_t* get_current_task();
+
+/**
  * @brief get task's stack usage in bytes
  * 
  * @param task 

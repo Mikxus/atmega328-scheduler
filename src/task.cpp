@@ -4,6 +4,16 @@ task_data_t * volatile c_task = nullptr;
 // ready task list head
 static task_data_t * volatile ready_list_head = nullptr;
 
+task_data_t* get_current_task()
+{
+    task_data_t* task;
+    uint8_t sreg = SREG;
+    cli();
+
+    task = c_task;
+    SREG = sreg;
+    return task;
+}
 
 uint16_t _get_task_stack_size(task_data_t *task)
 {
