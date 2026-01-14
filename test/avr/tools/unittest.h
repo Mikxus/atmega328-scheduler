@@ -16,8 +16,31 @@ extern uint8_t unittest_state;
  * 
  */
 void init_unittest(void);
+
+/**
+ * @brief Exit unittest & prepare result to simavr
+ * @note   
+ * @retval 
+ */
 __attribute__((noreturn)) void exit_unittest(void);
 
+/**
+ * @brief Test if expected equals actual
+ * @note   
+ * @param  expected: 
+ * @param  actual: 
+ * @param  message: 
+ * @retval None
+ */
 void expect_equal(int expected, int actual, const char* message);
+
+/**
+ * @brief Test if statement is true
+ * @note   
+ * @param  cond: 0 fail, 1 pass
+ * @param  message: 
+ * @retval None
+ */
+void expect(int cond, const char* message);
 
 #endif // _UNITTEST_H_
