@@ -46,8 +46,10 @@ bool create_task(
 
     task.next_node = nullptr;
 
-    if (strlen(name) >= CONF_TASK_NAME_MAX_LENGTH)
+    if (strlen(name) >= CONF_TASK_NAME_MAX_LENGTH) {
+        SREG = sreg;
         return 1;
+    }
 
     strcpy(task.name, name);
 
