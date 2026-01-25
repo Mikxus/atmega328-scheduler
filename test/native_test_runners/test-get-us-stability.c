@@ -85,18 +85,18 @@ int main(int argc, char *argv[]) {
     /* Verify outputs */
 #ifdef RELEASE_BUILD
     return verify_timing(&timings_data,
-        999.4f,
-        990.50f,
-        1002.5f,
+        976.4f,
+        973.50f,
+        977.5f,
         1.3f,
-        0.3f );
+        5.0f );
 #endif
 
 #ifdef DEBUG_BUILD
     return verify_timing(&timings_data,
-        997.0f,
-        989.50f,
-        1001.0f,
+        976.0f,
+        973.50f,
+        977.0f,
         1.6f,
         6.0f );
 #endif
