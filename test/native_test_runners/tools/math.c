@@ -54,7 +54,7 @@ void calculate_timings(avr_t *avr, struct math_timings_data *data)
     data->avg = avg_sum / (data->size - 1);
 
     /* skip the first reading since it's inaccurate */
-    data->stddev = calculate_standard_deviation(&data->buffer[1], sizeof(data->buffer) / sizeof(float) - 1);
+    data->stddev = calculate_standard_deviation(&data->buffer[1], data->size - 1);
 }
 
 bool verify_timing(struct math_timings_data *data,
