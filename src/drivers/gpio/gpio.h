@@ -2,6 +2,7 @@
 #define _GPIO_
 #include <avr/io.h>
 #include <stdbool.h>
+#include "../synchronization/atomic.h"
 
 typedef enum io_port {
     IO_PORTB,
@@ -21,7 +22,7 @@ typedef enum io_data_direction {
  * @param port 
  * @param pin 
  */
-void set_gpio_mode(io_port port, io_data_direction dir, uint8_t pin);
+void set_gpio_mode(io_port port, uint8_t pin, io_data_direction dir)
 
 /**
  * @brief Write specified bit to pin  
