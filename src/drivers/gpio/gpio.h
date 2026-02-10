@@ -22,7 +22,7 @@ typedef enum io_data_direction {
  * @param port 
  * @param pin 
  */
-void set_gpio_mode(io_port port, uint8_t pin, io_data_direction dir)
+void set_gpio_mode(io_port port, uint8_t pin, io_data_direction dir);
 
 /**
  * @brief Write specified bit to pin  
