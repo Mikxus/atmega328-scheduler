@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <string.h>
-#include <avr/sleep.h>
 #include <avr/io.h>
+#include <avr/sleep.h>
 #include "src/scheduler.h"
+#include "src/drivers/gpio/gpio.h"
 
 int main(void)
 {
     initialize_clock();
 
     // Set PB4 as output
-    DDRB = 0b00010000;
+    set_gpio_mode(IO_PORTB, PB4, OUTPUT);
+    
     uint32_t last_us = get_us();           
     while(true){
         if (get_us() - last_us >= 1000){
