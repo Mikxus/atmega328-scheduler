@@ -4,7 +4,6 @@
 #include <avr/interrupt.h>
 #include "src/task.h"
 #include "src/drivers/synchronization/atomic.h"
-#include "src/drivers/scheduling/sched.h"
 #include "src/scheduler.h"
 
 typedef enum
