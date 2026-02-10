@@ -3,14 +3,13 @@
 
 #include <avr/interrupt.h>
 #include "src/task.h"
+#include "src/drivers/synchronization/atomic.h"
 #include "src/drivers/scheduling/sched.h"
 #include "src/scheduler.h"
 
 typedef enum
 {
     MUTEX_OK = 0,
-    MUTEX_FREE,
-    MUTEX_LOCKED,
     MUTEX_ERR_ALREADY_LOCKED,
     MUTEX_ERR_NOT_OWNER,
 } mutex_errno_t;
