@@ -75,7 +75,8 @@ bool run_avr_until_pin_change(avr_t *avr,
         }
     }
 
-    WARN("%s: Did not change pin output in timeout %llu", avr->mmcu, timeout_ms);
+    WARN("%s: did not acquire mutex once in %llu ms", __func__, timeout_ms);
+    dump_avr_core(avr);
     return 1;
 }
 
