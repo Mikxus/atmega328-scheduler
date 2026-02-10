@@ -48,7 +48,9 @@ void task_1(void)
 {
     while (1)
     {
-        mtx_lock(&mtx);
+        if (mtx_try_lock(&mtx) == MUTEX_ERR_ALREADY_LOCKED)
+            continue;
+
         PORTB |= (1u << PB4);
 
         for (uint8_t i = 0; i < 255; i++)
@@ -67,7 +69,9 @@ void task_2(void)
 {
     while (1) 
     {
-        mtx_lock(&mtx);
+        if (mtx_try_lock(&mtx) == MUTEX_ERR_ALREADY_LOCKED)
+            continue;
+
         PORTB |= (1u << PB3);
 
         for (uint8_t i = 0; i < 255; i++)
