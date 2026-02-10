@@ -113,7 +113,6 @@ bool test_mutex_violation(avr_t *avr,
                     pb_change[i].change_count);
             }
             dump_avr_core(avr);
-            //enter_gdb_debug(avr, 1234);
             return 1;
         }
 
@@ -160,5 +159,5 @@ int main(int argc, char *argv[]) {
         pb_state,
         sizeof(pb_state) / sizeof(pb_state[0]),
         10000,
-        1);
+        2); // 2 tasks with 1 ms time slice. Mutex should be acquired least once in 2 ms
 }
