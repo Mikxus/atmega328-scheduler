@@ -11,7 +11,7 @@ void mtx_lock(mutex_t *mtx)
     while (1)
     {
         ATOMIC_BLOCK() {
-            if (mtx->owner == nullptr || mtx->owner == c_task) {
+            if (mtx->owner == nullptr) {
                 mtx->owner = c_task;
                 return;
             }
@@ -23,7 +23,7 @@ void mtx_lock(mutex_t *mtx)
 mutex_errno_t mtx_try_lock(mutex_t *mtx)
 {
     ATOMIC_GUARD();
-    if (mtx->owner != nullptr && mtx->owner != c_task) {
+    if (mtx->owner != nullptr) {
         return MUTEX_ERR_ALREADY_LOCKED;
 
     }
