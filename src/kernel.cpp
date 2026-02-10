@@ -218,15 +218,13 @@ ISR(TIMER0_COMPB_vect)
 
 void kernel_init_timer(void)
 {
-    uint8_t sreg = SREG;
-    cli();
+    ATOMIC_GUARD();
 
     // assume timer0 is already initialized 
     enable_timer0_interrupt(COMPB_INTERRUPT);
 
     // try to trigger at 1 ms intervals 
     OCR0B = freq_to_timer_comp_value<1000, 64>() + TCNT0;
-    SREG = sreg;
     return;
 }
 
@@ -240,7 +238,9 @@ void __attribute__((noreturn)) kernel_start(void)
 
 void soft_yield(void)
 {
-    OCR0B = TCNT0;
+    ATOMIC_BLOCK() {
+        OCR0B = TCNT0;
+    }
 }
 
 void __attribute__((hot, flatten, naked)) yield(void)
@@ -267,5 +267,4 @@ void __attribute__((hot, flatten, naked)) yield(void)
     _RESTORE_CTX();
     sei();
     asm volatile("ret" ::: "memory");
-    __builtin_unreachable();
 }

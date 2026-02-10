@@ -12,6 +12,7 @@
 #include "drivers/clock/clock.h"
 #include "drivers/timer/timer.h"
 #include "drivers/scheduling/sched.h"
+#include "drivers/synchronization/atomic.h"
 
 
 /**

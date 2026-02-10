@@ -26,8 +26,7 @@ bool create_task(
     const uint8_t slice_ms,
     void (entry)(void))
 {
-    uint8_t sreg = SREG;
-    cli();
+    ATOMIC_GUARD();
 
     #if SCHEDULER_HAS_PRIORITIES == 1
     task.priority = priority;
@@ -47,7 +46,6 @@ bool create_task(
     task.next_node = nullptr;
 
     if (strlen(name) >= CONF_TASK_NAME_MAX_LENGTH) {
-        SREG = sreg;
         return 1;
     }
 
@@ -66,12 +64,12 @@ bool create_task(
     if (c_task == nullptr)
         c_task = _get_head_task();
 
-    SREG = sreg;
     return 0;
 }
 
 bool remove_task(task_data_t *task)
 {
+    ATOMIC_GUARD();
     if (_remove_task_from_ready_list(task))
         return 1;
 

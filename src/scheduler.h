@@ -132,18 +132,16 @@ bool create_task(
     void (entry)(Args...),
     Args... args)
 {
-    uint8_t sreg = SREG;
     bool args_to_stack = 0;
     uint16_t regs_used = 0;
     uint16_t stack_used = 0;
     uint16_t stack_base = 0;
-    cli();
+    ATOMIC_GUARD();
 
     if (create_task(
         task, stack_array, stack_size,
         name, priority, slice_ms,
         (void (*)(void)) entry)) {
-        SREG = sreg;
         return 1;
     }
 
@@ -190,8 +188,6 @@ bool create_task(
         */
     }
 
-    SREG = sreg;
-    sei();
     return 0;
 }
 
