@@ -7,7 +7,7 @@ void schedule_round_robin(void)
     
     /* if last node */
     if (node == nullptr)
-        node = _get_head_task();
+        node = _get_ready_list_head();
 
     c_task = node;
 }

@@ -42,11 +42,11 @@ kernel_errno_t create_task(
     task.stack.memory_ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
     task.stack.memory_ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
 
-    _add_task(&task);
+    _add_task(&task, _get_ready_list_head());
 
     /* if there is no existing task */
     if (c_task == nullptr)
-        c_task = _get_head_task();
+        c_task = _get_ready_list_head();
 
     return KERNEL_OK;
 }
@@ -54,7 +54,7 @@ kernel_errno_t create_task(
 kernel_errno_t remove_task(task_data_t *task)
 {
     ATOMIC_GUARD();
-    if (_remove_task_from_ready_list(task))
+    if (_remove_task_from_list(task, _get_ready_list_head()) != KERNEL_OK)
         return KERNEL_ERR_NOT_FOUND;
 
     _set_task_state(task, UNDEFINED);
