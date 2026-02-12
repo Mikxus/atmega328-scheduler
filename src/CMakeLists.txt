@@ -13,8 +13,8 @@ add_avr_library (
     drivers/synchronization/mutex.cpp
     drivers/scheduling/sched.cpp
     kernel.cpp
-    scheduler.cpp
     task.cpp
+    task_utils.cpp
 )
 
 # Link libraries
