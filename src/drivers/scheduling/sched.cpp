@@ -1,4 +1,5 @@
-#include "sched.h"
+#include <kernel/drivers/scheduling/sched.h>
+#include "../../task_utils.h"
 
 void schedule_round_robin(void) 
 {

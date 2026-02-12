@@ -1,4 +1,4 @@
-#include "mutex.h"
+#include <kernel/drivers/synchronization/mutex.h>
 
 void mtx_init(mutex_t *mtx)
 {

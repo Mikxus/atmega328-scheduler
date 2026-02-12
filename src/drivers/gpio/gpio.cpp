@@ -1,4 +1,4 @@
-#include "gpio.h"
+#include <kernel/drivers/gpio/gpio.h>
 
 void set_gpio_mode(io_port port, uint8_t pin, io_data_direction dir)
 {

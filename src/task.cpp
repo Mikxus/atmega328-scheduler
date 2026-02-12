@@ -1,122 +1,73 @@
-#include "task.h"
+#include <kernel/task.h>
+#include "task_utils.h"
 
-task_data_t * volatile c_task = nullptr;
-// ready task list head
-static task_data_t * volatile ready_list_head = nullptr;
+bool create_task(
+    task_data_t &task,
+    volatile uint8_t *stack_array,
+    const uint16_t stack_size,
+    const char *name,
+    const uint8_t priority,
+    const uint8_t slice_ms,
+    void (entry)(void))
+{
+    ATOMIC_GUARD();
+
+    #if SCHEDULER_HAS_PRIORITIES == 1
+    task.priority = priority;
+    #endif
+    task.time_slice_ms = slice_ms;
+    #if CONF_TRACK_TASK_CPU_TIME == 1
+    task.exec_time_us = 0;
+    task.exec_time_overflow_count = 0;
+    task.exec_start_time_us = 0;
+    #endif
+    task.next_node = nullptr;
+    task.stack.memory_ptr = stack_array;
+    task.stack.size = stack_size;
+    task.state = READY;
+    task.cpu_state.sreg = 0x80; // interrupts enabled
+
+    task.next_node = nullptr;
+
+    if (strlen(name) >= CONF_TASK_NAME_MAX_LENGTH) {
+        return 1;
+    }
+
+    strcpy(task.name, name);
+
+    // initialize stack pointer to third byte? so [0 - 1] can have entry's pc 
+    task.cpu_state.sp = (uint16_t) &stack_array[stack_size - 3]; // might be incorrect address
+
+    // Set entry to stack
+    task.stack.memory_ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
+    task.stack.memory_ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
+
+    _add_task(&task);
+
+    /* if there is no existing task */
+    if (c_task == nullptr)
+        c_task = _get_head_task();
+
+    return 0;
+}
+
+bool remove_task(task_data_t *task)
+{
+    ATOMIC_GUARD();
+    if (_remove_task_from_ready_list(task))
+        return 1;
+
+    _set_task_state(task, UNDEFINED);
+    return 0;
+}
+
 
 task_data_t* get_current_task()
 {
     task_data_t* task;
-    uint8_t sreg = SREG;
-    cli();
 
+    ATOMIC_BLOCK() {
     task = c_task;
-    SREG = sreg;
+    }
     return task;
-}
-
-uint16_t _get_task_stack_size(task_data_t *task)
-{
-    return (size_t) task->stack.size;
-}
-
-uint16_t _get_task_stack_usage(task_data_t *task)
-{
-    // stack top - sp
-    return (uint16_t) &task->stack.memory_ptr[task->stack.size - 1] - task->cpu_state.sp;
-}
-
-task_data_t* _get_head_task()
-{
-    return ready_list_head;
-}
-
-task_data_t* _get_tail()
-{
-    return _find_preceding_task(nullptr);
-}
-
-task_data_t* _get_next_task(task_data_t* task) 
-{
-    if (task == nullptr)
-        return nullptr;
-
-    return task->next_node;
-}
-
-task_data_t* _find_preceding_task(task_data_t* target_node)
-{
-    task_data_t *seek_head = _get_head_task();
-
-    if (seek_head == nullptr)
-        return seek_head;
-
-    while (seek_head->next_node != target_node && seek_head != nullptr)
-    {
-        seek_head = _get_next_task(seek_head);
-    }
-    return seek_head;
-}
-
-task_data_t* _find_task(task_data_t* target_node)  // Fixed typo: _fing_task
-{
-    task_data_t* seek_node = _get_head_task();
-
-    if (seek_node == target_node)
-        return seek_node;
-
-    while (seek_node != nullptr)
-    {
-        if (seek_node == target_node)
-            break;
-        
-        seek_node = _get_next_task(seek_node);
-    }
-
-    return seek_node;
-}
-
-void _add_task(task_data_t* new_node)
-{
-    task_data_t* ptr;
-
-    if (_get_head_task() == nullptr) {
-        ready_list_head = new_node;
-        return;
-    }
-
-    ptr = _get_tail();
-    ptr->next_node = new_node;
-    return;
-}
-
-bool _remove_task_from_ready_list(task_data_t* task)
-{
-    task_data_t *preceding_task;
-    task_data_t *next_task;
-
-    if (task == nullptr)
-        return 1;
-
-    if (task == _get_head_task()) {
-        ready_list_head = _get_next_task(task);
-        return 0;
-    }
-
-    preceding_task = _find_preceding_task(task);
-    next_task = _get_next_task(task);
-
-    // no need to check if next_task is nullptr
-    preceding_task->next_node = next_task;
-    task->next_node = nullptr;
-    return 0;
-}
-
-void _set_task_state(task_data_t* task, task_state_t state)
-{
-    if (task == nullptr)
-        return;
-
-    task->state = state;
-    return;
 }

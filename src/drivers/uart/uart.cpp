@@ -1,4 +1,4 @@
-#include "uart.h"
+#include <kernel/drivers/uart/uart.h>
 
 void initialize_uart(void)
 {

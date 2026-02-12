@@ -1,4 +1,4 @@
-#include "clock.h"
+#include <kernel/drivers/clock/clock.h>
 
 volatile uint32_t timer0_overflow_count = 0;
 volatile uint32_t timer0_ms = 0;
