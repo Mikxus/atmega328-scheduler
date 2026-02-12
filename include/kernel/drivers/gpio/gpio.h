@@ -2,7 +2,7 @@
 #define _GPIO_
 #include <avr/io.h>
 #include <stdbool.h>
-#include "../synchronization/atomic.h"
+#include <kernel/drivers/synchronization/atomic.h>
 
 typedef enum io_port {
     IO_PORTB,
