@@ -1,7 +1,8 @@
 #include <avr/io.h>
-#include "src/scheduler.h"
-#include "src/drivers/synchronization/mutex.h"
-#include "src/drivers/uart/uart.h"
+#include <avr/cpufunc.h>
+#include <kernel/kernel.h>
+#include <kernel/drivers/uart/uart.h>
+#include <kernel/drivers/synchronization/mutex.h>
 
 #define STACK_SIZE 128
 #define FIFO_SIZE 5
@@ -17,7 +18,7 @@ mutex_t mtx;
 int main(void)
 {
     cli();
-    init_scheduler();
+    kernel_init();
     DDRB |= (1 << DDB4) | (1 << DDB3);
 
     mtx_init(&mtx); 
@@ -41,7 +42,7 @@ int main(void)
         &task_2);
 
     sei();
-    start_scheduler();
+    kernel_start();
 }
 
 void task_1(void)

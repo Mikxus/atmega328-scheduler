@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <avr/sleep.h>
-#include "src/scheduler.h"
+#include <kernel/kernel.h>
 
 int main(void)
 {
-    init_scheduler();
+    kernel_init();
 
     printf("Hello World!\n");
     printf("Hello World!\n");

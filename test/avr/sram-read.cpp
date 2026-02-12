@@ -1,8 +1,7 @@
-#include <stdio.h>
 #include <string.h>
-#include <avr/sleep.h>
 #include <avr/io.h>
-#include "src/scheduler.h"
+#include <avr/interrupt.h>
+#include <avr/sleep.h>
 
 const uint8_t identifier[] = {0xDE, 0xAD, 0xBE, 0xEF}; 
 

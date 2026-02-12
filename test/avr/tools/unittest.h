@@ -6,7 +6,7 @@
 #include <avr/io.h>
 #include <avr/sleep.h>
 
-#include "src/drivers/uart/uart.h"
+#include <kernel/drivers/uart/uart.h>
 
 extern uint8_t *unittest_exit_result;
 extern uint8_t unittest_state;

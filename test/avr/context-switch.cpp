@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <avr/sleep.h>
 #include <avr/io.h>
-#include "src/scheduler.h"
+#include <kernel/kernel.h>
 
 int main(void)
 {

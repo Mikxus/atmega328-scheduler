@@ -1,6 +1,7 @@
 #include "tools/unittest.h"
-#include "src/scheduler.h"
-#include "src/drivers/synchronization/mutex.h"
+#include <kernel/kernel.h>
+#include <kernel/drivers/uart/uart.h>
+#include <kernel/drivers/synchronization/mutex.h>
 
 task_data_t task0, task1, task2, task3;
 uint8_t stack0[100];
@@ -34,7 +35,7 @@ void test_4(float f_val, double d_val, uint64_t u64_1, struct struct_array struc
 int main(void)
 {
     cli();
-    init_scheduler();
+    kernel_init();
     mtx_init(&mtx);
     init_unittest();
 
@@ -87,7 +88,7 @@ int main(void)
 
     sei();
     uart0_flush();
-    start_scheduler();
+    kernel_start();
 }
 
 void test_status(uint8_t *count)

@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <avr/io.h>
+#include <avr/cpufunc.h>
 #include <avr/sleep.h>
-#include "src/scheduler.h"
-#include "src/drivers/gpio/gpio.h"
+#include <kernel/kernel.h>
+#include <kernel/drivers/gpio/gpio.h>
 
 int main(void)
 {

@@ -1,6 +1,5 @@
 #include <avr/sleep.h>
-#include "src/drivers/data_types/fifo.h"
-#include "src/scheduler.h"
+#include <kernel/drivers/data_types/fifo.h>
 #include "tools/unittest.h"
 
 #define FIFO_SIZE 3
