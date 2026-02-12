@@ -192,7 +192,10 @@ message(STATUS "------- End of configurations ---------")
 ##########################################################################
 # include search paths
 ##########################################################################
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/lib
+)
 
 ##########################################################################
 # building library and application in their subdirectories
