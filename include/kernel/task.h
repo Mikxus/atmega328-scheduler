@@ -5,6 +5,7 @@
 #include <string.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <kernel/errno.h>
 #include <kernel/drivers/synchronization/atomic.h>
 #include <kernel/drivers/scheduling/sched.h>
 
@@ -89,7 +90,7 @@ typedef struct task_data_t
  * @return true 
  * @return false 
  */
-bool create_task(
+kernel_errno_t create_task(
     task_data_t &task,
     volatile uint8_t *stack_array,
     const uint16_t stack_size,
@@ -180,7 +181,7 @@ void _process_arg(
 }
 
 template <typename... Args>
-bool create_task(
+kernel_errno_t create_task(
     task_data_t &task,
     volatile uint8_t *stack_array,
     const uint16_t stack_size,
@@ -190,25 +191,30 @@ bool create_task(
     void (entry)(Args...),
     Args... args)
 {
+    kernel_errno_t errno = KERNEL_OK;
     bool args_to_stack = 0;
     uint16_t regs_used = 0;
     uint16_t stack_used = 0;
     uint16_t stack_base = 0;
     ATOMIC_GUARD();
 
-    if (create_task(
-        task, stack_array, stack_size,
+    errno = create_task(task, stack_array, stack_size,
         name, priority, slice_ms,
-        (void (*)(void)) entry)) {
-        return 1;
-    }
+        (void (*)(void)) entry);
+
+    if (errno == KERNEL_OK)
+        return errno;
 
     /*
      * We need first calculate sizes of how much stack & registers are needed
      * since we have to place the left most stack arguments at the lowest stack address
      */
     int dummy_size[] = {0, (_calc_sizes(task, args_to_stack, regs_used, stack_used, args), 0)...}; 
-    (void)dummy_size; // silence unused warning
+    (void)dummy_size;
+
+    if (stack_used > stack_size - 1)
+        return TASK_ERR_STACK_TOO_SMALL;
+
     /* No need to keep track of regs used
      * since they're placed from r25 downwards
      */
@@ -246,7 +252,7 @@ bool create_task(
         */
     }
 
-    return 0;
+    return KERNEL_OK;
 }
 
 
@@ -263,6 +269,6 @@ task_data_t* get_current_task();
  * @param  *task: 
  * @retval
  */
-bool remove_task(task_data_t *task = c_task);
+kernel_errno_t remove_task(task_data_t *task = c_task);
 
 #endif

@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/cpufunc.h>
 #include <kernel/kernel.h>
+#include <kernel/errno.h>
 #include <kernel/drivers/uart/uart.h>
 #include <kernel/drivers/synchronization/mutex.h>
 
@@ -49,7 +50,7 @@ void task_1(void)
 {
     while (1)
     {
-        if (mtx_try_lock(&mtx) == MUTEX_ERR_ALREADY_LOCKED)
+        if (mtx_try_lock(&mtx) != KERNEL_OK)
             continue;
 
         PORTB |= (1u << PB4);
@@ -70,7 +71,7 @@ void task_2(void)
 {
     while (1) 
     {
-        if (mtx_try_lock(&mtx) == MUTEX_ERR_ALREADY_LOCKED)
+        if (mtx_try_lock(&mtx) != KERNEL_OK)
             continue;
 
         PORTB |= (1u << PB3);

@@ -80,17 +80,18 @@ void _add_task(task_data_t* new_node)
     return;
 }
 
-bool _remove_task_from_ready_list(task_data_t* task)
+kernel_errno_t _remove_task_from_ready_list(task_data_t* task)
 {
     task_data_t *preceding_task;
     task_data_t *next_task;
+    kernel_errno_t errno = KERNEL_OK;
 
     if (task == nullptr)
-        return 1;
+        return KERNEL_ERR_INVALID_PARAMETER;
 
     if (task == _get_head_task()) {
         ready_list_head = _get_next_task(task);
-        return 0;
+        return KERNEL_OK;
     }
 
     preceding_task = _find_preceding_task(task);
@@ -99,7 +100,7 @@ bool _remove_task_from_ready_list(task_data_t* task)
     // no need to check if next_task is nullptr
     preceding_task->next_node = next_task;
     task->next_node = nullptr;
-    return 0;
+    return KERNEL_OK;
 }
 
 void _set_task_state(task_data_t* task, task_state_t state)

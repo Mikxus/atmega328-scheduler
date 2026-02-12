@@ -1,7 +1,7 @@
 #include <kernel/task.h>
 #include "task_utils.h"
 
-bool create_task(
+kernel_errno_t create_task(
     task_data_t &task,
     volatile uint8_t *stack_array,
     const uint16_t stack_size,
@@ -29,8 +29,8 @@ bool create_task(
 
     task.next_node = nullptr;
 
-    if (strlen(name) >= CONF_TASK_NAME_MAX_LENGTH) {
-        return 1;
+    if (strlen(name) > CONF_TASK_NAME_MAX_LENGTH) {
+        return TASK_ERR_NAME_TOO_LONG;
     }
 
     strcpy(task.name, name);
@@ -48,17 +48,17 @@ bool create_task(
     if (c_task == nullptr)
         c_task = _get_head_task();
 
-    return 0;
+    return KERNEL_OK;
 }
 
-bool remove_task(task_data_t *task)
+kernel_errno_t remove_task(task_data_t *task)
 {
     ATOMIC_GUARD();
     if (_remove_task_from_ready_list(task))
-        return 1;
+        return KERNEL_ERR_NOT_FOUND;
 
     _set_task_state(task, UNDEFINED);
-    return 0;
+    return KERNEL_OK;
 }
 
 

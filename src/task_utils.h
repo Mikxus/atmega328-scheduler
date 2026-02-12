@@ -1,7 +1,12 @@
+/** 
+ * @file task_utils.h
+ * @brief PRIVATE - internal task managment utilities
+ */
 #ifndef _TASK_UTILS_H_
 #define _TASK_UTILS_H_
 
 #include <kernel/task.h>
+#include <kernel/errno.h>
 
 /**
  * @brief get task's stack usage in bytes
@@ -59,7 +64,7 @@ task_data_t  *_find_preceding_task(
  * @param target_task 
  * @return task_data_t* 
  */
-task_data_t *_fing_task(
+task_data_t *_find_task(
     task_data_t *target_task);
 
 /**
@@ -74,7 +79,7 @@ void _add_task(task_data_t *new_node);
  * @param  *task: 
  * @retval bool: 0 success, 1 failure
  */
-bool _remove_task_from_ready_list(task_data_t *task);
+kernel_errno_t _remove_task_from_ready_list(task_data_t *task);
 
 /**
  * @brief Set task state
