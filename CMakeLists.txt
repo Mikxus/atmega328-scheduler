@@ -101,7 +101,7 @@ message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 
 # default flags for avr builds
 set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -funsigned-char -funsigned-bitfields -ffunction-sections -flto)
-
+# add -Wextra -Wpedantic
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")
    set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++11")
@@ -174,6 +174,7 @@ set(
 )
 add_definitions(
   "-DCONF_SCHEDULER_ALGO_ROUND_ROBIN=${CONF_SCHEDULER_ALGO_ROUND_ROBIN}"
+  "-DSCHEDULER_HAS_PRIORITIES=1"
 )
 
 message(STATUS "------- Project configurations -------")
@@ -187,6 +188,7 @@ message(STATUS "              |- Track cpu time: ${CONF_TRACK_TASK_CPU_TIME}")
 message(STATUS "")
 message(STATUS "Scheduler settings[ ]:")
 message(STATUS "                   |- Round robin algo enabled: ${CONF_SCHEDULER_ALGO_ROUND_ROBIN}")
+message(STATUS "                   |- Priorities supported: ${SCHEDULER_HAS_PRIORITIES}")
 message(STATUS "------- End of configurations ---------")
 
 ##########################################################################
