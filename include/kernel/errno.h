@@ -17,11 +17,14 @@ typedef enum
     MUTEX_ERR_RECURSIVE_LOCK = 11,
     MUTEX_ERR_NOT_OWNER = 12,
 
-    /* Data structure errors*/
+    /* Data structure errors */
+
 
     /* Generic errors */
     KERNEL_ERR_INVALID_PARAMETER = 30,
     KERNEL_ERR_NOT_FOUND = 31,
+    KERNEL_ERR_EMPTY = 32,
+    KERNEL_ERR_EVENT_MAX_TASK_CNT = 33,
 } kernel_errno_t;
 
 #endif // _KERNEL_ERRNO_H_
