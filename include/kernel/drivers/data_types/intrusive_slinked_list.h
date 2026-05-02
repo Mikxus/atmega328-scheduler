@@ -6,7 +6,7 @@
  * 
  *      Usage:
  *      struct my_data {
- *          slinked_list_node<my_data> list_node;
+ *          intrusive_slinked_list_node<my_data> list_node;
  *          # own data after this
  *      }
  * 
@@ -24,13 +24,13 @@
 #include <kernel/errno.h>
 
 template <typename T>
-struct slinked_list_node
+struct intrusive_slinked_list_node
 {
     T* volatile next_node;
 };
 
-template <typename T, slinked_list_node<T> T::*node_ptr>
-class slinked_list
+template <typename T, intrusive_slinked_list_node<T> T::*node_ptr>
+class intrusive_slinked_list
 {
     T* volatile head;
 
@@ -39,10 +39,21 @@ class slinked_list
     }
 
 public:
-    slinked_list() : head(nullptr) {}
+    intrusive_slinked_list() : head(nullptr) {}
 
+    /**
+     * @brief Get the head node
+     * 
+     * @return T* or nullptr if no head
+     */
     T* get_head() const {return head;}
 
+    /**
+     * @brief Get the next node
+     * 
+     * @param node 
+     * @return T* or nullptr if no next
+     */
     T* get_next(T* node) const {
         if (node == nullptr)
             return nullptr;
@@ -50,6 +61,14 @@ public:
         return (node->*node_ptr).next_node; 
     }
 
+    /**
+     * @brief Add node to tail
+     * 
+     * @param new_node 
+     * @return kernel_errno_t:
+     *      KERNEL_ERR_INVALID_PARAMETER
+     *      KERNEL_OK
+     */
     kernel_errno_t add_tail(T* new_node)
     {
         if (new_node == nullptr)
@@ -73,6 +92,15 @@ public:
         return KERNEL_OK;
     }
 
+    /**
+     * @brief Remove node from the list
+     * 
+     * @param node 
+     * @return kernel_errno_t:
+     *          KERNEL_ERR_INVALID_PARAMETER
+     *          KERNEL_ERR_NOT_FOUND
+     *          KERNEL_OK
+     */
     kernel_errno_t remove(T* node)
     {
         if (node == nullptr)

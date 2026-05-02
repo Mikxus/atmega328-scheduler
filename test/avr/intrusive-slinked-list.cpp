@@ -5,12 +5,12 @@
 
 struct data
 {
-    slinked_list_node<data> list_node;
+    intrusive_slinked_list_node<data> list_node;
     uint8_t numbers;
 };
 
 // Create linked list of data
-slinked_list<data, &data::list_node> data_list;
+intrusive_slinked_list<data, &data::list_node> data_list;
 
 struct data a, b, c, d;
 
