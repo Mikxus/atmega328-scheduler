@@ -168,6 +168,17 @@ add_definitions(
   "-DCONF_TRACK_TASK_CPU_TIME=${CONF_TRACK_TASK_CPU_TIME}"
 )
 
+## Events
+# Max tasks event can have simultaneously
+# eq: mutexes, or other stuff which rely on the event system
+set(
+  CONF_EVENT_MAX_TASK_CNT "2"
+)
+add_definitions(
+  "-DCONF_EVENT_MAX_TASK_CNT=${CONF_EVENT_MAX_TASK_CNT}"
+)
+
+
 ## scheduler settings
 set(
   "CONF_SCHEDULER_ALGO_ROUND_ROBIN" "1"
@@ -185,6 +196,9 @@ message(STATUS "")
 message(STATUS "Task settings[ ]:")
 message(STATUS "              |- Name max length: ${CONF_TASK_NAME_MAX_LENGTH}")
 message(STATUS "              |- Track cpu time: ${CONF_TRACK_TASK_CPU_TIME}")
+message(STATUS "")
+message(STATUS "Event settings[ ]:")
+message(STATUS "               |- Max tasks per event: ${CONF_EVENT_MAX_TASK_CNT}")
 message(STATUS "")
 message(STATUS "Scheduler settings[ ]:")
 message(STATUS "                   |- Round robin algo enabled: ${CONF_SCHEDULER_ALGO_ROUND_ROBIN}")
