@@ -1,5 +1,6 @@
 #include <kernel/kernel.h>
 #include "task_utils.h"
+#include "drivers/scheduling/sched.h"
 
 #define CONTEXT_SWITCH_HZ 1000 
 #define CONTEXT_SWITCH_PRESCALER 64
