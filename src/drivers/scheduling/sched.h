@@ -9,17 +9,18 @@
 #define _SCHED_H_
 #include <kernel/task.h>
 #include <kernel/event.h>
+#include <kernel/drivers/data_types/intrusive_slinked_list.h>
 
 typedef struct
 {
     // Tasks which are ready to be scheduled
-    task_data_t* volatile ready_list = nullptr;
+    intrusive_slinked_list<task_data_t, &task_data_t::next_node> ready_list;
 
     // Tasks which are sleeping
-    task_data_t* volatile sleep_list = nullptr;
+    intrusive_slinked_list<task_data_t, &task_data_t::next_node> sleep_list;
     
     // List of events which hold list of tasks blocked by the event 
-    event_t* volatile event_list = nullptr;
+    intrusive_slinked_list<event_t, &event_t::next_event> event_list;
 } scheduler_lists_t;
 
 extern scheduler_lists_t _sched_lists;
