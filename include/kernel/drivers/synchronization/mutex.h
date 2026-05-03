@@ -1,3 +1,8 @@
+/**
+ * @file mutex.h 
+ * @brief  Non recursive mutex with priority inheritance
+ * @note   
+ */
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
@@ -6,13 +11,22 @@
 #include <kernel/event.h>
 #include <kernel/errno.h>
 #include <kernel/drivers/synchronization/atomic.h>
+#include <kernel/drivers/data_types/sorted_fifo_ptr.h>
 #include <kernel/kernel.h>
 
 typedef struct
 {
-    task_data_t* volatile owner;
+    task_data_t* owner;
     event_t mtx_event;
+
+    #if SCHEDULER_HAS_PRIORITIES == 1
+    uint8_t priority;
+    sorted_fifo_ptr_t<task_data_t, uint8_t, &task_data_t::priority> fifo;
+    #endif
 } mutex_t; 
+
+static_assert(sizeof(((task_data_t*)0)->priority) == sizeof(((mutex_t*)0)->priority),
+                "inherited_priority must have the same size as task_data_t->priority");
 
 /**
  * @brief Initializes mutex 
