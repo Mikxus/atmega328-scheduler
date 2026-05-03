@@ -29,12 +29,4 @@ kernel_errno_t _add_event(event_t* event);
  */
 kernel_errno_t _remove_event(event_t* event);
 
-/**
- * @brief Check if event has any tasks dependet by it  
- * @note   
- * @param  *event: 
- * @retval 1 if no
- */
-bool _is_event_empty(event_t *event);
-
 #endif _EVENT_PRIV_H_
