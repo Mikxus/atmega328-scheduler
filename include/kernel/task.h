@@ -7,12 +7,8 @@
 #include <avr/interrupt.h>
 #include <kernel/errno.h>
 #include <kernel/drivers/synchronization/atomic.h>
-#include <kernel/drivers/scheduling/sched.h>
+#include <kernel/drivers/data_types/intrusive_slinked_list.h>
 
-typedef struct task_data_t task_data_t;
-
-/* Currently running task */
-extern task_data_t* volatile c_task;
 
 /**
  * @brief Enum for task's possible states
@@ -53,7 +49,7 @@ typedef struct
 typedef struct task_data_t
 {
     /* singly linked list node for the current task */
-    task_data_t* volatile next_node;
+    intrusive_slinked_list_node<task_data_t> next_node;
 
     char name[CONF_TASK_NAME_MAX_LENGTH];
 
@@ -77,7 +73,10 @@ typedef struct task_data_t
     volatile uint32_t exec_start_time_us;
     #endif
     uint8_t time_slice_ms;
-};
+} task_data_t;
+
+/* Currently running task */
+extern task_data_t* volatile c_task;
 
 /**
  * @brief Adds a new task to the scheduler
@@ -202,7 +201,7 @@ kernel_errno_t create_task(
         name, priority, slice_ms,
         (void (*)(void)) entry);
 
-    if (errno == KERNEL_OK)
+    if (errno != KERNEL_OK)
         return errno;
 
     /*
