@@ -1,5 +1,6 @@
 #include <kernel/task.h>
 #include "task_utils.h"
+#include "drivers/scheduling/sched.h"
 
 kernel_errno_t create_task(
     task_data_t &task,
@@ -21,13 +22,10 @@ kernel_errno_t create_task(
     task.exec_time_overflow_count = 0;
     task.exec_start_time_us = 0;
     #endif
-    task.next_node = nullptr;
     task.stack.memory_ptr = stack_array;
     task.stack.size = stack_size;
     task.state = READY;
     task.cpu_state.sreg = 0x80; // interrupts enabled
-
-    task.next_node = nullptr;
 
     if (strlen(name) > CONF_TASK_NAME_MAX_LENGTH) {
         return TASK_ERR_NAME_TOO_LONG;
@@ -42,7 +40,7 @@ kernel_errno_t create_task(
     task.stack.memory_ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
     task.stack.memory_ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
 
-    _add_task(&task, _get_ready_list_head());
+    _sched_lists.ready_list.add_tail(&task);
 
     /* if there is no existing task */
     if (c_task == nullptr)
@@ -54,7 +52,8 @@ kernel_errno_t create_task(
 kernel_errno_t remove_task(task_data_t *task)
 {
     ATOMIC_GUARD();
-    if (_remove_task_from_list(task, _get_ready_list_head()) != KERNEL_OK)
+    /* TODO: handle case when task is being blocked by a event */
+    if (_sched_lists.ready_list.remove(task) != KERNEL_OK)
         return KERNEL_ERR_NOT_FOUND;
 
     _set_task_state(task, UNDEFINED);
