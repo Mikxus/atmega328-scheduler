@@ -11,7 +11,6 @@
 #include <kernel/drivers/uart/uart.h>
 #include <kernel/drivers/clock/clock.h>
 #include <kernel/drivers/timer/timer.h>
-#include <kernel/drivers/scheduling/sched.h>
 #include <kernel/drivers/synchronization/atomic.h>
 
 
