@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <avr/sleep.h>
 #include <avr/io.h>
+#include <avr/sleep.h>
 #include <kernel/kernel.h>
 
 int main(void)
@@ -12,7 +12,7 @@ int main(void)
      */
     create_task(
         task,
-        (volatile uint8_t *) 0x00, // use current stack
+        (volatile uint8_t *) RAMEND, // use current stack
         100,
         "init_task",
         0,
