@@ -1,26 +1,38 @@
 # atmega328-scheduler v0.3.0
 
-scheduler for atmega328p. Hobby project.
-
-## Architecture
-
-Notes:
-- Preemptive scheduler (timer0 interrupt based)
-- task CPU context sould be saved on the stack maybe? (need to research more)
-  - Or maybe in per task struct?
-- Task slice is 1 ms (not configurable without hassle)
-- Maybe round robin scheduling
+Simple scheduler for atmega328p. Is this the fastest possible? No. I've created this to study how operating systems & schedulers work.
 
 ## Features
 
-- Fully working test suite with simavr 
-- No preexisting HAL
-- UART driver
+- Preemptive scheduler
+- Custom built test suite with simavr
+- Mutex with priority inheritance
+- Ipc fifo
+- gpio driver
+- timer0 driver
+
+### TODO
+
+- Make the default scheduler priority and time slice aware
+- Add more core ipc semantics
+- implement sleep functionality
+- uart output task aware
+
+## Layout
+
+```bash
+atmega328-scheduler/
+  include/kernel -- Public header files
+  src/           -- Core scheduler code
+  test/avr       -- Avr test files
+  test/native_test_runners -- Avr test file runners
+```
 
 ## Building the project
 
 Dependencies:
 * avr-gcc
+* avr-libc (<= 2.2.0)
 * gcc
 * cmake
 * make
