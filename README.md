@@ -1,3 +1,5 @@
+![Image of two tasks toggling pin](assets/context-switchjpg.jpg)
+
 # atmega328-scheduler v0.3.0
 
 Simple scheduler for atmega328p. Is this the fastest possible? No. I've created this to study how operating systems & schedulers work.
