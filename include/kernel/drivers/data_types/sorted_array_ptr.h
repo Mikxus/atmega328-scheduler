@@ -1,28 +1,28 @@
 /**
- * @file sorted_fifo_ptr.h
- * @brief Sorted fifo implementation
- *      Keeps fifo ordered to some value eq, priority
+ * @file sorted_array_ptr.h
+ * @brief Sorted array implementation
+ *      Keeps aray ordered to some value eq, priority
  *      Higher priority gets precedence
  */
-#ifndef _SORTED_FIFO_H_
-#define _SORTED_FIFO_H_
+#ifndef _SORTED_ARRAY_PTR_H_
+#define _SORTED_ARRAY_PTR_H_
 
 #include <stddef.h>
 #include <stdint.h>
 
 /**
- * @brief Sorted fifo of pointers, Sorts by data's value_ptr  
- * @note returns the highest value_ptr's ptr   
+ * @brief Array of pointers, Sorts by data's value_ptr  
+ * @note returns the highest value_ptr's ptr
  */
 template<typename T, typename valueType, valueType T::*value_ptr>
-class sorted_fifo_ptr_t
+class sorted_array_ptr_t
 {
     T** data;
     uint8_t size;
     uint8_t count;
 
 public:
-    sorted_fifo_ptr_t() : data(nullptr), size(0), count(0) {}
+    sorted_array_ptr_t() : data(nullptr), size(0), count(0) {}
 
     void init(T** buf, uint8_t n)
     {
@@ -99,5 +99,4 @@ public:
     }
 };
 
-#endif
-
+#endif // _SORTED_ARRAY_PTR_H_

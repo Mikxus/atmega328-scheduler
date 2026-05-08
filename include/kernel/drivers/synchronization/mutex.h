@@ -11,7 +11,7 @@
 #include <kernel/event.h>
 #include <kernel/errno.h>
 #include <kernel/drivers/synchronization/atomic.h>
-#include <kernel/drivers/data_types/sorted_fifo_ptr.h>
+#include <kernel/drivers/data_types/sorted_array_ptr.h>
 #include <kernel/kernel.h>
 
 typedef struct
@@ -21,7 +21,7 @@ typedef struct
 
     #if SCHEDULER_HAS_PRIORITIES == 1
     uint8_t priority;
-    sorted_fifo_ptr_t<task_data_t, uint8_t, &task_data_t::priority> fifo;
+    sorted_array_ptr_t<task_data_t, uint8_t, &task_data_t::priority> fifo;
     #endif
 } mutex_t; 
 
