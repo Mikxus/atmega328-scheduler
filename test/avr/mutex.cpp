@@ -80,7 +80,7 @@ void mutex_test(uint8_t pin_num)
             _NOP();
 
         PORTB &= ~(1 << pin_num);
-        if (mtx_release(&mtx) != KERNEL_OK)
+        if ((retval = mtx_release(&mtx)) != KERNEL_OK)
         {
             printf("%s: mtx_release failed: %d\n",
                 &get_current_task()->name[0], retval);
