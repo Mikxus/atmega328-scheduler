@@ -8,7 +8,6 @@
 #include "tools/unittest.h"
 
 #define STACK_SIZE 128
-#define ARRAY_SIZE 5
 
 void mutex_test(uint8_t pin_num);
 void unittest_exit(void);
