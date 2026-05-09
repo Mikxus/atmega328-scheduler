@@ -6,12 +6,16 @@ uint8_t unittest_state = 0;
 void init_unittest(void)
 {
     // Set fail state, in case avr crashes before exit_unittest is called
-    *unittest_exit_result = 1;
+    ATOMIC_GUARD() {
+        *unittest_exit_result = 1;
+    }
 }
 
 __attribute__((noreturn)) void exit_unittest(void)
 {
-    *unittest_exit_result = unittest_state;
+    ATOMIC_GUARD() {
+        *unittest_exit_result = unittest_state;
+    }
     
     cli();
     sleep_cpu();
@@ -22,7 +26,9 @@ void expect_equal(int expected, int actual, const char* message)
 {
     if (expected != actual) {
         printf("FAIL: %s. Expected %d, got %d\n", message, expected, actual);
-        unittest_state++;
+        ATOMIC_GUARD() {
+            unittest_state++;
+        }
     } else {
         printf("PASS: %s\n", message);
     }
@@ -34,10 +40,26 @@ void expect(int cond, const char* message)
 {
     if (cond == 0) {
         printf("FAIL: %s\n", message);
-        unittest_state++;
+        ATOMIC_GUARD() {
+            unittest_state++;
+        }
     } else {
         printf("PASS: %s\n", message);
     }
+    uart0_flush();
+    return;
+}
+
+void fail_test(const char* message)
+{
+    ATOMIC_GUARD() {
+        unittest_state++;
+    }
+    
+    if (message == nullptr) 
+        return;
+
+    printf("FAIL: %s\n", message);
     uart0_flush();
     return;
 }
