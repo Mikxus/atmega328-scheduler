@@ -6,6 +6,7 @@
 #include <avr/io.h>
 #include <avr/sleep.h>
 
+#include <kernel/drivers/synchronization/atomic.h>
 #include <kernel/drivers/uart/uart.h>
 
 extern uint8_t *unittest_exit_result;
@@ -42,5 +43,13 @@ void expect_equal(int expected, int actual, const char* message);
  * @retval None
  */
 void expect(int cond, const char* message);
+
+
+/**
+ * @brief Immediately fail the unittest  
+ * @note   
+ * @retval None
+ */
+void fail_test(const char* message);
 
 #endif // _UNITTEST_H_
