@@ -15,13 +15,12 @@ void mtx_init(mutex_t *mtx)
 
 kernel_errno_t mtx_lock(mutex_t *mtx)
 {
-    ATOMIC_GUARD();
-    if (mtx->owner == get_current_task())
-        return MUTEX_ERR_RECURSIVE_LOCK;
-
     while (1)
     {
         ATOMIC_BLOCK() {
+            if (mtx->owner == get_current_task())
+                return MUTEX_ERR_RECURSIVE_LOCK;
+
             if (mtx->owner == nullptr || mtx->owner == get_current_task()) {
                 mtx->owner = get_current_task();
                 #if SCHEDULER_HAS_PRIORITIES == 1
@@ -81,10 +80,9 @@ kernel_errno_t mtx_release(mutex_t *mtx)
     if (mtx->fifo.get_used_size() == 0)
         return KERNEL_OK;
     
-    /* Get next highest priority owner */
-    mtx->owner = mtx->fifo.dequeue();
-    mtx->priority = mtx->owner->priority;
-    _sched_lists.ready_list.add_tail(mtx->owner);
+    /* Release the next highest task blocked */
+    mtx->priority = 0;
+    _sched_lists.ready_list.add_tail(mtx->fifo.dequeue());
     #endif
     return KERNEL_OK;
 }
