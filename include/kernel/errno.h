@@ -11,6 +11,7 @@ typedef enum
     TASK_ERR_STACK_TOO_SMALL = 2,
     TASK_ERR_INVALID_PRIORITY = 3,
     TASK_ERR_INVALID_TIMESLICE = 4,
+    TASK_ERR_BLOCKED = 5,
 
     /* Synchronization errors */
     MUTEX_ERR_LOCKED = 10,
