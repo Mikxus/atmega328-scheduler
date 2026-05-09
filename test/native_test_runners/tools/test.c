@@ -79,7 +79,22 @@ avr_t *init_avr(const char *elf_name,
 
 uint8_t unittest_result(avr_t *avr)
 {
-    return read_ram(avr, (uint16_t) avr->ramend);
+    uint8_t result = read_ram(avr, (uint16_t) avr->ramend);
+
+    if (result == 1) {
+        ERROR("%s: AVR failed to complete unit tests", __func__);
+        dump_avr_core(avr);
+        return result;
+    }
+
+    if (result > 1) {
+        ERROR("%s: AVR failed %d unit tests", __func__, result - 1);
+        dump_avr_core(avr);
+        return result;
+    }
+
+    INFO("%s: AVR passed unittests");
+    return result;
 }
 
 void enter_gdb_debug(avr_t *avr, const int port)
