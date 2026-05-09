@@ -115,7 +115,6 @@ bool test_mutex_violation(avr_t *avr,
             dump_avr_core(avr);
             return 1;
         }
-
     }
 
     // Check if all tasks acuired mutex atleast once
@@ -132,6 +131,7 @@ bool test_mutex_violation(avr_t *avr,
 
 int main(int argc, char *argv[]) {
 
+    bool result = 0;
     avr_irq_t *base_irq = NULL;
     avr_t *avr = NULL;
     struct pin_state_change pb_state[2]= {0};
@@ -155,9 +155,18 @@ int main(int argc, char *argv[]) {
         pb3_state_change_cb,
         &pb_state[1]);
 
-    return test_mutex_violation(avr,
+    result = test_mutex_violation(avr,
         pb_state,
         sizeof(pb_state) / sizeof(pb_state[0]),
         10000,
-        2); // 2 tasks with 1 ms time slice. Mutex should be acquired least once in 2 ms
+        2); // 2 tasks with 1 ms time slice. Mutex should be acquired least once in 2 ms 
+    
+    // Set PB2 high to notify avr that unittest is ready & save it's result
+    avr_raise_irq(base_irq + IOPORT_IRQ_PIN2, 1);
+
+    // Allow avr time to process our input on PB2
+    result |= run_avr_ms(avr, 3, 1);
+
+    result |= (unittest_result(avr) == 0) ? 0 : 1; 
+    return result;
 }
