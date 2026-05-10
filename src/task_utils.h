@@ -12,7 +12,7 @@
 /**
  * @brief get task's stack usage in bytes
  * @param task 
- * @return uintptr_t 
+ * @return 
  */
 uint16_t _get_task_stack_usage(
     task_data_t* task);
@@ -21,7 +21,7 @@ uint16_t _get_task_stack_usage(
  * @brief Get task's stack size in bytes
  * 
  * @param task 
- * @return uintptr_t 
+ * @return 
  */
 uint16_t _get_task_stack_size(
     task_data_t* task);
