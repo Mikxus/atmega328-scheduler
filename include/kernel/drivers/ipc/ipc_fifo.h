@@ -12,7 +12,7 @@ struct ipc_fifo_t
     mutex_t mtx;
 
 public:
-    void init(volatile T* buffer, int size)
+    void init(T* buffer, int size)
     {
         fifo.init(buffer, size);
         mtx_init(&mtx);
@@ -55,13 +55,13 @@ public:
         return err;
     }
 
-    T dequeue()
+    bool dequeue(T &output)
     {
-        T item;
+        bool errno;
         mtx_lock(&mtx);
-        item = fifo.dequeue();
+        errno = fifo.dequeue(output);
         mtx_release(&mtx);
-        return item;
+        return 0;
     }
 
 };
