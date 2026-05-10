@@ -1,6 +1,6 @@
 #include <kernel/drivers/gpio/gpio.h>
 
-void set_gpio_mode(io_port port, uint8_t pin, io_data_direction dir)
+void set_gpio_mode(io_port_t port, uint8_t pin, io_data_direction_t dir)
 {
     volatile uint8_t *ddrx;
     volatile uint8_t *portx;
@@ -35,7 +35,7 @@ void set_gpio_mode(io_port port, uint8_t pin, io_data_direction dir)
     return;
 }
 
-void write_gpio(io_port port, uint8_t pin, bool value)
+void write_gpio(io_port_t port, uint8_t pin, bool value)
 {
     volatile uint8_t *portx;
 
@@ -64,7 +64,7 @@ void write_gpio(io_port port, uint8_t pin, bool value)
     return;
 }
 
-bool read_gpio(io_port port, uint8_t pin)
+bool read_gpio(io_port_t port, uint8_t pin)
 {
     volatile uint8_t *pinx;
     bool value = 0;
