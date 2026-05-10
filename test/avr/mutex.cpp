@@ -7,7 +7,7 @@
 #include <kernel/drivers/synchronization/mutex.h>
 #include "tools/unittest.h"
 
-#define STACK_SIZE 128
+#define STACK_SIZE 200
 
 void mutex_test(uint8_t pin_num);
 void unittest_exit(void);
