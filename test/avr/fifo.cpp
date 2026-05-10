@@ -27,7 +27,9 @@ int main(void)
     expect_equal(30, buffer[2], "buffer[2] should be 30");
 
     // remove one item & add another 
-    expect_equal(10, fifo.dequeue(), "Dequeue should return first item (10)");
+    uint8_t dequeued_val;
+    expect_equal(fifo.dequeue(dequeued_val), 0, "Dequeue should succeed");
+    expect_equal(dequeued_val, 10, "Dequeue should return first item (10)");
     expect_equal(fifo.get_used_size(), 2, "FIFO should have two items after dequeue");
     expect_equal(fifo.enqueue(40), 0, "Enqueue should succeed after dequeue");
     expect_equal(fifo.get_used_size(), 3, "FIFO should be full again");
@@ -37,9 +39,12 @@ int main(void)
     expect_equal(20, buffer[1], "buffer[1] should be 20");
     expect_equal(30, buffer[2], "buffer[2] should be 30");
 
-    expect_equal(20, fifo.dequeue(), "Dequeue should return second item (20)");
-    expect_equal(30, fifo.dequeue(), "Dequeue should return third item (30)");
-    expect_equal(40, fifo.dequeue(), "Dequeue should return fourth item (40)");
+    expect_equal(fifo.dequeue(dequeued_val), 0, "Dequeue should succeed");
+    expect_equal(dequeued_val, 20, "Dequeue should return second item (20)");
+    expect_equal(fifo.dequeue(dequeued_val), 0, "Dequeue should succeed");
+    expect_equal(dequeued_val, 30, "Dequeue should return third item (30)");
+    expect_equal(fifo.dequeue(dequeued_val), 0, "Dequeue should succeed");
+    expect_equal(dequeued_val, 40, "Dequeue should return fourth item (40)");
 
     exit_unittest();
 }
