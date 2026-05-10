@@ -5,11 +5,19 @@ scheduler_lists_t _sched_lists;
 
 void _sched_pick_next_task_round_robin(void) 
 {
-    task_data_t* node = _sched_lists.ready_list.get_next(c_task);
-    
-    /* if last node */
-    if (node == nullptr)
-        node = _sched_lists.ready_list.get_head();
+    uint32_t last_exec_start_us = UINT32_MAX;
+    task_data_t* node;
+    task_data_t* result_node;
+    node = _sched_lists.ready_list.get_head();
 
-    c_task = node;
+    while (node != nullptr) {
+        if (node->exec_start_time_us <= last_exec_start_us && node->state == READY) {
+            last_exec_start_us = node->exec_start_time_us; 
+            result_node = node;
+        }
+        
+        node = _sched_lists.ready_list.get_next(node);
+    }
+
+    c_task = result_node;
 }
