@@ -195,15 +195,12 @@ void calculate_task_execution_time(task_data_t volatile *task)
     );
 
 /**
- * @brief Task switch interrupt
- * naked ISR to avoid C++ prologue/epilogue generation
+ * @brief Context switch C++ code has to be in it's own function
+ *        with attribute noinline to force gcc generate prologue  
+ *        otherwise gcc would trust that the registers are set up correctly
+ *        leading to spurious memory corruption 
  */
-ISR(TIMER0_COMPB_vect, ISR_NAKED) __attribute__((hot, flatten));
-ISR(TIMER0_COMPB_vect)
-{
-    _SAVE_CTX();
-    asm volatile ("clr r1" ::: "memory");
-
+void __attribute__((noinline)) _do_context_switch(void) {
     calculate_task_execution_time(c_task);
 
     _schedule_next_task();
@@ -213,7 +210,19 @@ ISR(TIMER0_COMPB_vect)
     #if CONF_TRACK_TASK_CPU_TIME == 1
     c_task->exec_start_time_us = get_us();
     #endif
+    return;
+}
 
+/**
+ * @brief Task switch interrupt
+ * naked ISR to avoid C++ prologue/epilogue generation
+ */
+ISR(TIMER0_COMPB_vect, ISR_NAKED) __attribute__((naked));
+ISR(TIMER0_COMPB_vect)
+{
+    _SAVE_CTX();
+    asm volatile ("clr r1" ::: "memory");
+    _do_context_switch();
     _RESTORE_CTX();
     asm volatile ("reti"  ::: "memory");
 }
@@ -255,11 +264,12 @@ void soft_yield(void)
     }
 }
 
-void __attribute__((hot, flatten, naked)) yield(void)
-{
-    _SAVE_CTX();
-    asm volatile ("clr r1" ::: "memory");
-
+/**
+ * @brief Yield c++ code has to be in it's own function to
+ *        force generate prologue for the C++ code
+ * @retval None
+ */
+void __attribute__((noinline)) _do_yield(void) {
     calculate_task_execution_time(c_task);
 
     _schedule_next_task();
@@ -275,7 +285,17 @@ void __attribute__((hot, flatten, naked)) yield(void)
     #if CONF_TRACK_TASK_CPU_TIME == 1
     c_task->exec_start_time_us = get_us();
     #endif
+    return;
+}
 
+void __attribute__((naked)) yield(void)
+{
+    _SAVE_CTX();
+    /**
+     * avr gcc ABI expects R1 to be 0  
+     */
+    asm volatile ("clr r1" ::: "memory");
+    _do_yield();
     _RESTORE_CTX();
     sei();
     asm volatile("ret" ::: "memory");
