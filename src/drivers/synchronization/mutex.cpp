@@ -1,4 +1,5 @@
 #include <kernel/drivers/synchronization/mutex.h>
+#include "../../task_utils.h"
 #include "../scheduling/sched.h"
 
 void mtx_init(mutex_t *mtx)
@@ -21,7 +22,7 @@ kernel_errno_t mtx_lock(mutex_t *mtx)
             if (mtx->owner == get_current_task())
                 return MUTEX_ERR_RECURSIVE_LOCK;
 
-            if (mtx->owner == nullptr || mtx->owner == get_current_task()) {
+            if (mtx->owner == nullptr) {
                 mtx->owner = get_current_task();
                 #if SCHEDULER_HAS_PRIORITIES == 1
                 mtx->priority = mtx->owner->priority;
@@ -33,6 +34,7 @@ kernel_errno_t mtx_lock(mutex_t *mtx)
             /* mtx is locked */
             _sched_lists.ready_list.remove(get_current_task());
             mtx->fifo.enqueue(get_current_task());
+            _set_task_state(get_current_task(), BLOCKED);
 
 		    /* priority inheritance */
             if (mtx->owner->priority < get_current_task()->priority) {
@@ -81,8 +83,12 @@ kernel_errno_t mtx_release(mutex_t *mtx)
         return KERNEL_OK;
     
     /* Release the next highest task blocked */
+    task_data_t* task = mtx->fifo.dequeue();
     mtx->priority = 0;
-    _sched_lists.ready_list.add_tail(mtx->fifo.dequeue());
+    _sched_lists.ready_list.add_tail(task);
+    _set_task_state(task, READY);
+    // allow blocked task to aquire mtx
+    yield();
     #endif
     return KERNEL_OK;
 }
