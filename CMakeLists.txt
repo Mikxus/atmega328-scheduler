@@ -121,7 +121,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
 
-# Also add mcu as compilie time definition
+# Also add mcu as compile time definition
 add_definitions(-DSCHEDULER_AVR_MCU=${AVR_MCU})
 
 ##########################################################################
@@ -139,11 +139,11 @@ set(
 
 # enable u2x mode for uart0
 set(
-    USART0_U2X_SPEED "0"
+    USART0_U2X_SPEED "1"
 )
 
 # Define uart definitions
-if ({USART0_U2X_SPEED} STREQUAL "1")
+if (${USART0_U2X_SPEED} STREQUAL "1")
   add_definitions("-DUSART0_U2X_SPEED")
 endif()
 
@@ -181,7 +181,7 @@ add_definitions(
 
 ## scheduler settings
 set(
-  "CONF_SCHEDULER_ALGO_ROUND_ROBIN" "1"
+  CONF_SCHEDULER_ALGO_ROUND_ROBIN "1"
 )
 add_definitions(
   "-DCONF_SCHEDULER_ALGO_ROUND_ROBIN=${CONF_SCHEDULER_ALGO_ROUND_ROBIN}"
@@ -217,6 +217,7 @@ include_directories(
 # building library and application in their subdirectories
 ##########################################################################
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/examples)
 add_subdirectory(${CMAKE_SOURCE_DIR}/lib/AVR-UART-LIB/)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/)
 
