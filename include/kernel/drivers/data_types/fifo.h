@@ -6,11 +6,11 @@
 template <typename T>
 struct fifo_t
 {
-    volatile T *buffer;
-    volatile int size;
-    volatile int count;
-    volatile int head;
-    volatile int tail;
+    T *buffer;
+    int size;
+    int count;
+    int head;
+    int tail;
 
     bool increment_head()
     {
@@ -35,7 +35,7 @@ struct fifo_t
     }
 
 public:
-    void init(volatile T *buf, size_t n)
+    void init(T *buf, size_t n)
     {
         buffer = buf;
         size = n;
@@ -80,7 +80,7 @@ public:
         if (buffer == nullptr)
             return 1;
         
-        if (get_used_size() == size)
+        if (get_used_size() >= size)
             return 1;
 
         buffer[head] = item;
@@ -88,14 +88,14 @@ public:
         return 0;
     }
 
-    T dequeue(void)
+    bool dequeue(T &output)
     {
         if (get_used_size() == 0)
-            return buffer[tail]; // idk nothing to return
+            return 0; // idk nothing to return
         
-        T item = buffer[tail];
+        output = buffer[tail];
         increment_tail();
-        return item;
+        return 0;
     }
 };
 
