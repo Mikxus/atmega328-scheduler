@@ -18,7 +18,7 @@
 
 //#define USE_DOUBLE_SPEED // enables double speed for all available USART interfaces
 
-#define RX_STDIO_GETCHAR_ECHO // echoes back received characters in getchar() function (for reading in scanf())
+//#define RX_STDIO_GETCHAR_ECHO // echoes back received characters in getchar() function (for reading in scanf())
 //#define RX_GETC_ECHO // echoes back received characters in getc() function
 
 //#define PUTC_CONVERT_LF_TO_CRLF // allow for unix style (\n only) newline terminator in stored strings // not included into putc_noblock
@@ -59,8 +59,8 @@
 //#define NO_USART2 // disable usage of uart2
 //#define NO_USART3 // disable usage of uart3
 
-//#define RX0_BUFFER_SIZE 128
-//#define TX0_BUFFER_SIZE 64
+#define RX0_BUFFER_SIZE 128
+#define TX0_BUFFER_SIZE 64
 
 //#define RX1_BUFFER_SIZE 128
 //#define TX1_BUFFER_SIZE 64
