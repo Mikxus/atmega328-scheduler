@@ -70,3 +70,63 @@ task_data_t* get_current_task()
     }
     return task;
 }
+
+uint16_t get_task_pc(task_data_t *task) 
+{
+    uint16_t sp = 0;
+    uint8_t pc_l = 0;
+    uint8_t pc_h = 0;
+
+    if (task == nullptr)
+        return 0;
+
+    ATOMIC_BLOCK() {
+        sp = task->cpu_state.sp;
+        /* 
+         * Stack grows toward lower memory addresses
+         */
+        pc_l = *(uint8_t*)(sp + 2);
+        pc_h = *(uint8_t*)(sp + 1);
+    }
+
+    return (pc_h << 8) | pc_l;
+}
+
+kernel_errno_t suspend_task(task_data_t *task)
+{
+    ATOMIC_GUARD();
+    if (task == nullptr)
+        return KERNEL_ERR_INVALID_PARAMETER;
+    
+    if (task->state == BLOCKED)
+        return TASK_ERR_BLOCKED;
+
+    _set_task_state(task, STOPPED);
+    return KERNEL_OK;
+}
+
+
+kernel_errno_t resume_task(task_data_t *task)
+{
+    ATOMIC_GUARD();
+    if (task == nullptr)
+        return KERNEL_ERR_INVALID_PARAMETER;
+
+    if (task->state != STOPPED)
+        return KERNEL_ERR_INVALID_PARAMETER;
+
+    _set_task_state(task, READY);
+    return KERNEL_OK;
+}
+
+uint16_t get_task_stack_size(
+    task_data_t* task)
+{
+    return _get_task_stack_size(task);
+}
+
+uint16_t get_task_stack_usage(
+    task_data_t* task)
+{
+    return _get_task_stack_usage(task);
+}

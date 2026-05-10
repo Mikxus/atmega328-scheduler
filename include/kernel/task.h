@@ -18,6 +18,7 @@ typedef enum
     READY,
     RUNNING,
     BLOCKED,
+    STOPPED,
     SLEEP,
     UNDEFINED
 } task_state_t;
@@ -263,11 +264,53 @@ kernel_errno_t create_task(
 task_data_t* get_current_task();
 
 /**
+ * @brief Get task's stack size in bytes
+ * 
+ * @param task 
+ * @return 
+ */
+uint16_t get_task_stack_size(task_data_t* task);
+
+/**
+ * @brief get task's stack usage in bytes
+ * @param task 
+ * @return 
+ */
+uint16_t get_task_stack_usage(task_data_t* task);
+
+/**
  * @brief Remove task from the scheduler  
  * @note  The task will continue running until it's tick ends
  * @param  *task: 
- * @retval
+ * @retval      KERNEL_ERR_NOT_FOUND
  */
-kernel_errno_t remove_task(task_data_t *task = c_task);
+kernel_errno_t remove_task(task_data_t *task);
+
+/**
+ * @brief Get task's last known pc  
+ * @note    pc is only updated on context switch
+ * @param  *task: 
+ * @retval  pc value
+ */
+uint16_t get_task_pc(task_data_t *task);
+
+/**
+ * @brief Stop task's execution  
+ * @note   
+ * @param  *task: 
+ * @retval      KERNEL_ERR_INVALID_PARAMETER
+ *              TASK_ERR_BLOCKED
+ *              KERNEL_OK
+ */
+kernel_errno_t suspend_task(task_data_t *task);
+
+/**
+ * @brief Resume task's execution 
+ * @note   
+ * @param  *task: 
+ * @retval      KERNEL_ERR_INVALID_PARAMETER:
+ *              KERNEL_OK 
+ */
+kernel_errno_t resume_task(task_data_t *task);
 
 #endif
