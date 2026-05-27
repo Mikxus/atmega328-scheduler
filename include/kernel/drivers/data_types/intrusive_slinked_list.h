@@ -65,9 +65,8 @@ public:
      * @brief Add node to tail
      * 
      * @param new_node 
-     * @return kernel_errno_t:
-     *      KERNEL_ERR_INVALID_PARAMETER
-     *      KERNEL_OK
+     * @return  KERNEL_ERR_INVALID_PARAMETER
+     *          KERNEL_OK
      */
     kernel_errno_t add_tail(T* new_node)
     {
@@ -96,8 +95,7 @@ public:
      * @brief Remove node from the list
      * 
      * @param node 
-     * @return kernel_errno_t:
-     *          KERNEL_ERR_INVALID_PARAMETER
+     * @return  KERNEL_ERR_INVALID_PARAMETER
      *          KERNEL_ERR_NOT_FOUND
      *          KERNEL_OK
      */
