@@ -57,4 +57,5 @@ foreach(FILE ${NATIVE_TEST_FILES})
     target_compile_options(${NAME} PRIVATE -Wall -Werror -W -Wno-error=unused-parameter -DCONFIF_PULL_UP=1)
 
     add_test(NAME ${NAME} COMMAND ${OUTPUT_FILE} ${CMAKE_BINARY_DIR}/test/avr/${AVR_TEST_NAME}-${AVR_MCU}.elf ${AVR_MCU} ${MCU_SPEED})
+    set_tests_properties(${NAME} PROPERTIES SKIP_RETURN_CODE 77)
 endforeach()
