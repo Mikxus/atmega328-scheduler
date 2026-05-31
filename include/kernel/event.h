@@ -14,10 +14,8 @@ typedef enum
 typedef struct event_t
 {
     event_type_t type;
-    task_data_t* task_arr[CONF_EVENT_MAX_TASK_CNT];
+    intrusive_slinked_list<task_data_t, &task_data_t::next_node> blocked_list;
     intrusive_slinked_list_node<event_t> next_event;
 } event_t;
-
-static_assert(CONF_EVENT_MAX_TASK_CNT <= 255, "CONF_EVENT_MAX_TASK_CNT has to be less <= 255");
 
 #endif // _EVENT_H_

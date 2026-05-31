@@ -16,7 +16,7 @@
  * @brief Add event to event_list  
  * @note   
  * @param  event: 
- * @retval kernel_errno_t:
+ * @retval  KERNEL_OK 
  *          KERNEL_ERR_INVALID_PARAMETER 
  */
 kernel_errno_t _add_event(event_t* event);
@@ -24,9 +24,39 @@ kernel_errno_t _add_event(event_t* event);
 /**
  * @brief Remove event from event_list  
  * @note   
- * @param  &event: 
- * @retval None
+ * @param  *event: 
+ * @return  KERNEL_OK
+ *          KERNEL_ERR_INVALID_PARAMETER
+ *          KERNEL_ERR_NOT_FOUND
+ *          KERNEL_ERR_NOT_EMPTY
  */
 kernel_errno_t _remove_event(event_t* event);
 
-#endif _EVENT_PRIV_H_
+/**
+ * @brief Block task & add it to event  
+ * @note   
+ * @param  task: 
+ * @param  event: 
+ * @retval 
+ */
+kernel_errno_t _event_block_task(task_data_t* task, event_t* event);
+
+/**
+ * @brief Unblock the first blocked task  
+ * @note   
+ * @param  event: 
+ * @retval success: ptr to unblocked task
+ *         fail: nullptr
+ */
+task_data_t* _event_unblock_first(event_t* event);
+
+/**
+ * @brief Unblock the task with highest priority  
+ * @note  With same priority tasks the task which is blocked first is unblocked
+ * @param  event: 
+ * @retval success: ptr to unblocked task
+ *         fail: nullptr
+ */
+task_data_t* _event_unblock_highest_prio(event_t* event);
+
+#endif // _EVENT_PRIV_H_
