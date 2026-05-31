@@ -5,5 +5,4 @@ add_avr_executable(
     main.cpp
 )
 
-
 avr_target_link_libraries(task-communication scheduler-${AVR_MCU})
