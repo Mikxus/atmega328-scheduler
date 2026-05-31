@@ -31,10 +31,10 @@ kernel_errno_t create_task(
         return TASK_ERR_NAME_TOO_LONG;
     }
 
-    strcpy(task.name, name);
+    strncpy(task.name, name, CONF_TASK_NAME_MAX_LENGTH);
 
-    // initialize stack pointer to third byte? so [0 - 1] can have entry's pc 
-    task.cpu_state.sp = (uint16_t) &stack_array[stack_size - 3]; // might be incorrect address
+    // init stack pointer
+    task.cpu_state.sp = (uint16_t) &stack_array[stack_size - 3];
 
     // Set entry to stack
     task.stack.memory_ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
