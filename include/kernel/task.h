@@ -3,8 +3,11 @@
 
 #include <stdint.h>
 #include <string.h>
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+
 #include <kernel/errno.h>
 #include <kernel/drivers/synchronization/atomic.h>
 #include <kernel/drivers/data_types/intrusive_slinked_list.h>
@@ -53,7 +56,8 @@ typedef struct task_data_t
     /* singly linked list node for the current task */
     intrusive_slinked_list_node<task_data_t> next_node;
 
-    char name[CONF_TASK_NAME_MAX_LENGTH];
+    /* Flash ptr to a name */
+    PGM_P name;
 
     volatile task_state_t state;
     volatile task_stack_t stack;
@@ -80,7 +84,7 @@ extern task_data_t* volatile c_task;
  * @brief Adds a new task to the scheduler
  * 
  * @param task 
- * @param name task name
+ * @param name Flash ptr to name
  * @param priority task priority (0 - 255)
  * @param slice_ms lenght of time slice in milliseconds
  * @param entry Task entry function ptr
@@ -91,7 +95,7 @@ kernel_errno_t create_task(
     task_data_t &task,
     volatile uint8_t *stack_array,
     const uint16_t stack_size,
-    const char *name,
+    PGM_P name,
     const uint8_t priority,
     const uint8_t slice_ms,
     void (entry)(void));
@@ -182,7 +186,7 @@ kernel_errno_t create_task(
     task_data_t &task,
     volatile uint8_t *stack_array,
     const uint16_t stack_size,
-    const char *name,
+    PGM_P name,
     const uint8_t priority,
     const uint8_t slice_ms,
     void (entry)(Args...),

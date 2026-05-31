@@ -52,8 +52,8 @@ void blink_task(ipc_fifo_t<struct blink_msg> *fifo, io_port port, uint8_t pin)
 
         fifo->dequeue(message);
 
-        printf_P(PSTR("%s: blinking %d times at %d freq\n"),
-            &get_current_task()->name[0], message.count, message.blink_freq);
+        printf_P(PSTR("%S: blinking %d times at %d freq\n"),
+            get_current_task()->name, message.count, message.blink_freq);
 
         blink_ms = 1000 / (message.blink_freq * 2) ;
         message.count *= 2;
@@ -97,8 +97,8 @@ void print_cmd()
             default: state_char = 'U'; break;
         }
 
-        printf_P(PSTR("%-10s| %-5c| %3d| %3d /%4d| %10lu\n"),
-            &task_arr[i]->name[0],
+        printf_P(PSTR("%-10S| %-5c| %3d| %3d /%4d| %10lu\n"),
+            task_arr[i]->name,
             state_char,
             task_arr[i]->priority,
             get_task_stack_usage(task_arr[i]),
@@ -202,13 +202,13 @@ int main(void)
     fifo2.init(task_2_buffer, FIFO_SIZE);
 
     create_task(blink1, blink_stack1, BLINK_STACK_SIZE,
-        "blink 1", 1, 1, &blink_task, &fifo1, IO_PORTB, (uint8_t) PIN_1);
+        PSTR("blink 1"), 1, 1, blink_task, &fifo1, IO_PORTB, (uint8_t) PIN_1);
 
     create_task(blink2, blink_stack2, BLINK_STACK_SIZE,
-        "blink 2", 1, 1, &blink_task, &fifo2, IO_PORTB, (uint8_t) PIN_2);
+        PSTR("blink 2"), 1, 1, blink_task, &fifo2, IO_PORTB, (uint8_t) PIN_2);
     
     create_task(control, control_stack, CONTROL_STACK_SIZE,
-        "control", 1, 1, control_task);
+        PSTR("control"), 1, 1, control_task);
    
     sei();
 

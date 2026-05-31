@@ -6,7 +6,7 @@ kernel_errno_t create_task(
     task_data_t &task,
     volatile uint8_t *stack_array,
     const uint16_t stack_size,
-    const char *name,
+    PGM_P name,
     const uint8_t priority,
     const uint8_t slice_ms,
     void (entry)(void))
@@ -27,11 +27,7 @@ kernel_errno_t create_task(
     task.state = READY;
     task.cpu_state.sreg = 0x80; // interrupts enabled
 
-    if (strlen(name) > CONF_TASK_NAME_MAX_LENGTH) {
-        return TASK_ERR_NAME_TOO_LONG;
-    }
-
-    strncpy(task.name, name, CONF_TASK_NAME_MAX_LENGTH);
+    task.name = name;
 
     // init stack pointer
     task.cpu_state.sp = (uint16_t) &stack_array[stack_size - 3];
