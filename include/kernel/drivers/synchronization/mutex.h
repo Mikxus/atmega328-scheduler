@@ -11,7 +11,6 @@
 #include <kernel/event.h>
 #include <kernel/errno.h>
 #include <kernel/drivers/synchronization/atomic.h>
-#include <kernel/drivers/data_types/sorted_array_ptr.h>
 #include <kernel/kernel.h>
 
 typedef struct
@@ -20,12 +19,11 @@ typedef struct
     event_t mtx_event;
 
     #if SCHEDULER_HAS_PRIORITIES == 1
-    uint8_t priority;
-    sorted_array_ptr_t<task_data_t, uint8_t, &task_data_t::priority> fifo;
+    uint8_t base_priority;
     #endif
 } mutex_t; 
 
-static_assert(sizeof(((task_data_t*)0)->priority) == sizeof(((mutex_t*)0)->priority),
+static_assert(sizeof(((task_data_t*)0)->priority) == sizeof(((mutex_t*)0)->base_priority),
                 "inherited_priority must have the same size as task_data_t->priority");
 
 /**
@@ -42,15 +40,6 @@ void mtx_init(mutex_t *mtx);
  *         MUTEX_ERR_RECURSIVE_LOCK: Mutex already locked by the task
  */
 kernel_errno_t mtx_lock(mutex_t *mtx);
-
-/**
- * @brief Tries to acquire mutex without blocking  
- * @note   
- * @param  *mtx: 
- * @retval  KERNEL_OK: Acquired successfully
- *          MUTEX_ERR_LOCKED: Mutex already locked by another task
- */
-kernel_errno_t mtx_try_lock(mutex_t *mtx);
 
 /**
  * @brief Releases mutex  
