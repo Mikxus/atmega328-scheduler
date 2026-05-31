@@ -7,10 +7,10 @@ template <typename T>
 struct fifo_t
 {
     T *buffer;
-    int size;
-    int count;
-    int head;
-    int tail;
+    uint8_t size;
+    uint8_t count;
+    uint8_t head;
+    uint8_t tail;
 
     bool increment_head()
     {
