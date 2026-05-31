@@ -61,7 +61,7 @@ public:
         mtx_lock(&mtx);
         errno = fifo.dequeue(output);
         mtx_release(&mtx);
-        return 0;
+        return errno;
     }
 
 };
