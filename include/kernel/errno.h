@@ -1,6 +1,8 @@
 #ifndef _KERNEL_ERRNO_H_
 #define _KERNEL_ERRNO_H_
 
+#include <avr/pgmspace.h>
+
 typedef enum
 {
     // Success
@@ -25,7 +27,17 @@ typedef enum
     KERNEL_ERR_INVALID_PARAMETER = 30,
     KERNEL_ERR_NOT_FOUND = 31,
     KERNEL_ERR_EMPTY = 32,
-    KERNEL_ERR_EVENT_MAX_TASK_CNT = 33,
+    KERNEL_ERR_NOT_EMPTY = 33,
+    KERNEL_ERR_FULL = 34,
+    KERNEL_ERR_EVENT_MAX_TASK_CNT = 35,
 } kernel_errno_t;
+
+/**
+ * @brief Get error's pointer to flash string
+ * @note   
+ * @param  errno: 
+ * @retval 
+ */
+PGM_P kernel_strerror_P(kernel_errno_t errno);
 
 #endif // _KERNEL_ERRNO_H_
