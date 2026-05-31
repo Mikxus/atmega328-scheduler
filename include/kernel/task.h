@@ -9,18 +9,19 @@
 #include <kernel/drivers/synchronization/atomic.h>
 #include <kernel/drivers/data_types/intrusive_slinked_list.h>
 
+struct event_t; 
 
 /**
  * @brief Enum for task's possible states
  */
 typedef enum 
 {
+    UNDEFINED = 0,
     READY,
     RUNNING,
     BLOCKED,
     STOPPED,
-    SLEEP,
-    UNDEFINED
+    SLEEP
 } task_state_t;
 
 /**
@@ -63,10 +64,6 @@ typedef struct task_data_t
     #endif
 
     #if CONF_TRACK_TASK_CPU_TIME == 1
-    /*
-     * Task execution time represented in 38 bits
-     * Overflows in ~50.9 days
-     */
     volatile uint32_t exec_time_us;
     volatile uint8_t  exec_time_overflow_count;
 
@@ -287,8 +284,9 @@ uint16_t get_task_stack_usage(task_data_t* task);
 kernel_errno_t remove_task(task_data_t *task);
 
 /**
- * @brief Get task's last known pc  
- * @note    pc is only updated on context switch
+ * @brief Get task's pc  
+ * @note    pc is only updated on context switch & points to 
+            the next instruction to be ran when it's scheduled again
  * @param  *task: 
  * @retval  pc value
  */
@@ -313,4 +311,4 @@ kernel_errno_t suspend_task(task_data_t *task);
  */
 kernel_errno_t resume_task(task_data_t *task);
 
-#endif
+#endif // _TASK_H_
