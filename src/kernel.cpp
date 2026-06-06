@@ -56,7 +56,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
 } 
 
 /**
- * @brief Saves the current task context into c_task structure
+ * @brief Saves the current task context into task_data_t structure
  *      This is inlined in the COMPB interrupt handler
  *      and should be the first thing the interrupt does 
  * @note Assumptions:
@@ -71,24 +71,23 @@ void calculate_task_execution_time(task_data_t volatile *task)
  *  sp[1]   : r30
  *  sp[2]   : r31
  */
-#define _SAVE_CTX()                       \
+#define _SAVE_CTX_ISR()                       \
     asm volatile (                            \
-        "cli                            \n\t" \
         "push r29                       \n\t" \
+        "in   r29, __SREG__             \n\t" \
         "push r30                       \n\t" \
         "push r31                       \n\t" \
         "lds  r30, %[ctask]             \n\t" \
         "lds  r31, %[ctask]+1           \n\t" \
-        "in   r29, __SREG__             \n\t" \
         "std  Z+%[sreg_offset], r29     \n\t" \
         "pop  r29                       \n\t" \
-        "std  Z+%[r31_offset], r29      \n\t" \
+        "std  Z+%[r31_offset],  r29     \n\t" \
         "pop  r29                       \n\t" \
-        "std  Z+%[r30_offset], r29      \n\t" \
+        "std  Z+%[r30_offset],  r29     \n\t" \
         "pop  r29                       \n\t" \
-        "std  Z+%[r29_offset], r29      \n\t" \
+        "std  Z+%[r29_offset],  r29     \n\t" \
         "in   r29, __SP_L__             \n\t" \
-        "std  Z+%[sp_offset], r29       \n\t" \
+        "std  Z+%[sp_offset],   r29     \n\t" \
         "in   r29, __SP_H__             \n\t" \
         "std  Z+%[sp_offset]+1, r29     \n\t" \
         "std  Z+%[r0_offset]+0,  r0     \n\t" \
@@ -135,16 +134,94 @@ void calculate_task_execution_time(task_data_t volatile *task)
     );
 
 /**
+ * @brief Saves the current task context into task_data_t structure
+ *        Enables interrupts as soon as possible and is used in 
+ *        non interrupt funcs
+ * @note Assumptions:
+ *     - c_task is valid
+ *     - pc is saved at stack, not in task's cpu structure
+ * 
+ * Stack layout:
+ *  SP[-2]  : currently running tasks pc l
+ *  SP[-1]  : currently running tasks pc h
+ * ------ Below Stack pointer changes made by asm ---  
+ *  sp[0]   : r29
+ *  sp[1]   : r30
+ *  sp[2]   : r31
+ */
+#define _SAVE_CTX()                       \
+    asm volatile (                            \
+        "push r29                       \n\t" \
+        "in   r29, __SREG__             \n\t" \
+        "cli                            \n\t" \
+        "push r30                       \n\t" \
+        "push r31                       \n\t" \
+        "lds  r30, %[ctask]             \n\t" \
+        "lds  r31, %[ctask]+1           \n\t" \
+        "std  Z+%[sreg_offset], r29     \n\t" \
+        "pop  r29                       \n\t" \
+        "std  Z+%[r31_offset],  r29     \n\t" \
+        "pop  r29                       \n\t" \
+        "std  Z+%[r30_offset],  r29     \n\t" \
+        "pop  r29                       \n\t" \
+        "std  Z+%[r29_offset],  r29     \n\t" \
+        "in   r29, __SP_L__             \n\t" \
+        "std  Z+%[sp_offset],   r29     \n\t" \
+        "in   r29, __SP_H__             \n\t" \
+        "std  Z+%[sp_offset]+1, r29     \n\t" \
+        "std  Z+%[r0_offset]+0,  r0     \n\t" \
+        "std  Z+%[r0_offset]+1,  r1     \n\t" \
+        "std  Z+%[r0_offset]+2,  r2     \n\t" \
+        "std  Z+%[r0_offset]+3,  r3     \n\t" \
+        "std  Z+%[r0_offset]+4,  r4     \n\t" \
+        "std  Z+%[r0_offset]+5,  r5     \n\t" \
+        "std  Z+%[r0_offset]+6,  r6     \n\t" \
+        "std  Z+%[r0_offset]+7,  r7     \n\t" \
+        "std  Z+%[r0_offset]+8,  r8     \n\t" \
+        "std  Z+%[r0_offset]+9,  r9     \n\t" \
+        "std  Z+%[r0_offset]+10, r10    \n\t" \
+        "std  Z+%[r0_offset]+11, r11    \n\t" \
+        "std  Z+%[r0_offset]+12, r12    \n\t" \
+        "std  Z+%[r0_offset]+13, r13    \n\t" \
+        "std  Z+%[r0_offset]+14, r14    \n\t" \
+        "std  Z+%[r0_offset]+15, r15    \n\t" \
+        "std  Z+%[r0_offset]+16, r16    \n\t" \
+        "std  Z+%[r0_offset]+17, r17    \n\t" \
+        "std  Z+%[r0_offset]+18, r18    \n\t" \
+        "std  Z+%[r0_offset]+19, r19    \n\t" \
+        "std  Z+%[r0_offset]+20, r20    \n\t" \
+        "std  Z+%[r0_offset]+21, r21    \n\t" \
+        "std  Z+%[r0_offset]+22, r22    \n\t" \
+        "std  Z+%[r0_offset]+23, r23    \n\t" \
+        "std  Z+%[r0_offset]+24, r24    \n\t" \
+        "std  Z+%[r0_offset]+25, r25    \n\t" \
+        "std  Z+%[r0_offset]+26, r26    \n\t" \
+        "std  Z+%[r0_offset]+27, r27    \n\t" \
+        "std  Z+%[r0_offset]+28, r28    \n\t" \
+        :                                                                   \
+        : [ctask]       "m" (c_task),                                       \
+          [r31_offset]  "n" (offsetof(task_data_t, cpu_state.regs[31])),    \
+          [r30_offset]  "n" (offsetof(task_data_t, cpu_state.regs[30])),    \
+          [r29_offset]  "n" (offsetof(task_data_t, cpu_state.regs[29])),    \
+          [sreg_offset] "n" (offsetof(task_data_t, cpu_state.sreg)),        \
+          [sp_offset]   "n" (offsetof(task_data_t, cpu_state.sp)),          \
+          [r0_offset]   "n" (offsetof(task_data_t, cpu_state.regs[0]))      \
+        : "r0","r1","r2","r3","r4","r5","r6","r7","r8","r9","r10",          \
+          "r11","r12","r13","r14","r15","r16","r17","r18","r19","r20",      \
+          "r21","r22","r23","r24","r25","r26","r27","r28","r29","r30","r31",\
+          "memory","cc"                                                     \
+    );
+
+
+/**
  * @brief Restores the next task context from c_task  
  */
-#define _RESTORE_CTX()                                                                      \
+#define _RESTORE_CTX_ISR()                                                                  \
     asm volatile (                                                                          \
         "lds    r30, %[ctask]           \n\t"                                               \
         "lds    r31, %[ctask]+1         \n\t"                                               \
-        "ldd    r29, Z+%[sreg_offset]   \n\t"                                               \
-        "out    __SREG__, r29           \n\t"                                               \
-        "ldd     r28, Z+%[sp_offset]    \n\t"                                               \
-        "ldd     r29, Z+%[sp_offset]+1  \n\t"                                               \
+        "ldd    r28, Z+%[sp_offset]     \n\t"                                               \
+        "ldd    r29, Z+%[sp_offset]+1   \n\t"                                               \
         "out    __SP_L__, r28           \n\t"                                               \
         "out    __SP_H__, r29           \n\t"                                               \
         "ldd     r28, Z+%[r30_offset]   \n\t"                                               \
@@ -180,6 +257,8 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "ldd    r26, Z+%[r0_offset]+26  \n\t"                                               \
         "ldd    r27, Z+%[r0_offset]+27  \n\t"                                               \
         "ldd    r28, Z+%[r0_offset]+28  \n\t"                                               \
+        "ldd    r29, Z+%[sreg_offset]   \n\t"                                               \
+        "out    __SREG__, r29           \n\t"                                               \
         "ldd    r29, Z+%[r0_offset]+29  \n\t"                                               \
         "pop    r31                     \n\t"                                               \
         "pop    r30                     \n\t"                                               \
@@ -194,18 +273,29 @@ void calculate_task_execution_time(task_data_t volatile *task)
         : "memory"                                                                          \
     );
 
+#define _RESTORE_CTX() _RESTORE_CTX_ISR()
+
 /**
  * @brief Context switch C++ code has to be in it's own function
- *        with attribute noinline to force gcc generate prologue  
+ *        with attribute noinline to force GCC generate a prologue  
  *        otherwise gcc would trust that the registers are set up correctly
  *        leading to spurious memory corruption 
  */
 void __attribute__((noinline)) _do_context_switch(void) {
     calculate_task_execution_time(c_task);
 
+    /* 
+     * The hardware automatically disables interrupts upon entering isr and 
+     * restores them with reti. yield() Doesn't explicitly enable interrupts upon
+     * rescheduling tasks. Leading to possibility of deadlock when task is 
+     * saved in isr and rescheduled by yield().
+     */
+    (*c_task).cpu_state.sreg |= (1 << SREG_I);
+
     _schedule_next_task();
 
-    OCR0B = freq_to_timer_comp_value<1000, 64>() + TCNT0; // ~1 ms task switch interval
+    OCR0B = freq_to_timer_comp_value
+    <CONTEXT_SWITCH_HZ, CONTEXT_SWITCH_PRESCALER>() + TCNT0; // ~1 ms task switch interval
 
     #if CONF_TRACK_TASK_CPU_TIME == 1
     c_task->exec_start_time_us = get_us();
@@ -217,13 +307,12 @@ void __attribute__((noinline)) _do_context_switch(void) {
  * @brief Task switch interrupt
  * naked ISR to avoid C++ prologue/epilogue generation
  */
-ISR(TIMER0_COMPB_vect, ISR_NAKED) __attribute__((naked));
-ISR(TIMER0_COMPB_vect)
+ISR(TIMER0_COMPB_vect, ISR_NAKED)
 {
-    _SAVE_CTX();
+    _SAVE_CTX_ISR();
     asm volatile ("clr r1" ::: "memory");
     _do_context_switch();
-    _RESTORE_CTX();
+    _RESTORE_CTX_ISR();
     asm volatile ("reti"  ::: "memory");
 }
 
@@ -235,7 +324,8 @@ void kernel_init_timer(void)
     enable_timer0_interrupt(COMPB_INTERRUPT);
 
     // try to trigger at 1 ms intervals 
-    OCR0B = freq_to_timer_comp_value<1000, 64>() + TCNT0;
+    OCR0B = freq_to_timer_comp_value<
+        CONTEXT_SWITCH_HZ, CONTEXT_SWITCH_PRESCALER>() + TCNT0;
     return;
 }
 
@@ -252,7 +342,7 @@ void kernel_init(void)
 void __attribute__((noreturn)) kernel_start(void)
 {
     kernel_init_timer();
-    _RESTORE_CTX();
+    _RESTORE_CTX_ISR();
     asm volatile ("ret" ::: "memory");
     __builtin_unreachable();
 }
@@ -288,7 +378,7 @@ void __attribute__((noinline)) _do_yield(void) {
     return;
 }
 
-void __attribute__((naked)) yield(void)
+void __attribute__((naked, noinline)) yield(void)
 {
     _SAVE_CTX();
     /**
@@ -297,6 +387,5 @@ void __attribute__((naked)) yield(void)
     asm volatile ("clr r1" ::: "memory");
     _do_yield();
     _RESTORE_CTX();
-    sei();
-    asm volatile("ret" ::: "memory");
+    asm volatile ("ret" ::: "memory");
 }
