@@ -33,6 +33,14 @@ kernel_errno_t _add_event(event_t* event);
 kernel_errno_t _remove_event(event_t* event);
 
 /**
+ * @brief Is event empty
+ * @note   Tells if there are tasks blocked on that event
+ * @param  event:
+ * @retval 1: empty 0: not empty
+ */
+bool _is_event_empty(const event_t* event);
+
+/**
  * @brief Block task & add it to event  
  * @note   
  * @param  task: 

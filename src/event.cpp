@@ -24,6 +24,11 @@ kernel_errno_t _remove_event(event_t *event)
     return _sched_lists.event_list.remove(event);
 }
 
+bool _is_event_empty(const event_t* event)
+{
+    return (event->blocked_list.get_head() == nullptr);
+}
+
 kernel_errno_t _event_block_task(task_data_t* task, event_t* event)
 {
     if (task == nullptr || event == nullptr)
