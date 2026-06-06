@@ -43,8 +43,8 @@ kernel_errno_t mtx_lock(mutex_t *mtx)
             mtx->owner->priority = task->priority; // boost priority
         }
         #endif
+        yield();
     }
-    yield();
     return KERNEL_OK;
 }
 
