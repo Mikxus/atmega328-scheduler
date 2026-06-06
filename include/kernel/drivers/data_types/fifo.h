@@ -35,7 +35,7 @@ struct fifo_t
     }
 
 public:
-    void init(T *buf, size_t n)
+    void init(T *buf, uint8_t n)
     {
         buffer = buf;
         size = n;
