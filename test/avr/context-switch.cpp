@@ -14,7 +14,7 @@ int main(void)
         task,
         (volatile uint8_t *) RAMEND, // use current stack
         100,
-        "init_task",
+        PSTR("init_task"),
         0,
         1,
         nullptr);
