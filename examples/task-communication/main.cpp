@@ -6,7 +6,7 @@
 #include <kernel/kernel.h>
 #include <kernel/drivers/uart/uart.h>
 #include <kernel/drivers/gpio/gpio.h>
-#include <kernel/drivers/ipc/ipc_fifo.h>
+#include <kernel/drivers/ipc/msg_que.h>
 
 #define PIN_1 PB4
 #define PIN_2 PB3
@@ -26,8 +26,8 @@ struct blink_msg {
 struct blink_msg task_1_buffer[FIFO_SIZE];
 struct blink_msg task_2_buffer[FIFO_SIZE];
 
-ipc_fifo_t<struct blink_msg> fifo1;
-ipc_fifo_t<struct blink_msg> fifo2;
+msg_que_t<struct blink_msg> msg1;
+msg_que_t<struct blink_msg> msg2;
 
 task_data_t blink1;
 task_data_t blink2;
@@ -37,7 +37,7 @@ uint8_t blink_stack1[BLINK_STACK_SIZE];
 uint8_t blink_stack2[BLINK_STACK_SIZE];
 uint8_t control_stack[CONTROL_STACK_SIZE];
 
-void blink_task(ipc_fifo_t<struct blink_msg> *fifo, io_port port, uint8_t pin)
+void blink_task(msg_que_t<struct blink_msg> *msg_que, io_port port, uint8_t pin)
 {
     blink_msg message = {0};
     uint32_t blink_ms = 0; 
@@ -45,12 +45,7 @@ void blink_task(ipc_fifo_t<struct blink_msg> *fifo, io_port port, uint8_t pin)
     set_gpio_mode(port, pin, OUTPUT);
 
     while (1) {
-        if (fifo->get_used_size() == 0) {
-            yield();
-            continue;
-        }
-
-        fifo->dequeue(message);
+        msg_que->dequeue(message);
 
         printf_P(PSTR("%S: blinking %d times at %d freq\n"),
             get_current_task()->name, message.count, message.blink_freq);
@@ -132,17 +127,15 @@ void blink_cmd(char *arr, uint16_t size)
     msg.blink_freq = freq;
 
     if (id == 1) {
-        errno = fifo1.enqueue(msg);
+        if (!msg1.is_full())
+            msg1.enqueue(msg);
     } else if (id == 2) {
-        errno = fifo2.enqueue(msg);
+        if (!msg2.is_full())
+            msg2.enqueue(msg);
     } else {
         printf_P(PSTR("Invalid ID\n"));
     }
 
-    if (errno) {
-        printf_P(PSTR("Error: Fifo full\n")); 
-        return;
-    }
     printf_P(PSTR("Sending command: blink ID: %u COUNT: %u FREQ: %u\n"),
         id, count, freq);
 }
@@ -198,14 +191,14 @@ int main(void)
 {
     kernel_init();
 
-    fifo1.init(task_1_buffer, FIFO_SIZE);
-    fifo2.init(task_2_buffer, FIFO_SIZE);
+    msg1.init(task_1_buffer, FIFO_SIZE);
+    msg2.init(task_2_buffer, FIFO_SIZE);
 
     create_task(blink1, blink_stack1, BLINK_STACK_SIZE,
-        PSTR("blink 1"), 1, 1, blink_task, &fifo1, IO_PORTB, (uint8_t) PIN_1);
+        PSTR("blink 1"), 1, 1, blink_task, &msg1, IO_PORTB, (uint8_t) PIN_1);
 
     create_task(blink2, blink_stack2, BLINK_STACK_SIZE,
-        PSTR("blink 2"), 1, 1, blink_task, &fifo2, IO_PORTB, (uint8_t) PIN_2);
+        PSTR("blink 2"), 1, 1, blink_task, &msg2, IO_PORTB, (uint8_t) PIN_2);
     
     create_task(control, control_stack, CONTROL_STACK_SIZE,
         PSTR("control"), 1, 1, control_task);
