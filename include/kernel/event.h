@@ -7,9 +7,9 @@ typedef enum
 {
     EVENT_UNUSED = 0,
     EVENT_MUTEX,
+    EVENT_MSG_QUE,
     EVENT_SLEEP
 } event_type_t;
-
 
 typedef struct event_t
 {
