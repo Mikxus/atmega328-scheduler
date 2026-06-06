@@ -68,8 +68,8 @@ void mutex_test(uint8_t pin_num)
     while (1)
     {
         if ((retval = mtx_lock(&mtx)) != KERNEL_OK) {
-            printf("%s: mtx_lock failed: %d\n",
-                &get_current_task()->name[0], retval);
+            printf_P(PSTR("%S: mtx_lock failed: %d\n"),
+                get_current_task()->name, retval);
             fail_test("mtx_lock failed");
             return;
         }
@@ -82,8 +82,8 @@ void mutex_test(uint8_t pin_num)
         PORTB &= ~(1 << pin_num);
         if ((retval = mtx_release(&mtx)) != KERNEL_OK)
         {
-            printf("%s: mtx_release failed: %d\n",
-                &get_current_task()->name[0], retval);
+            printf_P(PSTR("%S: mtx_release failed: %d\n"),
+                get_current_task()->name, retval);
             fail_test("mtx_release failed");
             while(1){}
         }
@@ -95,7 +95,7 @@ void unittest_exit()
     set_gpio_mode(IO_PORTB, PB2, INPUT);
     while (1) {
         if (read_gpio(IO_PORTB, PB2)) {
-            printf("Exiting test\n");
+            printf_P(PSTR("Exiting test\n"));
             uart0_flush();
             exit_unittest();
         }
