@@ -100,7 +100,7 @@ message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 ##########################################################################
 
 # default flags for avr builds
-set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -funsigned-char -funsigned-bitfields -ffunction-sections -flto)
+set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -Wextra -Wpedantic -funsigned-char -funsigned-bitfields -ffunction-sections -flto)
 # add -Wextra -Wpedantic
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")
@@ -168,16 +168,6 @@ add_definitions(
   "-DCONF_TRACK_TASK_CPU_TIME=${CONF_TRACK_TASK_CPU_TIME}"
 )
 
-## Events
-# Max tasks event can have simultaneously
-# eq: mutexes, or other stuff which rely on the event system
-set(
-  CONF_EVENT_MAX_TASK_CNT "2"
-)
-set (
-  CONF_TASK_MAX_EVENT_CNT "3"
-)
-
 add_definitions(
   "-DCONF_EVENT_MAX_TASK_CNT=${CONF_EVENT_MAX_TASK_CNT}"
   "-DCONF_TASK_MAX_EVENT_CNT=${CONF_TASK_MAX_EVENT_CNT}"
@@ -200,11 +190,7 @@ message(STATUS "            |- U2X mode enabled: ${CONF_UART_USE_U2X_MODE}")
 message(STATUS "")
 message(STATUS "Task settings[ ]:")
 message(STATUS "              |- Name max length: ${CONF_TASK_NAME_MAX_LENGTH}")
-message(STATUS "              |- Max simultaneous events: ${CONF_TASK_MAX_EVENT_CNT}")
 message(STATUS "              |- Track cpu time: ${CONF_TRACK_TASK_CPU_TIME}")
-message(STATUS "")
-message(STATUS "Event settings[ ]:")
-message(STATUS "               |- Max tasks per event: ${CONF_EVENT_MAX_TASK_CNT}")
 message(STATUS "")
 message(STATUS "Scheduler settings[ ]:")
 message(STATUS "                   |- Round robin algo enabled: ${CONF_SCHEDULER_ALGO_ROUND_ROBIN}")
