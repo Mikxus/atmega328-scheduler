@@ -2,25 +2,18 @@
 
 # atmega328-scheduler v0.4.0
 
-Simple scheduler for atmega328p. Is this the fastest possible? No. I've created this to study how operating systems & schedulers work.
+Simple hobby scheduler for atmega328p
 
 ## Features
 
 - Preemptive scheduler
 - Custom built test suite with simavr
 - Mutex with priority inheritance
-- Ipc fifo
+- Message que with support for multiple producers & consumers
 - gpio driver
 - timer0 driver
 
-### TODO
-
-- Make the default scheduler priority and time slice aware
-- Add more core ipc semantics
-- implement sleep functionality
-- uart output task aware
-
-## Layout
+## Project layout
 
 ```bash
 atmega328-scheduler/
@@ -32,9 +25,9 @@ atmega328-scheduler/
 
 ## Building the project
 
-Dependencies:
+Packages:
 * avr-gcc
-* avr-libc (<= 2.2.0)
+* avr-libc (<= 2.2.0)*
 * gcc
 * cmake
 * make
@@ -42,9 +35,11 @@ Dependencies:
 * libelf (simavr)
 * libdwarf (simavr)
 
+´*´ simavr doesn't compile with avr-libc 2.3.0 or higher
+
 ### Setting up development environment
 
-#### Installing dependencies
+#### Installing packages
 
 Ubuntu/debian:
 
