@@ -81,15 +81,16 @@ typedef struct task_data_t
 extern task_data_t* volatile c_task;
 
 /**
- * @brief Adds a new task to the scheduler
- * 
- * @param task 
- * @param name Flash ptr to name
- * @param priority task priority (0 - 255)
- * @param slice_ms lenght of time slice in milliseconds
- * @param entry Task entry function ptr
- * @return true 
- * @return false 
+ * @brief Initialize and add new task to the scheduler  
+ * @note   
+ * @param  &task: 
+ * @param  *stack_array: 
+ * @param  stack_size: 
+ * @param  name:        Flash ptr to name 
+ * @param  priority:    task priority (0 - 255)
+ * @param  slice_ms:    Timeslice
+ * @param  (entry: 
+ * @retval 
  */
 kernel_errno_t create_task(
     task_data_t &task,
@@ -103,12 +104,12 @@ kernel_errno_t create_task(
 
 template<typename T>
 void _calc_sizes(
-    task_data_t &task,
     bool &args_to_stack,
     uint16_t &regs_used,
     uint16_t &stack_used,
     T arg)
 {
+    (void) arg;
     uint16_t arg_size = sizeof(T);
     bool padding = arg_size % 2;
 
@@ -210,7 +211,7 @@ kernel_errno_t create_task(
      * We need first calculate sizes of how much stack & registers are needed
      * since we have to place the left most stack arguments at the lowest stack address
      */
-    int dummy_size[] = {0, (_calc_sizes(task, args_to_stack, regs_used, stack_used, args), 0)...}; 
+    int dummy_size[] = {0, (_calc_sizes(args_to_stack, regs_used, stack_used, args), 0)...}; 
     (void)dummy_size;
 
     if (stack_used > stack_size - 1)
@@ -223,19 +224,16 @@ kernel_errno_t create_task(
     regs_used = 0;
     args_to_stack = 0;
 
-    /*
-     *  Unpack the variadic args using initializer list
-     *  This should call process_arg with each given argument
-     */
     int dummy[] = {0, (_process_arg(task, args_to_stack, regs_used, stack_used, args), 0)...}; 
     (void)dummy; // silence unused warning
 
     /*
      * Prepare stack pointer & set entry point 
-     * Stack should look like this: (without the PC H & L)
-     * * Low address:
-     *  [PC H] <-- task.cpu_state.sp should point to this
-     *  [PC L]  <-- Gets popped the first time task is run by the ISR
+     * Stack should look like this:
+     *  Low address:
+     *  [empty] <-- task's sp points to here 
+     *  [PC L]
+     *  [PC H]  
      *  [function args which don't fit in regs]
      *  [---stack high---] end of task's stack
      *  High address:
