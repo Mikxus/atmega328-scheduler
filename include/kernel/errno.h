@@ -22,14 +22,13 @@ typedef enum
 
     /* Data structure errors */
 
-
     /* Generic errors */
     KERNEL_ERR_INVALID_PARAMETER = 30,
     KERNEL_ERR_NOT_FOUND = 31,
     KERNEL_ERR_EMPTY = 32,
     KERNEL_ERR_NOT_EMPTY = 33,
     KERNEL_ERR_FULL = 34,
-    KERNEL_ERR_EVENT_MAX_TASK_CNT = 35,
+    KERNEL_ERR_YIELD_PEND =35
 } kernel_errno_t;
 
 /**
