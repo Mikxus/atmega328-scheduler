@@ -32,9 +32,8 @@ PGM_P kernel_strerror_P(kernel_errno_t errno)
         return PSTR("Kernel err not empty");
     case KERNEL_ERR_FULL:
         return PSTR("Kernel err full");
-    case KERNEL_ERR_EVENT_MAX_TASK_CNT:
-        return PSTR("Kernel err event max task cnt");
-    
+    case KERNEL_ERR_YIELD_PEND:
+        return PSTR("Kernel err yield pend");
     default:
         return PSTR("Unknown error");
     }
