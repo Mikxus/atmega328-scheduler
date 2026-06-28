@@ -2,6 +2,7 @@
 #define _FIFO_H_
 
 #include <stdlib.h>
+#include <kernel/errno.h>
 
 template <typename T>
 struct fifo_t
@@ -14,7 +15,6 @@ struct fifo_t
 
     bool increment_head()
     {
-        // if full
         if (get_used_size() == size)
             return 1;
 
@@ -25,7 +25,6 @@ struct fifo_t
 
     bool increment_tail()
     {
-        // empty
         if (get_used_size() == 0)
             return 1;
 
@@ -63,39 +62,52 @@ public:
         return count;
     }
 
+    /**
+     * @brief Get boolean wether fifo is full  
+     * @note   
+     * @retval 1 if full
+     */
     bool is_full()
     {
         return get_used_size() == size;
     }
 
     /**
-     * @brief Push item
-     * 
-     * @param item 
-     * @return true if fifo is full
-     * @return false 
+     * @brief Add item  
+     * @note   
+     * @param  &item: 
+     * @retval  KERNEL_OK
+     *          KERNEL_ERR_FULL
+     *          KERNEL_ERR_INVALID_PARAMETER
      */
-    bool enqueue(const T &item)
+    kernel_errno_t enqueue(const T &item)
     {
         if (buffer == nullptr)
-            return 1;
+            return KERNEL_ERR_INVALID_PARAMETER;
         
         if (get_used_size() >= size)
-            return 1;
+            return KERNEL_ERR_FULL;
 
         buffer[head] = item;
         increment_head();
-        return 0;
+        return KERNEL_OK;
     }
 
-    bool dequeue(T &output)
+    /**
+     * @brief Dequeue item  
+     * @note Return value indicates wether dequeue was succesfull
+     * @param  &output: 
+     * @retval  KERNEL_OK
+     *          KERNEL_ERR_EMPTY
+     */
+    kernel_errno_t dequeue(T &output)
     {
         if (get_used_size() == 0)
-            return 0; // idk nothing to return
+            return KERNEL_ERR_EMPTY;
         
         output = buffer[tail];
         increment_tail();
-        return 0;
+        return KERNEL_OK;
     }
 };
 

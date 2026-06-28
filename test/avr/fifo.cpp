@@ -21,7 +21,7 @@ int main(void)
     fifo.enqueue(30);
 
     expect_equal(3, fifo.get_used_size(), "FIFO should be full");
-    expect_equal(1, fifo.enqueue(40), "Enqueue should fail when FIFO is full");
+    expect_equal(KERNEL_ERR_FULL, fifo.enqueue(40), "Enqueue should fail when FIFO is full");
     expect_equal(10, buffer[0], "buffer[0] should be 10");
     expect_equal(20, buffer[1], "buffer[1] should be 20");
     expect_equal(30, buffer[2], "buffer[2] should be 30");
