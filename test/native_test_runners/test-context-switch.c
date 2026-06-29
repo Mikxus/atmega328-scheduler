@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
     avr = init_avr(argv[1], argv[2], atoi(argv[3]));
    
     /*
-     * Register callback for timer0 compb interrupt in avr
-     * allows us to detect when the context interrupt has run 
+     * Register callback for timer0 compb interrupt in avr.
+     * Allows us to detect when the context interrupt has run. 
      * TIMER_IRQ_OUT_COMP+1 get us compb interrupt... why?
      */
     avr_irq_register_notify(
