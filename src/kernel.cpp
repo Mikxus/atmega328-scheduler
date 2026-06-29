@@ -7,7 +7,6 @@
 
 /**
  * @brief Converts frequency to timer compare value
- * @note  result may overflow if targeted frequency isn't possible with given prescaler 
  */
 template<uint16_t _FREQ, uint16_t _PRESCALER>
 constexpr uint8_t freq_to_timer_comp_value() {
@@ -305,7 +304,7 @@ void __attribute__((noinline)) _do_context_switch(void) {
 
 /**
  * @brief Task switch interrupt
- * naked ISR to avoid C++ prologue/epilogue generation
+ * naked ISR to avoid prologue/epilogue messing with registers
  */
 ISR(TIMER0_COMPB_vect, ISR_NAKED)
 {
@@ -366,11 +365,11 @@ void __attribute__((noinline)) _do_yield(void) {
 
     OCR0B = freq_to_timer_comp_value<1000, 64>() + TCNT0; // ~1 ms task switch interval
     
-    /* it is possible that task's time slice had
+    /* 
+     * it is possible that task's time slice had
      *  run out while we're switching task. So lets clear the flag
      */
-    if (TIFR0 & (1 << OCF0B))
-        TIFR0 |= (1 << OCF0B); // cleared by writing 1 to it
+    TIFR0 = (1 << OCF0B);
 
     #if CONF_TRACK_TASK_CPU_TIME == 1
     c_task->exec_start_time_us = get_us();
@@ -382,7 +381,7 @@ void __attribute__((naked, noinline)) yield(void)
 {
     _SAVE_CTX();
     /**
-     * avr gcc ABI expects R1 to be 0  
+     *  GCC ABI expects R1 to be 0  
      */
     asm volatile ("clr r1" ::: "memory");
     _do_yield();
