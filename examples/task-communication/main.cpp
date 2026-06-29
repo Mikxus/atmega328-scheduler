@@ -103,10 +103,9 @@ void print_cmd()
     printf_P(PSTR("\n"));
 }
 
-void blink_cmd(char *arr, uint16_t size)
+void blink_cmd(char *arr)
 {
     struct blink_msg msg;
-    bool errno;
 
     char *token = strtok_P(arr, PSTR(" "));
     if (token == NULL) return;
@@ -179,7 +178,7 @@ void control_task(void)
         }
 
         if (strncmp_P(command, PSTR("blink"), 5) == 0) {
-            blink_cmd(command, INPUT_BUFF_SIZE);
+            blink_cmd(command);
             continue;
         }
 
