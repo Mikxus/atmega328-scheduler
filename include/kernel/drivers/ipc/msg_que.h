@@ -17,8 +17,8 @@ template <typename T>
 struct msg_que_t
 {
     fifo_t<T> fifo = {0};
-    event_t rx_event = {0};
-    event_t tx_event = {0};
+    event_t rx_event;
+    event_t tx_event;
 
 public:
     void init(T* buffer, uint8_t size)
