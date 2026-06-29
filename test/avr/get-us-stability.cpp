@@ -16,12 +16,16 @@ int main(void)
     uint32_t last_us = get_us();           
     while(true){
         if (get_us() - last_us >= 1000){
-            PORTB = 0b00010000;
-            // Busy wait for a bit to ensure get_us returns
-            // different value next time
+            PORTB = (1 << PB4);
+
+            /* 
+             * Busy wait for a bit to ensure get_us returns
+             * different value next time
+             */
             for (volatile uint32_t i = 0; i < 10; i++)
                 _NOP();
-            PORTB = 0b00000000;
+
+            PORTB = 0;
             last_us = get_us();
         }
     }
