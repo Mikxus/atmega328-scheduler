@@ -22,7 +22,7 @@ kernel_errno_t create_task(
     task.exec_time_overflow_count = 0;
     task.exec_start_time_us = 0;
     #endif
-    task.stack.memory_ptr = stack_array;
+    task.stack.ptr = stack_array;
     task.stack.size = stack_size;
     task.state = READY;
     task.cpu_state.sreg = 0x80; // interrupts enabled
@@ -33,8 +33,8 @@ kernel_errno_t create_task(
     task.cpu_state.sp = (uint16_t) &stack_array[stack_size - 3];
 
     // Set entry to stack
-    task.stack.memory_ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
-    task.stack.memory_ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
+    task.stack.ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
+    task.stack.ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
 
     _sched_lists.ready_list.add_tail(&task);
 
@@ -43,6 +43,27 @@ kernel_errno_t create_task(
         c_task = _get_ready_list_head();
 
     return KERNEL_OK;
+}
+
+void _calc_arg_stack_size(
+    bool &args_to_stack,
+    uint16_t &regs_used,
+    uint16_t &stack_used,
+    uint16_t arg_size
+) {
+    constexpr uint8_t MAX_REG_USAGE = 17;
+    uint8_t padding = arg_size % 2;
+
+    if (
+        regs_used + arg_size + padding < MAX_REG_USAGE 
+        && args_to_stack == false
+    ) {
+        regs_used += arg_size + padding;
+    } else {
+        args_to_stack = true;
+        stack_used += arg_size;
+    }
+    return;
 }
 
 kernel_errno_t remove_task(task_data_t *task)
@@ -76,6 +97,13 @@ uint16_t get_task_pc(task_data_t *task)
     if (task == nullptr)
         return 0;
 
+    /* 
+     * Getting current task isn't supported as
+     * task.cpu_state.sp is only updated on ctx switch.
+     */
+    if (task == get_current_task())
+        return 0;
+
     ATOMIC_BLOCK() {
         sp = task->cpu_state.sp;
         /* 
@@ -85,7 +113,7 @@ uint16_t get_task_pc(task_data_t *task)
         pc_h = *(uint8_t*)(sp + 1);
     }
 
-    return (pc_h << 8) | pc_l;
+    return (uint16_t) (pc_h << 8U) | pc_l;
 }
 
 kernel_errno_t suspend_task(task_data_t *task)
