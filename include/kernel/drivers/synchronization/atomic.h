@@ -5,6 +5,28 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
+class atomic_guard {
+    uint8_t old_sreg;
+
+public:
+    atomic_guard() __attribute__((always_inline)) {
+        old_sreg = SREG;
+        cli();
+    }
+
+    ~atomic_guard() __attribute__((always_inline)) {
+        __asm__ __volatile__ ("" ::: "memory");
+        SREG = old_sreg;
+        __asm__ __volatile__ ("" ::: "memory");
+    }
+
+    /* Block copy constructor */
+    atomic_guard(const atomic_guard&) = delete;
+
+    /* Block copy assignment */
+    atomic_guard& operator=(const atomic_guard&) = delete;
+};
+
 /**
  * @brief Execute block of code with interrupts disabled 
  * example:
@@ -14,23 +36,17 @@
  * }
  * -- Interrupt state restored here
  */
-#define ATOMIC_BLOCK()                                                              \
-    for (uint8_t _atomic_sreg_##__COUNTER__ __attribute__((cleanup(_atomic_restore))) = ({ uint8_t s = SREG; cli(); s; }), \
-                 _once = 1; _once; _once = 0)
+#define ATOMIC_BLOCK()  \
+    for (bool _once = 1; _once; _once = 0)  \
+        for (atomic_guard _guard_obj; _once; _once = 0)
 
 /**
  * @brief Atomic guard. After this block code is executed with interrupts disabled
+ *      until this goes out of scope.
  * @note MUST be used within a braced scope {}
- *      Do not use in single-line if/for/while statements without braces  
+ *      Do not use in single-line if/for/while statements without braces.  
  */
-#define ATOMIC_GUARD()                                                                 \
-    uint8_t _old_sreg##__COUNTER__ __attribute__((cleanup(_atomic_restore))) = SREG;   \
-    cli();
+#define ATOMIC_GUARD()  \
+    atomic_guard _guard_obj;
 
-static inline __attribute__((always_inline)) void _atomic_restore(uint8_t *old_sreg_ptr) 
-{
-    __asm__ __volatile__ ("" ::: "memory"); // mem barrier
-    SREG = *old_sreg_ptr;
-    __asm__ __volatile__ ("" ::: "memory");
-}
 #endif // _ATOMIC_H_
