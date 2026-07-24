@@ -99,9 +99,15 @@ message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 # set compiler options for build types
 ##########################################################################
 
-# default flags for avr builds
-set(AVR_DEFAULT_FLAGS -fpack-struct -fshort-enums -Wall -Wextra -Wpedantic -funsigned-char -funsigned-bitfields -ffunction-sections -flto)
-# add -Wextra -Wpedantic
+# Default flags for avr builds
+set(
+  AVR_DEFAULT_FLAGS 
+  -Wall -Wextra -Wpedantic
+  -fpack-struct -fshort-enums -funsigned-char -funsigned-bitfields 
+  -ffunction-sections
+  -flto
+)
+
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")
    set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++11")
@@ -204,6 +210,10 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/lib
 )
+
+# Export compile commands
+# Enables editors to detect custom definitions etc..
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 ##########################################################################
 # building library and application in their subdirectories
