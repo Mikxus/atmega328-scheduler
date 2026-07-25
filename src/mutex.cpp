@@ -1,7 +1,13 @@
-#include <kernel/drivers/synchronization/mutex.h>
-#include "../../task_utils.h"
-#include "../scheduling/sched.h"
-#include "../../event_priv.h"
+/**
+ * @file mutex.cpp
+ * @brief  Non recursive mutex with priority inheritance
+ */
+#include <kernel/kernel.h>
+#include <kernel/atomic.h>
+#include <kernel/mutex.h>
+#include "task_utils.h"
+#include "event_priv.h"
+#include "drivers/scheduling/sched.h"
 
 void mtx_init(mutex_t *mtx)
 {
@@ -13,10 +19,6 @@ void mtx_init(mutex_t *mtx)
     #endif
     }
 }
-
-#if SCHEDULER_HAS_PRIORITIES != 1
-#error not included
-#endif
 
 kernel_errno_t mtx_lock(mutex_t *mtx)
 {

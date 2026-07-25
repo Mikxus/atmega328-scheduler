@@ -1,30 +1,27 @@
 /**
  * @file mutex.h 
  * @brief  Non recursive mutex with priority inheritance
- * @note   
  */
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
-#include <avr/interrupt.h>
 #include <kernel/task.h>
 #include <kernel/event.h>
 #include <kernel/errno.h>
-#include <kernel/drivers/synchronization/atomic.h>
-#include <kernel/kernel.h>
 
 typedef struct
 {
     task_data_t* owner;
     event_t mtx_event;
-
-    #if SCHEDULER_HAS_PRIORITIES == 1
     uint8_t base_priority;
-    #endif
 } mutex_t; 
 
 static_assert(sizeof(((task_data_t*)0)->priority) == sizeof(((mutex_t*)0)->base_priority),
                 "inherited_priority must have the same size as task_data_t->priority");
+
+#if SCHEDULER_HAS_PRIORITIES != 1
+    #error ERROR mutex.h needs priorities
+#endif
 
 /**
  * @brief Initializes mutex 

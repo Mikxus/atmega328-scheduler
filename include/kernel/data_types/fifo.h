@@ -1,17 +1,22 @@
+/**
+ * @brief Simple template fifo implementation.
+ * @note Is **not atomic**.  
+ */
 #ifndef _FIFO_H_
 #define _FIFO_H_
 
-#include <stdlib.h>
+#include <stdint.h>
 #include <kernel/errno.h>
 
 template <typename T>
 struct fifo_t
 {
-    T *buffer;
-    uint8_t size;
-    uint8_t count;
-    uint8_t head;
-    uint8_t tail;
+private:
+    T *buffer       = nullptr;
+    uint8_t size    = 0;
+    uint8_t count   = 0;
+    uint8_t head    = 0;
+    uint8_t tail    = 0;
 
     bool increment_head()
     {
@@ -45,8 +50,7 @@ public:
 
     /**
      * @brief Get fifo max size
-     * 
-     * @return size_t 
+     *
      */
     int get_size()
     {
@@ -55,7 +59,6 @@ public:
 
     /**
      * @brief Get count of items in fifo
-     * 
      */
     int get_used_size()
     {
@@ -74,11 +77,11 @@ public:
 
     /**
      * @brief Add item  
-     * @note   
      * @param  &item: 
-     * @retval  KERNEL_OK
-     *          KERNEL_ERR_FULL
-     *          KERNEL_ERR_INVALID_PARAMETER
+     * @retval kernel_errno_t
+     *          - KERNEL_OK
+     *          - KERNEL_ERR_FULL
+     *          - KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t enqueue(const T &item)
     {
@@ -97,8 +100,9 @@ public:
      * @brief Dequeue item  
      * @note Return value indicates wether dequeue was succesfull
      * @param  &output: 
-     * @retval  KERNEL_OK
-     *          KERNEL_ERR_EMPTY
+     * @retval  kernel_errno_t:
+     *          - KERNEL_OK
+     *          - KERNEL_ERR_EMPTY
      */
     kernel_errno_t dequeue(T &output)
     {

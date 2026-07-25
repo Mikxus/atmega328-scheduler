@@ -1,10 +1,13 @@
 /**
  * @file intrusive_slinked_list.h
- * @brief Simple intrusive singly linked list implementation
- * @note Pointers are volatile
- *      Functions are not ATOMIC. Callee must ensure atomicity if needed
+ *
+ * @brief Simple intrusive singly linked list implementation.
  * 
- *      Usage:
+ * @note Functions are not ATOMIC. Callee must ensure atomicity if needed.
+ *
+ * @details Usage:
+ * 
+ * @code {.c}
  *      struct my_data {
  *          intrusive_slinked_list_node<my_data> list_node;
  *          # own data after this
@@ -17,22 +20,29 @@
  *      # where obj is my_data type
  *      my_list.add_tail(&obj);
  *      my_list.remove(&obj); 
+ * @endcode
  */
 #ifndef _INTRUSIVE_SLINKED_LIST_H_
 #define _INTRUSIVE_SLINKED_LIST_H_
 
 #include <kernel/errno.h>
 
+/**
+ * @brief Intrusive slinked list node.
+ */
 template <typename T>
 struct intrusive_slinked_list_node
 {
-    T* volatile next_node;
+    T* next_node;
 };
 
+/**
+ * @brief Intrusive slinkend list accessor.   
+ */
 template <typename T, intrusive_slinked_list_node<T> T::*node_ptr>
 class intrusive_slinked_list
 {
-    T* volatile head;
+    T* head;
 
     void _set_next(T* node, T* next_value) {
         (node->*node_ptr).next_node = next_value;
@@ -65,8 +75,9 @@ public:
      * @brief Add node to tail
      * 
      * @param new_node 
-     * @return  KERNEL_ERR_INVALID_PARAMETER
-     *          KERNEL_OK
+     * @return kernel_errno_t:
+     *          - KERNEL_ERR_INVALID_PARAMETER
+     *          - KERNEL_OK
      */
     kernel_errno_t add_tail(T* new_node)
     {
@@ -95,7 +106,8 @@ public:
      * @brief Remove node from the list
      * 
      * @param node 
-     * @return  KERNEL_ERR_INVALID_PARAMETER
+     * @return kernel_errno_t:
+     *          KERNEL_ERR_INVALID_PARAMETER
      *          KERNEL_ERR_NOT_FOUND
      *          KERNEL_OK
      */

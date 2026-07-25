@@ -1,4 +1,8 @@
-#include <kernel/drivers/clock/clock.h>
+#include <kernel/drivers/clock.h>
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <kernel/drivers/timer.h>
 
 volatile uint32_t timer0_overflow_count = 0;
 volatile uint32_t timer0_ms = 0;

@@ -2,7 +2,6 @@
 #define _TIMER_H_
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
 #define clock_cycles_per_us() ( F_CPU / 1000000L )
 #define clock_cycles_to_us(a) ( (a) / clock_cycles_per_us() )
@@ -68,6 +67,20 @@ typedef enum
    EXTERNAL_CLOCK_SOURCE_FALLING =  (1 << CS02) | (1 << CS01) | (0 << CS00),
    EXTERNAL_CLOCK_SOURCE_RISING =   (1 << CS02) | (1 << CS01) | (1 << CS00) 
 } timer0_clock_select_t;
+
+/*
+typedef enum
+{
+   NO_CLOCK_SOURCE = 0,
+   NO_PRESCALER =                   (0 << CS22) | (0 << CS21) | (1 << CS20),
+   PRESCALER_8 =                    (0 << CS22) | (1 << CS21) | (0 << CS20),
+   PRESCALER_32 =                   (0 << CS22) | (1 << CS21) | (1 << CS20),
+   PRESCALER_64 =                   (1 << CS22) | (0 << CS21) | (0 << CS20),
+   PRESCALER_128 =                  (1 << CS22) | (0 << CS21) | (1 << CS20),
+   PRESCALER_256 =                  (1 << CS22) | (1 << CS21) | (0 << CS20),
+   PRESCALER_1024 =                 (1 << CS22) | (1 << CS21) | (1 << CS20),
+} timer2_clock_select_t;
+*/
 
 /**
  * @brief  Set waveform generation mode for timer0

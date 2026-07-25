@@ -1,4 +1,7 @@
-#include <kernel/drivers/gpio/gpio.h>
+#include <kernel/drivers/gpio.h>
+
+#include <avr/io.h>
+#include <kernel/atomic.h>
 
 void set_gpio_mode(io_port_t port, uint8_t pin, io_data_direction_t dir)
 {

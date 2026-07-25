@@ -7,9 +7,7 @@
 #ifndef _CLOCK_H_
 #define _CLOCK_H_
 
-#include <avr/interrupt.h>
-#include <avr/io.h>
-#include "../timer/timer.h"
+#include <inttypes.h>
 
 /**
  * @brief Initializes timers needed for the scehduler  
