@@ -1,15 +1,14 @@
 /**
  * @file sched.h  
- * @brief   Scheduler seleca
- *          Different scheduling algorithms support different options
- *          Contains defintions with SCHEDULER_ prefix
- *          
+ * @brief   Selects different scheduling algorithms from defined definitions.
+ *
  */
 #ifndef _SCHED_H_
 #define _SCHED_H_
+
 #include <kernel/task.h>
 #include <kernel/event.h>
-#include <kernel/drivers/data_types/intrusive_slinked_list.h>
+#include <kernel/data_types/intrusive_slinked_list.h>
 
 typedef struct
 {
@@ -17,7 +16,7 @@ typedef struct
     intrusive_slinked_list<task_data_t, &task_data_t::next_node> ready_list;
 
     // Tasks which are sleeping
-    intrusive_slinked_list<task_data_t, &task_data_t::next_node> sleep_list;
+    //intrusive_slinked_list<task_data_t, &task_data_t::next_node> sleep_list;
     
     // List of events which hold list of tasks blocked by the event 
     intrusive_slinked_list<event_t, &event_t::next_event> event_list;
