@@ -4,9 +4,10 @@
 #include <avr/pgmspace.h>
 
 #include <kernel/kernel.h>
-#include <kernel/drivers/uart/uart.h>
-#include <kernel/drivers/gpio/gpio.h>
-#include <kernel/drivers/ipc/msg_que.h>
+#include <kernel/drivers/uart.h>
+#include <kernel/drivers/gpio.h>
+#include <kernel/drivers/clock.h>
+#include <kernel/ipc/msg_que.h>
 
 #define PIN_1 PB4
 #define PIN_2 PB3
@@ -19,8 +20,8 @@
 #define RECV_TIMEOUT_MS 20
 
 struct blink_msg {
-    uint8_t count;
-    uint8_t blink_freq;
+    uint8_t count       = 0;
+    uint8_t blink_freq  = 0;
 };
 
 struct blink_msg task_1_buffer[FIFO_SIZE];
@@ -39,9 +40,9 @@ uint8_t control_stack[CONTROL_STACK_SIZE];
 
 void blink_task(msg_que_t<struct blink_msg> *msg_que, io_port port, uint8_t pin)
 {
-    blink_msg message = {0};
-    uint32_t blink_ms = 0; 
-    uint32_t last_blink_ms = 0;
+    blink_msg message;
+    uint32_t blink_ms       = 0; 
+    uint32_t last_blink_ms  = 0;
     set_gpio_mode(port, pin, OUTPUT);
 
     while (1) {
