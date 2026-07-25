@@ -1,13 +1,12 @@
+/**
+ * @file unittest.h
+ * @brief Utilities to test against conditions and to reflect the tests state
+ *        to the test runner.  
+ */
 #ifndef _UNITTEST_H_
 #define _UNITTEST_H_
 
-#include <stdio.h>
-#include <stdint.h>
-#include <avr/io.h>
-#include <avr/sleep.h>
-
-#include <kernel/drivers/synchronization/atomic.h>
-#include <kernel/drivers/uart/uart.h>
+#include <inttypes.h>
 
 extern uint8_t *unittest_exit_result;
 extern uint8_t unittest_state;
@@ -20,8 +19,7 @@ void init_unittest(void);
 
 /**
  * @brief Exit unittest & prepare result to simavr
- * @note   
- * @retval 
+ * @retval None 
  */
 __attribute__((noreturn)) void exit_unittest(void);
 
@@ -47,7 +45,6 @@ void expect(int cond, const char* message);
 
 /**
  * @brief Immediately fail the unittest  
- * @note   
  * @retval None
  */
 void fail_test(const char* message);

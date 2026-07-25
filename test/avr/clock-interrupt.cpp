@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <string.h>
-#include <avr/sleep.h>
 #include <avr/io.h>
+#include <avr/sleep.h>
 #include <kernel/kernel.h>
+#include <kernel/drivers/clock.h>
 
 int main(void)
 {

@@ -1,7 +1,7 @@
 #include "tools/unittest.h"
 #include <kernel/kernel.h>
-#include <kernel/drivers/uart/uart.h>
-#include <kernel/drivers/synchronization/mutex.h>
+#include <kernel/mutex.h>
+#include <kernel/drivers/uart.h>
 
 task_data_t task0, task1, task2, task3;
 uint8_t stack0[100];

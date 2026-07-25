@@ -1,6 +1,7 @@
 #include <avr/sleep.h>
-#include <kernel/drivers/data_types/sorted_array_ptr.h>
 #include <kernel/task.h>
+#include <kernel/data_types/sorted_array_ptr.h>
+#include <kernel/drivers/uart.h>
 #include "tools/unittest.h"
 
 struct test {
@@ -21,13 +22,12 @@ int main(void)
     testC.value = 40;
     testD.value = 10;
 
-    sorted_array_ptr_t<volatile test, uint8_t, &test::value> sarray;
+    sorted_array_ptr_t<test, uint8_t, &test::value> sarray;
 
-    volatile struct test* buffer[ARRAY_SIZE];
+    struct test* buffer[ARRAY_SIZE];
 
     init_unittest();
     initialize_uart();
-
 
     sarray.init(buffer, ARRAY_SIZE);
 

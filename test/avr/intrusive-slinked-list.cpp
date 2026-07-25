@@ -1,7 +1,7 @@
 #include "tools/unittest.h"
 #include <kernel/errno.h>
 #include <kernel/kernel.h>
-#include <kernel/drivers/data_types/intrusive_slinked_list.h>
+#include <kernel/data_types/intrusive_slinked_list.h>
 
 struct data
 {

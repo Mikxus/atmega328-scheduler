@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <avr/sleep.h>
 #include <kernel/kernel.h>
+#include <kernel/drivers/uart.h>
 
 int main(void)
 {

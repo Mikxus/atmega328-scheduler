@@ -1,10 +1,9 @@
-#include <stdio.h>
-#include <string.h>
+#include <stdint.h>
 #include <avr/io.h>
 #include <avr/cpufunc.h>
-#include <avr/sleep.h>
 #include <kernel/kernel.h>
-#include <kernel/drivers/gpio/gpio.h>
+#include <kernel/drivers/gpio.h>
+#include <kernel/drivers/clock.h>
 
 int main(void)
 {

@@ -1,5 +1,12 @@
 #include "unittest.h"
 
+#include <stdio.h>
+#include <avr/io.h>
+#include <avr/sleep.h>
+
+#include <kernel/atomic.h>
+#include <kernel/drivers/uart.h>
+
 uint8_t *unittest_exit_result = (uint8_t *) RAMEND;
 uint8_t unittest_state = 0;
 

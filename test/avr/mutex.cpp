@@ -1,10 +1,11 @@
 #include <avr/io.h>
 #include <avr/cpufunc.h>
+
 #include <kernel/kernel.h>
+#include <kernel/mutex.h>
 #include <kernel/errno.h>
-#include <kernel/drivers/uart/uart.h>
-#include <kernel/drivers/gpio/gpio.h>
-#include <kernel/drivers/synchronization/mutex.h>
+#include <kernel/drivers/uart.h>
+#include <kernel/drivers/gpio.h>
 #include "tools/unittest.h"
 
 #define STACK_SIZE 200

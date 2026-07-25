@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include <avr/sleep.h>
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+
+#include <kernel/task.h>
 #include <kernel/kernel.h>
+#include <kernel/drivers/clock.h>
 
 int main(void)
 {
