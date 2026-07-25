@@ -1,3 +1,7 @@
+/**
+ * @file task.h 
+ * @brief Scheduler's core task definitions & helper functions 
+ */
 #ifndef _TASK_H_
 #define _TASK_H_
 
@@ -9,8 +13,8 @@
 #include <avr/pgmspace.h>
 
 #include <kernel/errno.h>
-#include <kernel/drivers/synchronization/atomic.h>
-#include <kernel/drivers/data_types/intrusive_slinked_list.h>
+#include <kernel/atomic.h>
+#include <kernel/data_types/intrusive_slinked_list.h>
 
 struct event_t; 
 
@@ -53,7 +57,7 @@ typedef struct
  */
 typedef struct task_data_t
 {
-    /* singly linked list node for the current task */
+    /* @brief singly linked list node for the current task */
     intrusive_slinked_list_node<task_data_t> next_node;
 
     /* Flash ptr to a name */
@@ -76,9 +80,6 @@ typedef struct task_data_t
     #endif
     uint8_t time_slice_ms;
 } task_data_t;
-
-/* Currently running task */
-extern task_data_t* volatile c_task;
 
 /**
  * @brief Initialize and add new task to the scheduler  
@@ -104,7 +105,7 @@ kernel_errno_t create_task(
 
 /**
  * @brief Internal function to calculate variadic function's size argument sizes
- * @note   
+ * @note    Only meant to be used by scheduler's internal code.
  * @param  &args_to_stack: 
  * @param  &regs_used: 
  * @param  &stack_used: 
@@ -119,19 +120,19 @@ void _calc_arg_stack_size(
 );
 
 /**
- * @brief Initialize task's registers & stack with arguments.  
+ * @brief Internal function to initialize task's registers & stack with arguments.  
  * @details
  *      ABI rules:
- *          Registers: 
- *          - Arguments allocated left to right r25-r8
- *          - All arguments are aligned to start in even-numbered registers
- *          - odd-sized arguments have one free register above them
- *          - If one argument does not fit in registers all of the remaining args
- *            go to stack.
+ *          - Registers: 
+ *              - Arguments allocated left to right r25-r8
+ *              - All arguments are aligned to start in even-numbered registers
+ *              - odd-sized arguments have one free register above them
+ *              - If one argument does not fit in registers all of the remaining args
+ *                 go to stack.
  * 
- *          Stack: 
- *          - odd-sized arguments on stack do not have padding
- *          - Arguments are placed on stack from low -> high address
+ *          - Stack: 
+ *              - odd-sized arguments on stack do not have padding
+ *              - Arguments are placed on stack from low -> high address
  * 
  * @param  &task: 
  * @param  &args_to_stack: 

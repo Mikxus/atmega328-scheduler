@@ -9,7 +9,7 @@
 
 #include <kernel/event.h>
 #include <kernel/errno.h>
-#include <kernel/drivers/synchronization/atomic.h>
+#include <kernel/atomic.h>
 #include "drivers/scheduling/sched.h"
 
 /**

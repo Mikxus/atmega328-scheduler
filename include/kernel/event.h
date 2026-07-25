@@ -1,7 +1,16 @@
+/**
+ * @file event.h  
+ * 
+ * @brief Scheduler's event subsystem.
+ * 
+ * @details Each blocking event has it's own underlying event structure.
+ *
+ */
 #ifndef _EVENT_H_
 #define _EVENT_H_
+
 #include <kernel/task.h>
-#include <kernel/drivers/data_types/intrusive_slinked_list.h>
+#include <kernel/data_types/intrusive_slinked_list.h>
 
 typedef enum
 {

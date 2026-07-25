@@ -1,4 +1,13 @@
 #include <kernel/kernel.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <stddef.h>
+
+#include <kernel/task.h>
+#include <kernel/drivers/uart.h>
+#include <kernel/drivers/clock.h>
+#include <kernel/drivers/timer.h>
+#include <kernel/atomic.h>
 #include "task_utils.h"
 #include "drivers/scheduling/sched.h"
 
@@ -19,6 +28,11 @@ constexpr uint8_t freq_to_timer_comp_value() {
     static_assert(raw <= UINT8_MAX, "Frequency too high for given prescaler");
     return static_cast<uint8_t>(raw);
 }
+
+/**
+ * @brief Global variable to store the currently running task  
+ */
+task_data_t * volatile _c_task = nullptr;
 
 /**
  * @brief Calculate and update task execution time statistics
@@ -59,7 +73,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
  *      This is inlined in the COMPB interrupt handler
  *      and should be the first thing the interrupt does 
  * @note Assumptions:
- *     - c_task is valid
+ *     - _c_task is valid
  *     - pc is saved at stack, not in task's cpu structure
  * 
  * Stack layout:
@@ -119,7 +133,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "std  Z+%[r0_offset]+27, r27    \n\t" \
         "std  Z+%[r0_offset]+28, r28    \n\t" \
         :                                                                   \
-        : [ctask]       "m" (c_task),                                       \
+        : [ctask]       "m" (_c_task),                                       \
           [r31_offset]  "n" (offsetof(task_data_t, cpu_state.regs[31])),    \
           [r30_offset]  "n" (offsetof(task_data_t, cpu_state.regs[30])),    \
           [r29_offset]  "n" (offsetof(task_data_t, cpu_state.regs[29])),    \
@@ -137,7 +151,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
  *        Enables interrupts as soon as possible and is used in 
  *        non interrupt funcs
  * @note Assumptions:
- *     - c_task is valid
+ *     - _c_task is valid
  *     - pc is saved at stack, not in task's cpu structure
  * 
  * Stack layout:
@@ -198,7 +212,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "std  Z+%[r0_offset]+27, r27    \n\t" \
         "std  Z+%[r0_offset]+28, r28    \n\t" \
         :                                                                   \
-        : [ctask]       "m" (c_task),                                       \
+        : [ctask]       "m" (_c_task),                                       \
           [r31_offset]  "n" (offsetof(task_data_t, cpu_state.regs[31])),    \
           [r30_offset]  "n" (offsetof(task_data_t, cpu_state.regs[30])),    \
           [r29_offset]  "n" (offsetof(task_data_t, cpu_state.regs[29])),    \
@@ -213,7 +227,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
 
 
 /**
- * @brief Restores the next task context from c_task  
+ * @brief Restores the next task context from _c_task  
  */
 #define _RESTORE_CTX_ISR()                                                                  \
     asm volatile (                                                                          \
@@ -263,7 +277,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "pop    r30                     \n\t"                                               \
         :                                                                                   \
         :                                                                                   \
-            [ctask]         "m" (c_task),                                                   \
+            [ctask]         "m" (_c_task),                                                   \
             [sreg_offset]   "n" (offsetof(task_data_t, cpu_state.sreg)),                    \
             [sp_offset]     "n" (offsetof(task_data_t, cpu_state.sp)),                      \
             [r30_offset]    "n" (offsetof(task_data_t, cpu_state.regs[30])),                \
@@ -281,7 +295,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
  *        leading to spurious memory corruption 
  */
 void __attribute__((noinline)) _do_context_switch(void) {
-    calculate_task_execution_time(c_task);
+    calculate_task_execution_time(_c_task);
 
     /* 
      * The hardware automatically disables interrupts upon entering isr and 
@@ -289,7 +303,7 @@ void __attribute__((noinline)) _do_context_switch(void) {
      * rescheduling tasks. Leading to possibility of deadlock when task is 
      * saved in isr and rescheduled by yield().
      */
-    (*c_task).cpu_state.sreg |= (1 << SREG_I);
+    (*_c_task).cpu_state.sreg |= (1 << SREG_I);
 
     _schedule_next_task();
 
@@ -297,7 +311,7 @@ void __attribute__((noinline)) _do_context_switch(void) {
     <CONTEXT_SWITCH_HZ, CONTEXT_SWITCH_PRESCALER>() + TCNT0; // ~1 ms task switch interval
 
     #if CONF_TRACK_TASK_CPU_TIME == 1
-    c_task->exec_start_time_us = get_us();
+    _c_task->exec_start_time_us = get_us();
     #endif
     return;
 }
@@ -359,7 +373,7 @@ void soft_yield(void)
  * @retval None
  */
 void __attribute__((noinline)) _do_yield(void) {
-    calculate_task_execution_time(c_task);
+    calculate_task_execution_time(_c_task);
 
     _schedule_next_task();
 
@@ -372,7 +386,7 @@ void __attribute__((noinline)) _do_yield(void) {
     TIFR0 = (1 << OCF0B);
 
     #if CONF_TRACK_TASK_CPU_TIME == 1
-    c_task->exec_start_time_us = get_us();
+    _c_task->exec_start_time_us = get_us();
     #endif
     return;
 }

@@ -1,4 +1,5 @@
 #include <kernel/task.h>
+#include "kernel_priv.h"
 #include "task_utils.h"
 #include "drivers/scheduling/sched.h"
 
@@ -39,8 +40,8 @@ kernel_errno_t create_task(
     _sched_lists.ready_list.add_tail(&task);
 
     /* if there is no existing task */
-    if (c_task == nullptr)
-        c_task = _get_ready_list_head();
+    if (_c_task == nullptr)
+        _c_task = _get_ready_list_head();
 
     return KERNEL_OK;
 }
@@ -83,7 +84,7 @@ task_data_t* get_current_task()
     task_data_t* task;
 
     ATOMIC_BLOCK() {
-    task = c_task;
+    task = _c_task;
     }
     return task;
 }

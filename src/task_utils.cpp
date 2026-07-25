@@ -1,6 +1,8 @@
+/**
+ * @file task_utils.cpp  
+ * @brief PRIVATE - internal task managment utilities
+ */
 #include "task_utils.h"
-
-task_data_t * volatile c_task = nullptr;
 
 uint16_t _get_task_stack_size(task_data_t *task)
 {
@@ -10,7 +12,7 @@ uint16_t _get_task_stack_size(task_data_t *task)
 uint16_t _get_task_stack_usage(task_data_t *task)
 {
     // stack top - sp
-    return (uint16_t) &task->stack.memory_ptr[task->stack.size - 1] - task->cpu_state.sp;
+    return (uint16_t) &task->stack.ptr[task->stack.size - 1] - task->cpu_state.sp;
 }
 
 void _set_task_state(task_data_t* task, task_state_t state)
