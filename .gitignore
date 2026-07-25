@@ -20,7 +20,7 @@ build
 *.lst
 *.map
 
-# doxygen ignore docs
+# doxygen docs
 docs/
 
 # submodule files
