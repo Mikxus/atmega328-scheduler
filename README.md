@@ -2,7 +2,7 @@
 
 # atmega328-scheduler v0.4.0
 
-Simple hobby scheduler for atmega328p
+Simple preemptive scheduler for atmega328p
 
 ## Features
 
@@ -17,15 +17,24 @@ Simple hobby scheduler for atmega328p
 
 ```bash
 atmega328-scheduler/
-  include/kernel -- Public header files
-  src/           -- Core scheduler code
-  test/avr       -- Avr test files
-  test/native_test_runners -- Avr test file runners
+  |- docs/          -- Doxygen docs
+  |- examples/      -- Example projects
+  |- lib/           -- External libraries
+  |- include/kernel -- Public header files
+  |- src/           -- Core scheduler code
+  |- submodules/
+      |- cmake-avr/ -- Avr cmake toolchain
+      |- simavr/    -- Avr simulator source code
+  |- test/
+      |- avr/                 -- Avr test files
+      |- native_test_runners/ -- Avr test file runners
 ```
 
 ## Building the project
 
-Packages:
+### Setting up development environment
+
+Needed packages:
 * avr-gcc
 * avr-libc (<= 2.2.0)*
 * gcc
@@ -36,8 +45,6 @@ Packages:
 * libdwarf (simavr)
 
 ´*´ simavr doesn't compile with avr-libc 2.3.0 or higher
-
-### Setting up development environment
 
 #### Installing packages
 
@@ -78,17 +85,17 @@ ln -s /usr/lib/avr/include/avr/ submodules/simavr/simavr/cores/avr
 Generate out of source build system with cmake
 
 ```bash
-cmake -Bbuild/release -DCMAKE_BUILD_TYPE=Release
+cmake -Bbuild/release --config Release
 # Or debug build
-cmake -Bbuild/debug -DCMAKE_BUILD_TYPE=Debug
+cmake -Bbuild/debug --config Debug
 ```
 
 To build the project as release or debug:
 
 ```bash
-cmake --build build/release --config CMAKE_BUILD_TYPE=Release
+cmake --build build/release --config Release
  
-cmake --build build/debug --config CMAKE_BUILD_TYPE=Debug
+cmake --build build/debug --config Debug
 ```
 
 ### Running tests
@@ -112,6 +119,13 @@ Now you can run the tests with:
 ```bash
 ctest --test-dir build/debug --rerun-failed --output-on-failure
 ```
+
+### Doxygen documentation
+To build docs run the following command:
+```bash
+cmake --build build/debug|release --target docs
+```
+Doxygen generates html and latex docs in docs folder.
 
 ## License
 This library is under the [MIT license](https://github.com/Mikxus/atmega328-scheduler/blob/main/LICENSE) except the test folder. The code under test folder is licensed under [GPL v3.0](https://github.com/Mikxus/atmega328-scheduler/blob/main/test/LICENSE) since it uses simavr's source code.
