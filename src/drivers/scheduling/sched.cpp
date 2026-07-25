@@ -52,7 +52,6 @@ void _sched_pick_next_task_highest_priority(void)
         seek_ptr = _sched_lists.ready_list.get_next(seek_ptr);
     }
 
-    /* */
     if (priority_cnt == 1)
         _c_task = first_task_ptr;
 }*/
