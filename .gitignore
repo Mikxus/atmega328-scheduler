@@ -20,6 +20,9 @@ build
 *.lst
 *.map
 
+# doxygen ignore docs
+docs/
+
 # submodule files
 submodules/simavr/**
 Libs.mk
