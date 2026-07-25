@@ -229,3 +229,20 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/)
 enable_testing()
 add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 
+##########################################################################
+# Doxygen documentation
+##########################################################################
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    set(DOXYGEN_CONFIG_FILE "${CMAKE_SOURCE_DIR}/doxygen.conf")
+    
+    add_custom_target(
+        docs
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIG_FILE}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Generating Doxygen documentation..."
+        VERBATIM
+    )
+else()
+    message(WARNING "Doxygen not found. Documentation target will not be available.")
+endif()
