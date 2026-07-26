@@ -1,6 +1,6 @@
 #include "tools/unittest.h"
-#include <kernel/errno.h>
 #include <kernel/kernel.h>
+#include <kernel/errno.h>
 #include <kernel/data_types/intrusive_slinked_list.h>
 
 struct data
@@ -83,7 +83,29 @@ int main(void)
 
     errno = data_list.remove(&d);
     expect(errno == KERNEL_ERR_NOT_FOUND, "Test removing from empty list");
+   
+    /* test insert */
+    expect(data_list.add_tail(&a) == KERNEL_OK, "test list add");
+    expect(data_list.add_tail(&b) == KERNEL_OK, "test list add");
+    expect(data_list.insert(&a, &c) == KERNEL_OK, "test list insert");
+    /* list: [a, c, b]*/
+    expect(data_list.insert(&b, &d) == KERNEL_OK, "test list insert");
+    /* list: [a, c, b, d] */
+    struct data *ptr = data_list.get_head();
+    expect(ptr == &a, "Insert test head == &a");
     
+    ptr = data_list.get_next(ptr);
+    expect(ptr == &c, "2nd is &c");
+
+    ptr = data_list.get_next(ptr);
+    expect(ptr == &b, "3rd is &b");
+
+    ptr = data_list.get_next(ptr);
+    expect(ptr == &d, "4th is &d");
+
+    /* test insert errors */
+    expect(data_list.insert(&a, &b) == KERNEL_ERR_NOT_EMPTY, "insert non empty node");
+    expect(data_list.insert(nullptr, nullptr) == KERNEL_ERR_INVALID_PARAMETER, "insert nullptr");
     exit_unittest();
     while (1) {}
 }

@@ -14,7 +14,7 @@
  *      }
  * 
  *      # List head & accessor: 
- *      slinked_list<my_data, &my_data::list_node> my_list;
+ *      intrusive_slinked_list<my_data, &my_data::list_node> my_list;
  * 
  *      # Adding & removing to the list
  *      # where obj is my_data type
@@ -33,7 +33,7 @@
 template <typename T>
 struct intrusive_slinked_list_node
 {
-    T* next_node;
+    T* next_node = nullptr;
 };
 
 /**
@@ -42,6 +42,7 @@ struct intrusive_slinked_list_node
 template <typename T, intrusive_slinked_list_node<T> T::*node_ptr>
 class intrusive_slinked_list
 {
+protected:
     T* head;
 
     void _set_next(T* node, T* next_value) {
@@ -72,12 +73,40 @@ public:
     }
 
     /**
+     * @brief Insert new_node after node
+     * @note New_node must not be already linked
+     *
+     * @param  node: T*
+     * @param  new_node: T* 
+     * @retval kernel_erno_t:
+     *          - KERNEL_OK 
+     *          - KERNEL_ERR_NOT_EMPTY   (new_node is linked to other nodes)
+     *          - KERNEL_ERR_INVALID_PARAMETER 
+     */
+    kernel_errno_t insert(T* node, T* new_node) {
+        T* tmp_ptr = nullptr;
+
+        if (!node || !new_node)
+            return KERNEL_ERR_INVALID_PARAMETER;
+
+        if (get_next(new_node) != nullptr)
+            return KERNEL_ERR_NOT_EMPTY;
+        
+        tmp_ptr = get_next(node);
+        _set_next(node, new_node);
+        _set_next(new_node, tmp_ptr);
+
+        return KERNEL_OK;
+    }
+
+    /**
      * @brief Add node to tail
+     * @note new_node must not have nodes linked to it.
      * 
      * @param new_node 
      * @return kernel_errno_t:
-     *          - KERNEL_ERR_INVALID_PARAMETER
      *          - KERNEL_OK
+     *          - KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t add_tail(T* new_node)
     {
