@@ -10,32 +10,32 @@
 #include <avr/interrupt.h>
 
 /*
- * @brief Internal atomic guard class
+ * @brief **INTERNAL** atomic guard class
  * 
  * @details RAII style interrupt state disabling and restoring.
  * 
  * @note Only meant for internal use by atomic.h
  */
-class atomic_guard {
+class _atomic_guard {
 	uint8_t old_sreg;
 
 public:
-	atomic_guard() __attribute__((always_inline)) {
+	_atomic_guard() __attribute__((always_inline)) {
 		old_sreg = SREG;
 		cli();
 	}
 
-	~atomic_guard() __attribute__((always_inline)) {
+	~_atomic_guard() __attribute__((always_inline)) {
 		__asm__ __volatile__ ("" ::: "memory");
 		SREG = old_sreg;
 		__asm__ __volatile__ ("" ::: "memory");
 	}
 
 	/* Block copy constructor */
-	atomic_guard(const atomic_guard&) = delete;
+	_atomic_guard(const _atomic_guard&) = delete;
 
 	/* Block copy assignment */
-	atomic_guard& operator=(const atomic_guard&) = delete;
+	_atomic_guard& operator=(const _atomic_guard&) = delete;
 };
 
 /**
@@ -53,7 +53,7 @@ public:
  */
 #define ATOMIC_BLOCK()  \
 	for (bool _once = 1; _once; _once = 0)  \
-		for (atomic_guard _guard_obj; _once; _once = 0)
+		for (_atomic_guard _guard_obj; _once; _once = 0)
 
 /**
  * @brief Execute current scope with interrupts disabled
@@ -74,6 +74,6 @@ public:
  * 
  */
 #define ATOMIC_GUARD()  \
-	atomic_guard _guard_obj;
+	_atomic_guard _guard_obj;
 
 #endif // _ATOMIC_H_
