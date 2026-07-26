@@ -67,7 +67,7 @@ typedef struct task_data_t
     volatile task_stack_t stack;
     volatile cpu_registers cpu_state;
 
-    #if SCHEDULER_HAS_PRIORITIES == 1
+    #if CONF_SCHED_PRIORITIES == 1
     uint8_t priority;
     #endif
 

@@ -8,7 +8,7 @@ kernel_errno_t _add_event(event_t *event)
     if (event == nullptr)
         return KERNEL_ERR_INVALID_PARAMETER;
 
-    _sched_lists.event_list.add_tail(event);
+    _sched_lists.event.add_tail(event);
 
     return KERNEL_OK;
 }
@@ -21,7 +21,7 @@ kernel_errno_t _remove_event(event_t *event)
     if (event->blocked_list.get_head() != nullptr)
         return KERNEL_ERR_NOT_EMPTY;
 
-    return _sched_lists.event_list.remove(event);
+    return _sched_lists.event.remove(event);
 }
 
 bool _is_event_empty(const event_t* event)
@@ -35,7 +35,7 @@ kernel_errno_t _event_block_task(task_data_t* task, event_t* event)
         return KERNEL_ERR_INVALID_PARAMETER;
 
     _set_task_state(task, BLOCKED);
-    _sched_lists.ready_list.remove(task);
+    _sched_lists.ready.remove(task);
     event->blocked_list.add_tail(task);
 
     return KERNEL_OK;
@@ -55,8 +55,7 @@ task_data_t* _event_unblock_first(event_t* event)
 
     _set_task_state(task, READY);
     event->blocked_list.remove(task);
-    _sched_lists.ready_list.add_tail(task);
-
+    _sched_lists.ready.add_sorted(task);
     return task;
 }
 
@@ -88,6 +87,6 @@ task_data_t* _event_unblock_highest_prio(event_t* event)
     
     _set_task_state(chosen_ptr, READY);
     event->blocked_list.remove(chosen_ptr);
-    _sched_lists.ready_list.add_tail(chosen_ptr);
+    _sched_lists.ready.add_sorted(chosen_ptr);
     return chosen_ptr;
 }

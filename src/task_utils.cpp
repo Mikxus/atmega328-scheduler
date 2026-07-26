@@ -26,7 +26,7 @@ void _set_task_state(task_data_t* task, task_state_t state)
 
 void _set_task_priority(task_data_t* task, uint8_t priority)
 {
-    #if SCHEDULER_HAS_PRIORITIES == 1
+    #if CONF_SCHED_PRIORITIES == 1
     task->priority = priority;
     #endif
     return;
@@ -34,7 +34,7 @@ void _set_task_priority(task_data_t* task, uint8_t priority)
 
 uint8_t _get_task_priority(task_data_t* task)
 {
-    #if SCHEDULER_HAS_PRIORITIES == 1
+    #if CONF_SCHED_PRIORITIES == 1
     return task->priority;
     #endif
     return 0;
@@ -42,5 +42,5 @@ uint8_t _get_task_priority(task_data_t* task)
 
 task_data_t* _get_ready_list_head()
 {
-    return _sched_lists.ready_list.get_head();
+    return _sched_lists.ready.get_head();
 }

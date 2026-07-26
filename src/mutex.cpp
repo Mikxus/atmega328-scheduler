@@ -14,7 +14,7 @@ void mtx_init(mutex_t *mtx)
     ATOMIC_BLOCK() {
     mtx->owner = nullptr;
     mtx->mtx_event.type = EVENT_MUTEX;
-    #if SCHEDULER_HAS_PRIORITIES == 1
+    #if CONF_SCHED_PRIORITIES == 1
     mtx->base_priority = 0;
     #endif
     }
@@ -30,13 +30,13 @@ kernel_errno_t mtx_lock(mutex_t *mtx)
 
         if (mtx->owner == nullptr) {
             mtx->owner = task;
-            #if SCHEDULER_HAS_PRIORITIES == 1
+            #if CONF_SCHED_PRIORITIES == 1
             mtx->base_priority = mtx->owner->priority;
             #endif
             return KERNEL_OK;
         }
 
-        #if SCHEDULER_HAS_PRIORITIES == 1
+        #if CONF_SCHED_PRIORITIES == 1
 
         _event_block_task(task, &mtx->mtx_event);
 
@@ -57,7 +57,7 @@ kernel_errno_t mtx_release(mutex_t *mtx)
         return MUTEX_ERR_NOT_OWNER;
     }
 
-    #if SCHEDULER_HAS_PRIORITIES == 1
+    #if CONF_SCHED_PRIORITIES == 1
     mtx->owner->priority = mtx->base_priority; 
     mtx->owner = _event_unblock_highest_prio(&mtx->mtx_event);
 

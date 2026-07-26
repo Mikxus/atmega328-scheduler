@@ -19,7 +19,7 @@ typedef struct
 static_assert(sizeof(((task_data_t*)0)->priority) == sizeof(((mutex_t*)0)->base_priority),
                 "inherited_priority must have the same size as task_data_t->priority");
 
-#if SCHEDULER_HAS_PRIORITIES != 1
+#if CONF_SCHED_PRIORITIES != 1
     #error ERROR mutex.h needs priorities
 #endif
 

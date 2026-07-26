@@ -159,13 +159,6 @@ add_definitions(
 
 
 # Task settings
-set(
-    CONF_TASK_NAME_MAX_LENGTH "15"
-)
-add_definitions(
-  "-DCONF_TASK_NAME_MAX_LENGTH=${CONF_TASK_NAME_MAX_LENGTH}"
-)
-
 # track task cpu time
 set(
     CONF_TRACK_TASK_CPU_TIME "1"
@@ -174,33 +167,37 @@ add_definitions(
   "-DCONF_TRACK_TASK_CPU_TIME=${CONF_TRACK_TASK_CPU_TIME}"
 )
 
-add_definitions(
-  "-DCONF_EVENT_MAX_TASK_CNT=${CONF_EVENT_MAX_TASK_CNT}"
-  "-DCONF_TASK_MAX_EVENT_CNT=${CONF_TASK_MAX_EVENT_CNT}"
-)
+# scheduler settings
+set(CONF_SCHED_RR  "0") # Round robin
+set(CONF_SCHED_PRR "1") # Priority round robin
 
+# Autogen priority support flag
+if (CONF_SCHED_RR MATCHES "1") 
+    set(CONF_SCHED_PRIORITIES "0")
+elseif(CONF_SCHED_PRR MATCHES "1")
+    set(CONF_SCHED_PRIORITIES "1")
+else()
+  message(FATAL_ERROR "No scheduler algorithm selected")
+endif()
 
-## scheduler settings
-set(
-  CONF_SCHEDULER_ALGO_ROUND_ROBIN "1"
-)
 add_definitions(
-  "-DCONF_SCHEDULER_ALGO_ROUND_ROBIN=${CONF_SCHEDULER_ALGO_ROUND_ROBIN}"
-  "-DSCHEDULER_HAS_PRIORITIES=1"
+  "-DCONF_SCHED_RR=${CONF_SCHED_RR}"
+  "-DCONF_SCHED_PRR=${CONF_SCHED_PRR}"
+  "-DCONF_SCHED_PRIORITIES=${CONF_SCHED_PRIORITIES}"
 )
 
 message(STATUS "------- Project configurations -------")
 message(STATUS "Uart driver[ ]:")
 message(STATUS "            |- Baud rate: ${CONF_UART_BAUD_RATE}")
-message(STATUS "            |- U2X mode enabled: ${CONF_UART_USE_U2X_MODE}")
+message(STATUS "            |- U2X mode enabled: ${USART0_U2X_SPEED}")
 message(STATUS "")
 message(STATUS "Task settings[ ]:")
-message(STATUS "              |- Name max length: ${CONF_TASK_NAME_MAX_LENGTH}")
 message(STATUS "              |- Track cpu time: ${CONF_TRACK_TASK_CPU_TIME}")
 message(STATUS "")
 message(STATUS "Scheduler settings[ ]:")
-message(STATUS "                   |- Round robin algo enabled: ${CONF_SCHEDULER_ALGO_ROUND_ROBIN}")
-message(STATUS "                   |- Priorities supported: ${SCHEDULER_HAS_PRIORITIES}")
+message(STATUS "                   |- Sched: Round robin: ${CONF_SCHED_RR}")
+message(STATUS "                   |- Sched: Priority round robin: ${CONF_SCHED_PRR}")
+message(STATUS "                   |- Priorities supported: ${CONF_SCHED_PRIORITIES}")
 message(STATUS "------- End of configurations ---------")
 
 ##########################################################################

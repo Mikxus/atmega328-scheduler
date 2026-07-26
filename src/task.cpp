@@ -14,7 +14,7 @@ kernel_errno_t create_task(
 {
     ATOMIC_GUARD();
 
-    #if SCHEDULER_HAS_PRIORITIES == 1
+    #if CONF_SCHED_PRIORITIES == 1
     task.priority = priority;
     #endif
     task.time_slice_ms = slice_ms;
@@ -37,7 +37,7 @@ kernel_errno_t create_task(
     task.stack.ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
     task.stack.ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
 
-    _sched_lists.ready_list.add_tail(&task);
+    _sched_lists.ready.add_sorted(&task);
 
     /* if there is no existing task */
     if (_c_task == nullptr)
@@ -71,7 +71,7 @@ kernel_errno_t remove_task(task_data_t *task)
 {
     ATOMIC_GUARD();
     /* TODO: handle case when task is being blocked by a event */
-    if (_sched_lists.ready_list.remove(task) != KERNEL_OK)
+    if (_sched_lists.ready.remove(task) != KERNEL_OK)
         return KERNEL_ERR_NOT_FOUND;
 
     _set_task_state(task, UNDEFINED);
