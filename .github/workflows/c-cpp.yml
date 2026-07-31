@@ -35,14 +35,15 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Install simavr
-      run: sudo cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target simavr-install
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
   
     - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Test
+      env: LD_LIBRARY_PATH=/lib:${{github.workspace}}/submodules/simavr/simavr/obj-x86_64-pc-linux-gnu/
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+      run: ctest --test-dir ${{github.workspace}}/build -C ${{env.BUILD_TYPE}}
