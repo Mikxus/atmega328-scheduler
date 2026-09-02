@@ -2,6 +2,7 @@
 #define _TIMER_H_
 
 #include <avr/io.h>
+#include <inttypes.h>
 
 #define clock_cycles_per_us() ( F_CPU / 1000000L )
 #define clock_cycles_to_us(a) ( (a) / clock_cycles_per_us() )
@@ -24,10 +25,10 @@ static_assert(WGM21 == WGM01, "ERROR WGM21 and WGM01 bit mismatch");
 static_assert(WGM22 == WGM02, "ERROR WGM22 and WGM02 bit mismatch");
 
 /**
- * @brief Timer0 and Timer2 Waveform Generation Modes
+ * @brief Timer0 Waveform Generation Modes
  * 
  */
-typedef enum
+enum class tmr0_wvf_gen_mode_t : uint8_t
 {
     // top 0xff
     NORMAL = 0,
@@ -41,22 +42,31 @@ typedef enum
     PWM_PHASE_CORRECT_OCRA =(1 << WGM02) | (0 << WGM01) | (1 << WGM00),
     // top OCRA
     FAST_PWM_OCRA =         (1 << WGM02) | (1 << WGM01) | (1 << WGM00)
-} timer0_2_waveform_generation_mode_t;
+};
 
-typedef enum
+/**
+ * @brief Timer 0 compare units
+ */
+enum tmr0_cmp_unit_t : uint8_t
 {
     A = 0,
     B = 1
-} timer0_compare_unit_t;
+};
 
-typedef enum
+/**
+ * @brief Timer 0 interrupts 
+ */
+enum class tmr0_int_t : uint8_t
 {
-    COMPA_INTERRUPT = (1 << OCIE0A),
-    COMPB_INTERRUPT = (1 << OCIE0B),
-    OVERFLOW_INTERRUPT = (1 << TOIE0)
-} timer0_interrupt_t;
+    COMPA_INTERRUPT =       (1 << OCIE0A),
+    COMPB_INTERRUPT =       (1 << OCIE0B),
+    OVERFLOW_INTERRUPT =    (1 << TOIE0)
+};
 
-typedef enum
+/**
+ * @brief Timer 0 clock source
+ */
+enum class tmr0_clk_src_t : uint8_t
 {
    NO_CLOCK_SOURCE = 0,
    NO_PRESCALER =                   (0 << CS02) | (0 << CS01) | (1 << CS00),
@@ -66,10 +76,12 @@ typedef enum
    PRESCALER_1024 =                 (1 << CS02) | (0 << CS01) | (1 << CS00),
    EXTERNAL_CLOCK_SOURCE_FALLING =  (1 << CS02) | (1 << CS01) | (0 << CS00),
    EXTERNAL_CLOCK_SOURCE_RISING =   (1 << CS02) | (1 << CS01) | (1 << CS00) 
-} timer0_clock_select_t;
+};
 
-/*
-typedef enum
+/**
+ * @brief Timer 2 clock select  
+ */
+enum class tmr2_clk_src_t : uint8_t
 {
    NO_CLOCK_SOURCE = 0,
    NO_PRESCALER =                   (0 << CS22) | (0 << CS21) | (1 << CS20),
@@ -79,8 +91,7 @@ typedef enum
    PRESCALER_128 =                  (1 << CS22) | (0 << CS21) | (1 << CS20),
    PRESCALER_256 =                  (1 << CS22) | (1 << CS21) | (0 << CS20),
    PRESCALER_1024 =                 (1 << CS22) | (1 << CS21) | (1 << CS20),
-} timer2_clock_select_t;
-*/
+};
 
 /**
  * @brief  Set waveform generation mode for timer0
@@ -88,7 +99,7 @@ typedef enum
  * @param  mode: 
  * @retval None
  */
-void timer0_set_waveform_generation_mode(timer0_2_waveform_generation_mode_t mode);
+void timer0_set_waveform_generation_mode(tmr0_wvf_gen_mode_t mode);
 
 /**
  * @brief  Sets timer0's clock source
@@ -96,7 +107,7 @@ void timer0_set_waveform_generation_mode(timer0_2_waveform_generation_mode_t mod
  * @param  clock_source: 
  * @retval None
  */
-void timer0_set_clock_source(timer0_clock_select_t clock_source);
+void timer0_set_clock_source(tmr0_clk_src_t clock_source);
 
 /**
  * @brief  Enable timer0 interrupt
@@ -104,7 +115,7 @@ void timer0_set_clock_source(timer0_clock_select_t clock_source);
  * @param  interrupt: 
  * @retval None
  */
-void enable_timer0_interrupt(timer0_interrupt_t interrupt);
+void enable_timer0_interrupt(tmr0_int_t interrupt);
 
 /**
  * @brief  Disable timer0 interrupt
@@ -112,7 +123,7 @@ void enable_timer0_interrupt(timer0_interrupt_t interrupt);
  * @param  interrupt: 
  * @retval None
  */
-void disable_timer0_interrupt(timer0_interrupt_t interrupt);
+void disable_timer0_interrupt(tmr0_int_t interrupt);
 
 /**
  * @brief  Enable timer0 
