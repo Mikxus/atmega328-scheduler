@@ -56,7 +56,7 @@ void _sched_pick_next_prr(void)
 		 * TODO: implement trap function to allow other isr's 
 		 * run and unblock new tasks
 		 */ 
-        while(true){}; 
+        while(true){}
     }
 
     if (
@@ -89,7 +89,7 @@ void _sched_pick_next_prr(void)
 		 */
         _sched_lists.ready.remove(head);
         
-        _sched_lists.ready.add_sorted(head);
+        _sched_lists.ready.add(head);
     }
 
     _c_task = _sched_lists.ready.get_head();
