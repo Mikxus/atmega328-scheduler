@@ -136,9 +136,9 @@ public:
      * 
      * @param node 
      * @return kernel_errno_t:
-     *          KERNEL_ERR_INVALID_PARAMETER
-     *          KERNEL_ERR_NOT_FOUND
-     *          KERNEL_OK
+     *          - KERNEL_ERR_INVALID_PARAMETER
+     *          - KERNEL_ERR_NOT_FOUND
+     *          - KERNEL_OK
      */
     kernel_errno_t remove(T* node)
     {
