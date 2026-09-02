@@ -72,11 +72,11 @@ void initialize_clock(void)
     uint8_t sreg = SREG;
 
     cli();
-    timer0_set_waveform_generation_mode(NORMAL);
+    timer0_set_waveform_generation_mode(tmr0_wvf_gen_mode_t::NORMAL);
 
-    timer0_set_clock_source(PRESCALER_64);
+    timer0_set_clock_source(tmr0_clk_src_t::PRESCALER_64);
 
-    enable_timer0_interrupt(OVERFLOW_INTERRUPT);
+    enable_timer0_interrupt(tmr0_int_t::OVERFLOW_INTERRUPT);
 
     enable_timer0();
 
