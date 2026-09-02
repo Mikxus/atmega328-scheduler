@@ -13,26 +13,6 @@
 #include "drivers/scheduling/sched.h"
 
 /**
- * @brief Add event to event_list  
- * @note   
- * @param  event: 
- * @retval  KERNEL_OK 
- *          KERNEL_ERR_INVALID_PARAMETER 
- */
-kernel_errno_t _add_event(event_t* event);
-
-/**
- * @brief Remove event from event_list  
- * @note   
- * @param  *event: 
- * @return  KERNEL_OK
- *          KERNEL_ERR_INVALID_PARAMETER
- *          KERNEL_ERR_NOT_FOUND
- *          KERNEL_ERR_NOT_EMPTY
- */
-kernel_errno_t _remove_event(event_t* event);
-
-/**
  * @brief Is event empty
  * @note   Tells if there are tasks blocked on that event
  * @param  event:
