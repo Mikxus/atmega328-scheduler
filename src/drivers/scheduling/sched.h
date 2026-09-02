@@ -14,7 +14,7 @@
 typedef struct
 {
     // Tasks which are ready to be scheduled
-    sorted_slinked_list<
+    sched_slinked_list<
         task_data_t,
         &task_data_t::next_node,
         &task_data_t::priority
@@ -24,7 +24,7 @@ typedef struct
     //intrusive_slinked_list<task_data_t, &task_data_t::next_node> sleep_list;
     
     // List of events which hold list of tasks blocked by the event 
-    intrusive_slinked_list<event_t, &event_t::next_event> event;
+    //intrusive_slinked_list<event_t, &event_t::next_event> event;
 } scheduler_lists_t;
 
 extern scheduler_lists_t _sched_lists;

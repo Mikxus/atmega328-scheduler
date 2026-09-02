@@ -1,13 +1,15 @@
 #include <kernel/kernel.h>
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stddef.h>
 
 #include <kernel/task.h>
-#include <kernel/drivers/uart.h>
-#include <kernel/drivers/clock.h>
-#include <kernel/drivers/timer.h>
 #include <kernel/atomic.h>
+#include <kernel/drivers/clock.h>
+#include <kernel/drivers/uart.h>
+#include <kernel/drivers/timer.h>
+
 #include "task_utils.h"
 #include "drivers/scheduling/sched.h"
 
@@ -86,6 +88,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
  */
 #define _SAVE_CTX_ISR()                       \
     asm volatile (                            \
+        "cli                            \n\t" \
         "push r29                       \n\t" \
         "in   r29, __SREG__             \n\t" \
         "push r30                       \n\t" \
@@ -133,7 +136,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "std  Z+%[r0_offset]+27, r27    \n\t" \
         "std  Z+%[r0_offset]+28, r28    \n\t" \
         :                                                                   \
-        : [ctask]       "m" (_c_task),                                       \
+        : [ctask]       "m" (_c_task),                                      \
           [r31_offset]  "n" (offsetof(task_data_t, cpu_state.regs[31])),    \
           [r30_offset]  "n" (offsetof(task_data_t, cpu_state.regs[30])),    \
           [r29_offset]  "n" (offsetof(task_data_t, cpu_state.regs[29])),    \
@@ -157,7 +160,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
  * Stack layout:
  *  SP[-2]  : currently running tasks pc l
  *  SP[-1]  : currently running tasks pc h
- * ------ Below Stack pointer changes made by asm ---  
+ * ------ Below temporary stack pointer changes made by asm ------
  *  sp[0]   : r29
  *  sp[1]   : r30
  *  sp[2]   : r31
@@ -277,7 +280,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "pop    r30                     \n\t"                                               \
         :                                                                                   \
         :                                                                                   \
-            [ctask]         "m" (_c_task),                                                   \
+            [ctask]         "m" (_c_task),                                                  \
             [sreg_offset]   "n" (offsetof(task_data_t, cpu_state.sreg)),                    \
             [sp_offset]     "n" (offsetof(task_data_t, cpu_state.sp)),                      \
             [r30_offset]    "n" (offsetof(task_data_t, cpu_state.regs[30])),                \
@@ -294,7 +297,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
  *        otherwise gcc would trust that the registers are set up correctly
  *        leading to spurious memory corruption 
  */
-void __attribute__((noinline)) _do_context_switch(void) {
+void __attribute__((noinline)) _do_ctx_isr(void) {
     calculate_task_execution_time(_c_task);
 
     /* 
@@ -324,7 +327,7 @@ ISR(TIMER0_COMPB_vect, ISR_NAKED)
 {
     _SAVE_CTX_ISR();
     asm volatile ("clr r1" ::: "memory");
-    _do_context_switch();
+    _do_ctx_isr();
     _RESTORE_CTX_ISR();
     asm volatile ("reti"  ::: "memory");
 }
@@ -334,7 +337,7 @@ void kernel_init_timer(void)
     ATOMIC_GUARD();
 
     // assume timer0 is already initialized 
-    enable_timer0_interrupt(COMPB_INTERRUPT);
+    enable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
 
     // try to trigger at 1 ms intervals 
     OCR0B = freq_to_timer_comp_value<
@@ -372,7 +375,7 @@ void soft_yield(void)
  *        force generate prologue for the C++ code
  * @retval None
  */
-void __attribute__((noinline)) _do_yield(void) {
+void __attribute__((noinline)) _do_ctx_yield(void) {
     calculate_task_execution_time(_c_task);
 
     _schedule_next_task();
@@ -398,7 +401,7 @@ void __attribute__((naked, noinline)) yield(void)
      *  GCC ABI expects R1 to be 0  
      */
     asm volatile ("clr r1" ::: "memory");
-    _do_yield();
+    _do_ctx_yield();
     _RESTORE_CTX();
     asm volatile ("ret" ::: "memory");
 }
