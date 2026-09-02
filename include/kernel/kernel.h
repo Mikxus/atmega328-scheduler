@@ -27,7 +27,8 @@ void __attribute__((noreturn)) kernel_start(void);
 
 /**
  * @brief yields the currently running task by triggering timer0 COMPB match
- * @note It is not quaranteed that the task will yield immediately,
+ * @note Task will yield at the next timer tick
+ *       soft_yield will most likely exit before the current task yields
  */
 //void soft_yield(void);
 
@@ -35,7 +36,7 @@ void __attribute__((noreturn)) kernel_start(void);
  * @brief yields the currently running task immediately
  * @note
  */
-void __attribute__((hot, flatten, naked)) yield(void);
+void __attribute__((naked, noinline)) yield(void);
 
 /**
  * @brief  Delay task specified ms
