@@ -108,21 +108,23 @@ set(
   -flto
 )
 
+set_property(GLOBAL PROPERTY CMAKE_CXX_STANDARD_REQUIRED 23)
+
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os ")
-   set(CMAKE_CXX_FLAGS_RELEASE "-Os -std=c++11")
+   set(CMAKE_CXX_FLAGS_RELEASE "-Os")
    add_definitions("-DRELEASE_BUILD")
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
 if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf")
-   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf -std=c++11")
+   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -save-temps -g -gdwarf-3 -gstrict-dwarf")
    add_definitions("-DRELWITHDEBINFO_BUILD")
 endif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_C_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf")
-   set(CMAKE_CXX_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf -w -std=c++11")
+   set(CMAKE_CXX_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf -w")
    add_definitions("-DDEBUG_BUILD")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
@@ -131,7 +133,7 @@ endif(CMAKE_BUILD_TYPE MATCHES Debug)
 add_definitions(-DSCHEDULER_AVR_MCU=${AVR_MCU})
 
 ##########################################################################
-# Custom flags for the project
+# Generate kernel_config.h from custom options
 ##########################################################################
 add_definitions("-DF_CPU=${MCU_SPEED}")
 
