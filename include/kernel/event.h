@@ -24,7 +24,6 @@ typedef struct event_t
 {
     event_type_t type;
     intrusive_slinked_list<task_data_t, &task_data_t::next_node> blocked_list;
-    intrusive_slinked_list_node<event_t> next_event;
 } event_t;
 
 #endif // _EVENT_H_
