@@ -37,7 +37,7 @@ kernel_errno_t create_task(
     task.stack.ptr[stack_size - 1] = (uint8_t) ((uint16_t) entry & 0xFF);        // pc l 
     task.stack.ptr[stack_size - 2] = (uint8_t) (((uint16_t) entry >> 8) & 0xFF); // pc h
 
-    _sched_lists.ready.add_sorted(&task);
+    _sched_lists.ready.add(&task);
 
     /* if there is no existing task */
     if (_c_task == nullptr)
