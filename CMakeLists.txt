@@ -124,7 +124,7 @@ endif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_C_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf")
-   set(CMAKE_CXX_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf -w")
+   set(CMAKE_CXX_FLAGS_DEBUG "-Og -save-temps -g -gdwarf-3 -gstrict-dwarf -w -fverbose-asm")
    add_definitions("-DDEBUG_BUILD")
 endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
