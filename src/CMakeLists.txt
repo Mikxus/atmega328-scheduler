@@ -6,12 +6,13 @@ add_compile_options(
 # Generate a library from the scheduler source 
 add_avr_library (
     scheduler
-    drivers/uart.cpp
-    drivers/timer.cpp
+    drivers/scheduling/sched.cpp
     drivers/clock.cpp
     drivers/gpio.cpp
+    drivers/timer.cpp
+    drivers/uart.cpp
+    drivers/ws2812b.cpp
     mutex.cpp
-    drivers/scheduling/sched.cpp
     kernel.cpp
     errno.cpp
     event.cpp
