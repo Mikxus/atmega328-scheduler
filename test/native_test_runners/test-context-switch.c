@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     bool interrupt_fired = 0;
     uint8_t register_values[32] = {0};
     uint16_t register_array_offset = 0;
-    
+    bool state = 0;
+
     if (validate_args(argc, argv)){
         return 1;
     }
@@ -94,9 +95,13 @@ int main(int argc, char *argv[])
         if (reg_value != register_values[i]) {
             ERROR("Register %d value incorrect after context restore: expected: 0x%02x got: 0x%02x",
                 i, register_values[i], reg_value);
-            dump_avr_core(avr);
-            return 1;
+            state = true;
         }
     }
-    return 0;
+
+    if (state) {
+        dump_avr_core(avr);
+    }
+
+    return (int) state;
 }
