@@ -215,7 +215,7 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "std  Z+%[r0_offset]+27, r27    \n\t" \
         "std  Z+%[r0_offset]+28, r28    \n\t" \
         :                                                                   \
-        : [ctask]       "m" (_c_task),                                       \
+        : [ctask]       "m" (_c_task),                                      \
           [r31_offset]  "n" (offsetof(task_data_t, cpu_state.regs[31])),    \
           [r30_offset]  "n" (offsetof(task_data_t, cpu_state.regs[30])),    \
           [r29_offset]  "n" (offsetof(task_data_t, cpu_state.regs[29])),    \
@@ -227,7 +227,6 @@ void calculate_task_execution_time(task_data_t volatile *task)
           "r21","r22","r23","r24","r25","r26","r27","r28","r29","r30","r31",\
           "memory","cc"                                                     \
     );
-
 
 /**
  * @brief Restores the next task context from _c_task  
@@ -241,8 +240,10 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "out    __SP_L__, r28           \n\t"                                               \
         "out    __SP_H__, r29           \n\t"                                               \
         "ldd     r28, Z+%[r30_offset]   \n\t"                                               \
-        "ldd     r29, Z+%[r30_offset]+1 \n\t"                                               \
         "push   r28                     \n\t"                                               \
+        "ldd    r28, Z+%[sreg_offset]   \n\t"                                               \
+        "push   r28                     \n\t"                                               \
+        "ldd    r29, Z+%[r30_offset]+1  \n\t"                                               \
         "push   r29                     \n\t"                                               \
         "ldd    r0, Z+%[r0_offset]      \n\t"                                               \
         "ldd    r1, Z+%[r0_offset]+1    \n\t"                                               \
@@ -273,10 +274,10 @@ void calculate_task_execution_time(task_data_t volatile *task)
         "ldd    r26, Z+%[r0_offset]+26  \n\t"                                               \
         "ldd    r27, Z+%[r0_offset]+27  \n\t"                                               \
         "ldd    r28, Z+%[r0_offset]+28  \n\t"                                               \
-        "ldd    r29, Z+%[sreg_offset]   \n\t"                                               \
-        "out    __SREG__, r29           \n\t"                                               \
         "ldd    r29, Z+%[r0_offset]+29  \n\t"                                               \
         "pop    r31                     \n\t"                                               \
+        "pop    r30                     \n\t"                                               \
+        "out    __SREG__, r30           \n\t"                                               \
         "pop    r30                     \n\t"                                               \
         :                                                                                   \
         :                                                                                   \
@@ -313,6 +314,13 @@ void __attribute__((noinline)) _do_ctx_isr(void) {
     OCR0B = freq_to_timer_comp_value
     <CONTEXT_SWITCH_HZ, CONTEXT_SWITCH_PRESCALER>() + TCNT0; // ~1 ms task switch interval
 
+
+    /* 
+     * it is possible that task's time slice had
+     *  run out while we're sleeping.
+     */
+    TIFR0 = (1 << OCF0B);
+
     #if CONF_TRACK_TASK_CPU_TIME == 1
     _c_task->exec_start_time_us = get_us();
     #endif
@@ -329,7 +337,7 @@ ISR(TIMER0_COMPB_vect, ISR_NAKED)
     asm volatile ("clr r1" ::: "memory");
     _do_ctx_isr();
     _RESTORE_CTX_ISR();
-    asm volatile ("reti"  ::: "memory");
+    asm volatile ("ret"  ::: "memory");
 }
 
 void kernel_init_timer(void)
@@ -347,11 +355,8 @@ void kernel_init_timer(void)
 
 void kernel_init(void)
 {
-    ATOMIC_BLOCK() {
-        initialize_uart();
-        initialize_clock();
-    }
-
+    uart_init();
+    clock_init();
     return;
 }
 
@@ -404,4 +409,21 @@ void __attribute__((naked, noinline)) yield(void)
     _do_ctx_yield();
     _RESTORE_CTX();
     asm volatile ("ret" ::: "memory");
+}
+
+void delay_ms(uint16_t ms) {
+    ATOMIC_BLOCK() {
+        if (ms == 0) {
+            return;
+        }
+
+        task_data_t * c_task = get_current_task();
+
+        c_task->sleep_tick = ms / MS_INC;
+
+        _sched_lists.ready.remove(c_task);
+        _sched_lists.sleep.add(c_task);
+        yield();
+    }
+    return;
 }

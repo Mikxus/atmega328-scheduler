@@ -3,6 +3,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <kernel/drivers/timer.h>
+#include <kernel/atomic.h>
+#include "scheduling/sched.h"
 
 volatile uint32_t timer0_overflow_count = 0;
 volatile uint32_t timer0_ms = 0;
@@ -25,6 +27,35 @@ ISR(TIMER0_OVF_vect)
 	timer0_fractional_ms = fract;
 	timer0_ms = ms;
 	timer0_overflow_count++;
+
+    /* Do sleep tick */
+    task_data_t * node;
+    node = _sched_lists.sleep.get_head();
+    if (node == nullptr) {
+        return;
+    }
+
+    node->sleep_tick -= 1;
+
+    if (node->sleep_tick == 0) {
+        /* Wakeup task */
+        _sched_lists.sleep.remove(node);
+        _sched_lists.ready.add(node);
+
+        node = _sched_lists.sleep.get_head();
+
+        /* Check if other tasks are ready*/
+        while (node != nullptr) {
+            if (node->sleep_tick != 0) {
+                break;
+            }
+
+            _sched_lists.sleep.remove(node);
+            _sched_lists.ready.add(node);
+
+            node = _sched_lists.sleep.get_next(node);
+        }
+    }
 }
 
 uint32_t get_ms(void)
@@ -67,18 +98,15 @@ uint32_t get_us(void)
 	return ((ms << 8) + t) * (64 / clock_cycles_per_us());
 }
 
-void initialize_clock(void)
+void clock_init(void)
 {
-    uint8_t sreg = SREG;
+    ATOMIC_BLOCK() {
+        timer0_set_waveform_generation_mode(tmr0_wvf_gen_mode_t::NORMAL);
 
-    cli();
-    timer0_set_waveform_generation_mode(tmr0_wvf_gen_mode_t::NORMAL);
+        timer0_set_clock_source(tmr0_clk_src_t::PRESCALER_64);
 
-    timer0_set_clock_source(tmr0_clk_src_t::PRESCALER_64);
+        enable_timer0_interrupt(tmr0_int_t::OVERFLOW_INTERRUPT);
 
-    enable_timer0_interrupt(tmr0_int_t::OVERFLOW_INTERRUPT);
-
-    enable_timer0();
-
-    SREG = sreg;
+        enable_timer0();
+    }
 }

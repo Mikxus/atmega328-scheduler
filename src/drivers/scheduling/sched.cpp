@@ -1,6 +1,10 @@
 #include "sched.h"
+#include <avr/interrupt.h>
+#include <avr/sleep.h>
+
 #include "../../task_utils.h"
 #include "../../kernel_priv.h"
+#include <kernel/drivers/timer.h> 
 
 scheduler_lists_t _sched_lists;
 
@@ -13,6 +17,22 @@ void _sched_pick_next_rr(void)
     task_data_t* node;
     task_data_t* result_node;
     node = _sched_lists.ready.get_head();
+
+    while (node == nullptr) {
+        /*
+         * No ready tasks. Disable context switch and sleep until 
+         * isr wakes new tasks.
+         */
+        disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
+        sleep_enable();
+        sei();
+        sleep_cpu();
+        cli();
+        sleep_disable();
+
+        node = _sched_lists.ready.get_head();
+        enable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
+    }
 
     while (node != nullptr) {
         if (node->exec_start_time_us <= last_exec_start_us && node->state == READY) {
@@ -49,14 +69,22 @@ void _sched_pick_next_rr(void)
  */
 void _sched_pick_next_prr(void)
 {
-    task_data_t* const head = _sched_lists.ready.get_head();
+    task_data_t* head = _sched_lists.ready.get_head();
 
-    if (head == nullptr) {
-		/**
-		 * TODO: implement trap function to allow other isr's 
-		 * run and unblock new tasks
-		 */ 
-        while(true){}
+    while (head == nullptr) {
+        /*
+         * No ready tasks. Disable context switch and sleep until 
+         * isr wakes new tasks.
+         */
+        disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
+        sleep_enable();
+        sei();
+        sleep_cpu();
+        cli();
+        sleep_disable();
+
+        head = _sched_lists.ready.get_head();
+        enable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
     }
 
     if (

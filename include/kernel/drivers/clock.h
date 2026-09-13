@@ -14,7 +14,7 @@
  * @note  Uses timer0's overflow interrupt
  * @retval None
  */
-void initialize_clock(void);
+void clock_init(void);
     
 /**
  * @brief Returns the uptime in milliseconds

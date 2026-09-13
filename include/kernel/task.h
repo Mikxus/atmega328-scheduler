@@ -57,19 +57,21 @@ typedef struct
  */
 typedef struct task_data_t
 {
-    /* @brief singly linked list node for the current task */
+    /* singly linked list node for the current task */
     intrusive_slinked_list_node<task_data_t> next_node;
 
-    /* Flash ptr to a name */
-    PGM_P name;
+    /* Singly linked list node for sleep */
+    intrusive_slinked_list_node<task_data_t> next_sleep_node;
 
-    volatile task_state_t state;
-    volatile task_stack_t stack;
-    volatile cpu_registers cpu_state;
+    uint16_t sleep_tick;
 
     #if CONF_SCHED_PRIORITIES == 1
     uint8_t priority;
     #endif
+
+    volatile task_state_t state;
+    volatile task_stack_t stack;
+    volatile cpu_registers cpu_state;
 
     #if CONF_TRACK_TASK_CPU_TIME == 1
     volatile uint32_t exec_time_us;
@@ -79,6 +81,10 @@ typedef struct task_data_t
     volatile uint32_t exec_start_time_us;
     #endif
     uint8_t time_slice_ms;
+
+    /* Flash ptr to a name */
+    PGM_P name;
+
 } task_data_t;
 
 /**
