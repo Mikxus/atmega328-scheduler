@@ -7,7 +7,7 @@
 
 int main(void)
 {
-    initialize_clock();
+    clock_init();
 
     // Set PB4 as output
     set_gpio_mode(IO_PORTB, PB4, OUTPUT);

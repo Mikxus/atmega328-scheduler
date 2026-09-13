@@ -11,7 +11,7 @@ int main(void)
     uint8_t buffer[FIFO_SIZE];
 
     init_unittest();
-    initialize_uart();
+    uart_init();
 
 
     fifo.init(buffer, FIFO_SIZE);

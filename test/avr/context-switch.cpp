@@ -27,7 +27,7 @@ int main(void)
     cli();
 
     /* Manually initialize scheduler */
-    initialize_clock();
+    clock_init();
     kernel_init_timer();
     /* set cpu registers to a known state before interrupt */
     __asm__ __volatile__ (

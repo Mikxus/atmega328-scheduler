@@ -27,7 +27,7 @@ int main(void)
     struct test* buffer[ARRAY_SIZE];
 
     init_unittest();
-    initialize_uart();
+    uart_init();
 
     sarray.init(buffer, ARRAY_SIZE);
 

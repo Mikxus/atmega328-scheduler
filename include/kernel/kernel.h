@@ -30,7 +30,7 @@ void __attribute__((noreturn)) kernel_start(void);
  * @note Task will yield at the next timer tick
  *       soft_yield will most likely exit before the current task yields
  */
-//void soft_yield(void);
+void soft_yield(void);
 
 /**
  * @brief yields the currently running task immediately
@@ -45,6 +45,6 @@ void __attribute__((naked, noinline)) yield(void);
  * @param  ms: 
  * @retval None
  */
-void delay_ms(uint32_t ms);
+void delay_ms(uint16_t ms);
 
 #endif // _KERNEL_H_

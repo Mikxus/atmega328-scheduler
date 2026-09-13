@@ -15,7 +15,7 @@
  * @note   
  * @retval None
  */
-void initialize_uart();
+void uart_init();
 
 
 #endif
