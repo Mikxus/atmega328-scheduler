@@ -18,19 +18,16 @@ void _sched_pick_next_rr(void)
     task_data_t* result_node;
     node = _sched_lists.ready.get_head();
 
-    while (node == nullptr) {
-        /*
-         * No ready tasks. Disable context switch and sleep until 
-         * isr wakes new tasks.
-         */
+    if (node == nullptr) {
         disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
-        sleep_enable();
-        sei();
-        sleep_cpu();
-        cli();
-        sleep_disable();
+        do 
+        {
+            sei();
+            asm volatile ("nop" ::: "memory");
+            cli();
+            node = _sched_lists.ready.get_head();
+        } while (node == nullptr);
 
-        node = _sched_lists.ready.get_head();
         enable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
     }
 
@@ -71,19 +68,28 @@ void _sched_pick_next_prr(void)
 {
     task_data_t* head = _sched_lists.ready.get_head();
 
-    while (head == nullptr) {
+    if (head == nullptr) {
         /*
-         * No ready tasks. Disable context switch and sleep until 
-         * isr wakes new tasks.
+         * No ready tasks. Disable context switch and busy wait-till new tasks
+         * are unblocked.
+         * 
+         * We do not use sleep here due to hardware quirk. According to the 
+         * Atmega328P datasheet (sec 9.3 Idle mode) idle mode forces ADC
+         * conversion if the ADC is enabled. Pair this with ADC interrupt
+         * possibly being enabled will cause spurious loop of:
+         *      triggering adc -> interrupt -> wakeup.
+         *
+         * Possibly completely mangling user's sampling rate.
          */
         disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
-        sleep_enable();
-        sei();
-        sleep_cpu();
-        cli();
-        sleep_disable();
 
-        head = _sched_lists.ready.get_head();
+        do
+        {
+            sei();
+            asm volatile ("nop" ::: "memory");
+            cli();
+            head = _sched_lists.ready.get_head();
+        } while (head == nullptr);
         enable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
     }
 
