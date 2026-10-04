@@ -423,6 +423,7 @@ void delay_ms(uint16_t ms) {
 
         _sched_lists.ready.remove(c_task);
         _sched_lists.sleep.add(c_task);
+        _set_task_state(c_task, SLEEP);
         yield();
     }
     return;
