@@ -5,6 +5,7 @@
 #include <kernel/drivers/timer.h>
 #include <kernel/atomic.h>
 #include "scheduling/sched.h"
+#include "../task_utils.h"
 
 volatile uint32_t timer0_overflow_count = 0;
 volatile uint32_t timer0_ms = 0;
@@ -41,7 +42,8 @@ ISR(TIMER0_OVF_vect)
         /* Wakeup task */
         _sched_lists.sleep.remove(node);
         _sched_lists.ready.add(node);
-
+        _set_task_state(node, READY);
+        
         node = _sched_lists.sleep.get_head();
 
         /* Check if other tasks are ready*/
@@ -52,6 +54,7 @@ ISR(TIMER0_OVF_vect)
 
             _sched_lists.sleep.remove(node);
             _sched_lists.ready.add(node);
+            _set_task_state(node, READY);
 
             node = _sched_lists.sleep.get_next(node);
         }
