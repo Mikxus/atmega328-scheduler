@@ -2,16 +2,22 @@
 
 # atmega328-scheduler v0.4.0
 
-Simple preemptive scheduler for atmega328p
+Simple preemptive scheduler for ATmega328P
 
 ## Features
 
 - Preemptive scheduler
+    - Priority round robin
+    - Round robin
 - Custom built test suite with simavr
 - Mutex with priority inheritance
-- Message que with support for multiple producers & consumers
-- gpio driver
-- timer0 driver
+- Message queue with support for multiple producers & consumers
+- Tasks with arbitrary parameter support
+- Simple drivers for:
+    - gpio
+    - timer 0, 1, 2
+    - adc
+    - Bitbang ws2812b
 
 ## Project layout
 
