@@ -7,11 +7,14 @@ void ws2812b_write(
 	volatile uint8_t *  portx,
 	const uint8_t 		pin
 ) {
-	/*
-	 * ws2812b seems to be really lenient on incorrect timings.
-	 * As long as T1H is longer than 0.45 us and T0H is 
-	 * less than 0.40 us it regocnizes it.
-	 */ 
+	static_assert(
+		F_CPU == 16000000UL,
+		"ws2812b_write assumes cpu frequency of 16 Mhz"
+	);
+
+	if (size == 0)
+		return;
+
 	ATOMIC_BLOCK() {
 		/* 
 		 * Pre calculate high and low port values.

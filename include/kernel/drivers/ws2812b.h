@@ -26,8 +26,8 @@ typedef struct wsb2812_rgb {
 
 /**
  * @brief Send rgb_t buffer to leds.
- * 		Takes roughly 30 us per pixel.
- * @note Notes:
+ * @note
+ * 			- Takes roughly 30 us per pixel.
  * 			- Blocks interrupts until all of the buffer is written.
  * 			- Doesn't block for end latch which is 50us or 300us on
  * 			  newer chipsets. Calling code must ensure that this function isn't
@@ -46,6 +46,5 @@ void ws2812b_write(
 	volatile uint8_t *  portx,
 	const uint8_t 		pin
 );
-
 
 #endif  // _WS2812B_H_
