@@ -10,7 +10,7 @@ int main(void)
     clock_init();
 
     // Set PB4 as output
-    set_gpio_mode(IO_PORTB, PB4, OUTPUT);
+    gpio_mode(IO_PORTB, PB4, OUTPUT);
     
     uint32_t last_us = get_us();           
     while(true){

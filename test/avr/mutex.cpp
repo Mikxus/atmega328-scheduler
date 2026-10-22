@@ -93,9 +93,9 @@ void mutex_test(uint8_t pin_num)
 
 void unittest_exit() 
 {
-    set_gpio_mode(IO_PORTB, PB2, INPUT);
+    gpio_mode(IO_PORTB, PB2, INPUT);
     while (1) {
-        if (read_gpio(IO_PORTB, PB2)) {
+        if (gpio_read(IO_PORTB, PB2)) {
             printf_P(PSTR("Exiting test\n"));
             uart0_flush();
             exit_unittest();
