@@ -6,6 +6,7 @@ add_compile_options(
 # Generate a library from the scheduler source 
 add_avr_library (
     scheduler
+    drivers/adc.cpp
     drivers/scheduling/sched.cpp
     drivers/clock.cpp
     drivers/gpio.cpp
