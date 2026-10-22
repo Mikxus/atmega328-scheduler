@@ -84,7 +84,7 @@ task_data_t* get_current_task()
     task_data_t* task;
 
     ATOMIC_BLOCK() {
-    task = _c_task;
+    task = _get_current_task();
     }
     return task;
 }
@@ -127,6 +127,8 @@ kernel_errno_t suspend_task(task_data_t *task)
         return TASK_ERR_BLOCKED;
 
     _set_task_state(task, STOPPED);
+    _sched_lists.ready.remove(task);
+    _sched_lists.sleep.remove(task);
     return KERNEL_OK;
 }
 

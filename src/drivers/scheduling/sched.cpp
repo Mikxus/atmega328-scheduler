@@ -70,7 +70,7 @@ void _sched_pick_next_prr(void)
 
     if (head == nullptr) {
         /*
-         * No ready tasks. Disable context switch and busy wait-till new tasks
+         * No ready tasks. Disable context switch and busy-wait till new tasks
          * are unblocked.
          * 
          * We do not use sleep here due to hardware quirk. According to the 
@@ -83,13 +83,13 @@ void _sched_pick_next_prr(void)
          */
         disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
 
-        do
-        {
+        do {
             sei();
             asm volatile ("nop" ::: "memory");
             cli();
             head = _sched_lists.ready.get_head();
         } while (head == nullptr);
+
         enable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
     }
 
@@ -98,7 +98,7 @@ void _sched_pick_next_prr(void)
         && _c_task == head	/* previously executed task should be at head if  */
     ) {						/* it hasn't been unscheduled                     */
         /**
-		 * TODO: Worst case O(n)to insert back. Remove is O(1) since we're
+		 * TODO: Worst case O(n) to insert back. Remove is O(1) since we're
 		 * removing the head.
          * will need to improve this.
 		 * Thoughts:
