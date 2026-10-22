@@ -45,12 +45,66 @@ enum class tmr0_wvf_gen_mode_t : uint8_t
 };
 
 /**
- * @brief Timer 0 compare units
+ * @brief Timer 1 waveform generation modes.  
  */
-enum tmr0_cmp_unit_t : uint8_t
+enum class tmr1_wvf_gen_mode : uint8_t
 {
-    A = 0,
-    B = 1
+    // top 0xFFFF
+    NORMAL = 0,
+
+    // top 0xFF
+    PWM_PHC_8BIT    = (0 << WGM13) | (0 << WGM12) | (0 << WGM11) | (1 << WGM10),
+    // top 0x1FF
+    PWM_PHC_9BIT    = (0 << WGM13) | (0 << WGM12) | (1 << WGM11) | (0 << WGM10),
+    // top 0x3FF
+    PWM_PHC_10BIT   = (0 << WGM13) | (0 << WGM12) | (1 << WGM11) | (1 << WGM10),
+
+    // top OCR1A
+    CTC_OCR1A       = (0 << WGM13) | (1 << WGM12) | (0 << WGM11) | (0 << WGM10),
+
+    // top 0xFF
+    FAST_PWM_8BIT   = (0 << WGM13) | (1 << WGM12) | (0 << WGM11) | (1 << WGM10),
+    // top 0x1FF
+    FAST_PWM_9BIT   = (0 << WGM13) | (1 << WGM12) | (1 << WGM11) | (0 << WGM10),
+    // top 0x3FF
+    FAST_PWM_10BIT  = (0 << WGM13) | (1 << WGM12) | (1 << WGM11) | (1 << WGM10),
+
+    // Phase & frequency correct. top ICR1
+    PWM_PHFC_ICR1   = (1 << WGM13) | (0 << WGM12) | (0 << WGM11) | (0 << WGM10),
+    // Phase & frequency correct. top OCR1A
+    PWM_PHFC_OCR1A  = (1 << WGM13) | (0 << WGM12) | (0 << WGM11) | (1 << WGM10),
+
+    // Phase correct. top ICR1
+    PWM_PHC_ICR1    = (1 << WGM13) | (0 << WGM12) | (1 << WGM11) | (0 << WGM10),
+    // Phase correct. top OCR1A
+    PWM_PHC_OCR1A   = (1 << WGM13) | (0 << WGM12) | (1 << WGM11) | (1 << WGM10),
+
+    // top ICR1
+    CTC_ICR1        = (1 << WGM13) | (1 << WGM12) | (0 << WGM11) | (0 << WGM10),
+
+    // top ICR1A
+    FAST_PWM_ICR1A  = (1 << WGM13) | (1 << WGM12) | (1 << WGM11) | (0 << WGM10),
+    // top OCR1A
+    FAST_PWM_OCR1A  = (1 << WGM13) | (1 << WGM12) | (1 << WGM11) | (1 << WGM10)
+};
+
+/**
+ * @brief Timer 2 waveform generation modes.  
+ */
+enum class tmr2_wvf_gen_mode : uint8_t
+{
+    // top 0xff
+    NORMAL = 0,
+    // top 0xff
+    PWM_PHASE_CORRECT =     (0 << WGM22) | (0 << WGM21) | (1 << WGM20),
+    // top OCRA. clear timer on compare match
+    CTC =                   (0 << WGM22) | (1 << WGM21) | (0 << WGM20),
+    // top 0xff
+    FAST_PWM =              (0 << WGM22) | (1 << WGM21) | (1 << WGM20),
+    // top OCRA
+    PWM_PHASE_CORRECT_OCRA =(1 << WGM22) | (0 << WGM21) | (1 << WGM20),
+    // top OCRA
+    FAST_PWM_OCRA =         (1 << WGM22) | (1 << WGM21) | (1 << WGM20)
 };
 
 /**
@@ -63,8 +117,26 @@ enum class tmr0_int_t : uint8_t
     OVERFLOW_INTERRUPT =    (1 << TOIE0)
 };
 
+enum class tmr1_int : uint8_t
+{
+    COMPA_INT =             (1 << OCIE1A),
+    COMPB_INT =             (1 << OCIE1B),
+    OVERFLOW_INT =          (1 << TOIE1),
+    CAPTURE_INT =           (1 << ICIE1)
+};
+
 /**
- * @brief Timer 0 clock source
+ * @brief Timer 2 interrupts 
+ */
+enum class tmr2_int : uint8_t
+{
+    COMPA_INTERRUPT =       (1 << OCIE2A),
+    COMPB_INTERRUPT =       (1 << OCIE2B),
+    OVERFLOW_INTERRUPT =    (1 << TOIE2)
+};
+
+/**
+ * @brief Timer 0 clock source.
  */
 enum class tmr0_clk_src_t : uint8_t
 {
@@ -79,9 +151,24 @@ enum class tmr0_clk_src_t : uint8_t
 };
 
 /**
- * @brief Timer 2 clock select  
+ * @brief Timer 1 clock select.
  */
-enum class tmr2_clk_src_t : uint8_t
+enum class tmr1_clk_src : uint8_t
+{
+    NO_CLOCK_SOURCE = 0,
+    NO_PRESCALER =                  (0 << CS12) | (0 << CS11) | (1 << CS10),
+    PRESCALER_8 =                   (0 << CS12) | (1 << CS11) | (0 << CS10),
+    PRESCALER_64 =                  (0 << CS12) | (1 << CS11) | (1 << CS10),
+    PRESCALER_256 =                 (1 << CS12) | (0 << CS11) | (0 << CS10),
+    PRESCALER_1024 =                (1 << CS12) | (0 << CS11) | (1 << CS10),
+    EXT_PIN_FALL =                  (1 << CS12) | (1 << CS11) | (0 << CS10),
+    EXT_PIN_RIS =                   (1 << CS12) | (1 << CS11) | (1 << CS10),
+};
+
+/**
+ * @brief Timer 2 clock select. 
+ */
+enum class tmr2_clk_src : uint8_t
 {
    NO_CLOCK_SOURCE = 0,
    NO_PRESCALER =                   (0 << CS22) | (0 << CS21) | (1 << CS20),
@@ -102,20 +189,76 @@ enum class tmr2_clk_src_t : uint8_t
 void timer0_set_waveform_generation_mode(tmr0_wvf_gen_mode_t mode);
 
 /**
+ * @brief  Set waveform generation mode for timer1
+ * @param  mode: 
+ * @retval None
+ */
+void tmr1_set_wvf_gen(tmr1_wvf_gen_mode mode);
+
+/**
+ * @brief  Set waveform generation mode for timer2
+ * @note   Affects both OC2A and OC2B comparators
+ * @retval None
+ */
+void tmr2_set_wvf_gen(tmr2_wvf_gen_mode mode);
+
+/**
  * @brief  Sets timer0's clock source
- * @note   
  * @param  clock_source: 
  * @retval None
  */
 void timer0_set_clock_source(tmr0_clk_src_t clock_source);
 
 /**
+ * @brief Set timer1 clock source.  
+ * @param  clock_source: clock source
+ * @retval None
+ */
+void tmr1_set_clk_src(tmr1_clk_src clock_source);
+
+/**
+ * @brief  Sets timer2's clock source
+ * @param  clock_source: 
+ * @retval None
+ */
+void tmr2_set_clk_src(tmr2_clk_src clock_source);
+
+/**
  * @brief  Enable timer0 interrupt
- * @note   
  * @param  interrupt: 
  * @retval None
  */
 void enable_timer0_interrupt(tmr0_int_t interrupt);
+
+/**
+ * @brief Enable or disable timer1 interrupt.
+ * @param  interrupt: Specific interrupt. 
+ * @param  state: TRUE: Enabled, FALSE: Disable.
+ * @retval None
+ */
+void tmr1_set_int(tmr1_int interrupt, bool state);
+
+/**
+ * @brief Enable or disable timer2 interrupt.
+ * @param  interrupt: Specific interrupt. 
+ * @param  state: TRUE: Enabled, FALSE: Disable.
+ * @retval None
+ */
+void tmr2_set_int(tmr2_int interrupt, bool state);
+
+/**
+ * @brief Set timer1 power state.
+ * @param  state: TRUE: Enabled, FALSE: Disable.
+ * @retval None
+ */
+void tmr1_set_power(bool state);
+
+/**
+ * @brief Set timer2 power state.
+ * @param  state: TRUE: Enabled, FALSE: Disable.
+ * @retval None
+ */
+void tmr2_set_power(bool state);
 
 /**
  * @brief  Disable timer0 interrupt
