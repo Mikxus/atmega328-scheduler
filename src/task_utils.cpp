@@ -3,6 +3,12 @@
  * @brief PRIVATE - internal task managment utilities
  */
 #include "task_utils.h"
+#include "kernel_priv.h"
+
+task_data_t* _get_current_task(void) {
+    return _c_task;
+}
+
 
 uint16_t _get_task_stack_size(task_data_t *task)
 {

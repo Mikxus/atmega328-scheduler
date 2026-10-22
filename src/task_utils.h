@@ -9,13 +9,16 @@
 #include <kernel/errno.h>
 #include "drivers/scheduling/sched.h"
 
+task_data_t * _get_current_task(void);
+
 /**
  * @brief get task's stack usage in bytes
  * @param task 
  * @return 
  */
 uint16_t _get_task_stack_usage(
-    task_data_t* task);
+    task_data_t* task
+);
 
 /**
  * @brief Get task's stack size in bytes
@@ -24,7 +27,8 @@ uint16_t _get_task_stack_usage(
  * @return 
  */
 uint16_t _get_task_stack_size(
-    task_data_t* task);
+    task_data_t* task
+);
 
 /**
  * @brief Set task state
@@ -34,7 +38,8 @@ uint16_t _get_task_stack_size(
  */
 void _set_task_state(
     task_data_t *task,
-    task_state_t state);
+    task_state_t state
+);
 
 /**
  * @brief Set task to given priority  
@@ -44,7 +49,8 @@ void _set_task_state(
  */
 void _set_task_priority(
     task_data_t* task,
-    uint8_t priority);
+    uint8_t priority
+);
 
 /**
  * @brief Get task's priority  
