@@ -44,21 +44,22 @@ class sched_slinked_list : private intrusive_slinked_list<T, node_ptr>
     }
 
     /**
-     * @brief Add new node sorted by priority
+     * @brief Add new node sorted by priority.
      * @details The resulting list will have highest priority at head and lowest
      *          at tail.
      * 
-     *          If the list has same priority nodes as new_node it
+     * @note 
+     *          - New_node must not be already linked
+     * 
+     *          - If the list has same priority nodes as new_node it
      *          will be placed behind the last same priority node whose next_ptr
      *          points to either lower priority node or nullptr (list end).
      * 
-     * @note New_node must not be already linked
      * @param  new_node: 
-     *
-     * @retval kernel_errno_t:
-     *              - KERNEL_OK
-     *              - KERNEL_ERR_NOT_EMPTY   (new_node is linked to other nodes)
-     *              - KERNEL_ERR_INVALID_PARAMETER
+     * 
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_NOT_EMPTY   (new_node is linked to other nodes)
+     * @retval KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t _add_sorted(T* new_node) {
         uint8_t priority    = _get_prio(*new_node);
@@ -75,7 +76,6 @@ class sched_slinked_list : private intrusive_slinked_list<T, node_ptr>
             this->head = new_node;
             return KERNEL_OK;
         }
-
 
         /*
          * Case: new_node's priority is higher than first node's.
@@ -128,11 +128,11 @@ public:
 
     /**
      * @brief Add new node to the list
-     * @param  new_node: 
-     * @retval kernel_errno_t:
-     *              - KERNEL_OK
-     *              - KERNEL_ERR_NOT_EMPTY
-     *              - KERNEL_ERR_INVALID_PARAMETER
+     * @param  new_node:
+     *
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_NOT_EMPTY
+     * @retval KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t add(T* new_node) {
         if constexpr (CONF_SCHED_PRIORITIES == true) {

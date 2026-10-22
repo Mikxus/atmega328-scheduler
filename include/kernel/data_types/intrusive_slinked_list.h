@@ -20,6 +20,13 @@
  *      # where obj is my_data type
  *      my_list.add_tail(&obj);
  *      my_list.remove(&obj); 
+ * 
+ *      # Iteration:
+ *      struct my_data * node = my_list.get_head();
+ *      while (get_next(node) != nullptr) {
+ *          # Do stuff
+ *          node = get_next(node);
+ *      }
  * @endcode
  */
 #ifndef _INTRUSIVE_SLINKED_LIST_H_
@@ -73,15 +80,15 @@ public:
     }
 
     /**
-     * @brief Insert new_node after node
-     * @note New_node must not be already linked
+     * @brief Insert new_node after node.
+     * @note New_node must not be already linked.
      *
      * @param  node: T*
-     * @param  new_node: T* 
-     * @retval kernel_erno_t:
-     *          - KERNEL_OK 
-     *          - KERNEL_ERR_NOT_EMPTY   (new_node is linked to other nodes)
-     *          - KERNEL_ERR_INVALID_PARAMETER 
+     * @param  new_node: T*
+     * 
+     * @retval KERNEL_OK 
+     * @retval KERNEL_ERR_NOT_EMPTY   (new_node is linked to other nodes)
+     * @retval KERNEL_ERR_INVALID_PARAMETER 
      */
     kernel_errno_t insert(T* node, T* new_node) {
         T* tmp_ptr = nullptr;
@@ -100,13 +107,13 @@ public:
     }
 
     /**
-     * @brief Add node to tail
+     * @brief Add node to tail.
      * @note new_node must not have nodes linked to it.
      * 
-     * @param new_node 
-     * @return kernel_errno_t:
-     *          - KERNEL_OK
-     *          - KERNEL_ERR_INVALID_PARAMETER
+     * @param new_node: T*
+     * 
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t add_tail(T* new_node)
     {
@@ -134,11 +141,11 @@ public:
     /**
      * @brief Remove node from the list
      * 
-     * @param node 
-     * @return kernel_errno_t:
-     *          - KERNEL_ERR_INVALID_PARAMETER
-     *          - KERNEL_ERR_NOT_FOUND
-     *          - KERNEL_OK
+     * @param node: T*
+     * 
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_NOT_FOUND
+     * @retval KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t remove(T* node)
     {

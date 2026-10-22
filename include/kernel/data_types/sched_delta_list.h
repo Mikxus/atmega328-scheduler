@@ -1,5 +1,5 @@
 /**
- * @file sched_slinked_list.h
+ * @file sched_delta_list.h
  *
  * @brief **INTERNAL** singly linked timer tick delta list.
  * 
@@ -17,7 +17,7 @@
 #include <kernel/data_types/intrusive_slinked_list.h>
 
 /**
- * @brief Scheduler's list implementation. Implements intrusive_slinked_list.
+ * @brief Scheduler's list implementation.
  */
 template<
     typename T,
@@ -42,22 +42,22 @@ public:
     /**
      * @brief Add new node to delta list.
      * 
-     * @details The resulting list will have next expiring task at head.
-     * 
-     *          If the new node has same expiration has node in the list new node
-     *          will be placed foward of the pre existing node.
+     * @details 
+     *          - The resulting list will have next expiring task at head.
+     *          - If the new node has same expiration as node in the list the new 
+     *          node will be placed foward of the pre existing node.
      * 
      * @note    
      *          - New node must have it's sleep_tick_ptr populated with the 
-     *            wanted timeout.
+     *            wanted timeout in milliseconds.
      *          - new_node must not be already linked.
+     *          - LIFO ordering when same timeout. (TODO: fix ordering to FIFO)
      * 
      * @param  new_node: Pointer to new node. 
      *
-     * @retval kernel_errno_t:
-     *              - KERNEL_OK
-     *              - KERNEL_ERR_NOT_EMPTY   (new_node is linked to other nodes)
-     *              - KERNEL_ERR_INVALID_PARAMETER
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_NOT_EMPTY         (new_node is linked to other nodes)
+     * @retval KERNEL_ERR_INVALID_PARAMETER (Nullptr as parameter)
      */
     kernel_errno_t add(T* new_node) {
         using base_list = intrusive_slinked_list<T, node_ptr>;
@@ -116,11 +116,10 @@ public:
      * 
      * @param  node: Pointer to node.
      * 
-     * @retval kernel_errno_t:
-     *              - KERNEL_OK
-     *              - KERNEL_ERR_EMPTY
-     *              - KERNEL_ERR_NOT_FOUND
-     *              - KERNEL_ERR_INVALID_PARAMETER
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_EMPTY                 (Empty list)
+     * @retval KERNEL_ERR_NOT_FOUND             (Not found)
+     * @retval KERNEL_ERR_INVALID_PARAMETER     (Nullptr as parameter)
      */
     kernel_errno_t remove(T* node) {
         using base_list = intrusive_slinked_list<T, node_ptr>;
@@ -169,4 +168,4 @@ public:
     }
 };
 
-#endif  // _SCHED_SLINKED_LIST_PRIV_H_
+#endif  // _SCHED_DELTA_LIST_H_

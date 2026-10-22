@@ -58,7 +58,7 @@ public:
     }
 
     /**
-     * @brief Get count of items in fifo
+     * @brief Get count of items in fifo.
      */
     int get_used_size()
     {
@@ -66,7 +66,7 @@ public:
     }
 
     /**
-     * @brief Get boolean wether fifo is full  
+     * @brief Get boolean wether fifo is full.
      * @note   
      * @retval 1 if full
      */
@@ -76,12 +76,12 @@ public:
     }
 
     /**
-     * @brief Add item  
+     * @brief Add item.
      * @param  &item: 
-     * @retval kernel_errno_t
-     *          - KERNEL_OK
-     *          - KERNEL_ERR_FULL
-     *          - KERNEL_ERR_INVALID_PARAMETER
+     *  
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_FULL
+     * @retval KERNEL_ERR_INVALID_PARAMETER
      */
     kernel_errno_t enqueue(const T &item)
     {
@@ -97,12 +97,11 @@ public:
     }
 
     /**
-     * @brief Dequeue item  
-     * @note Return value indicates wether dequeue was succesfull
+     * @brief Dequeue item.
      * @param  &output: 
-     * @retval  kernel_errno_t:
-     *          - KERNEL_OK
-     *          - KERNEL_ERR_EMPTY
+     *
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_EMPTY
      */
     kernel_errno_t dequeue(T &output)
     {

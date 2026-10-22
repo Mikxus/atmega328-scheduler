@@ -32,7 +32,7 @@ typedef enum
 } task_state_t;
 
 /**
- * @brief Atmega328p's cpu registers' state for context switching
+ * @brief Atmega328p cpu state
 */
 struct __attribute__((packed)) cpu_registers
 {

@@ -25,11 +25,6 @@ struct msg_que_t
 public:
     void init(T* buffer, uint8_t size)
     {
-        ATOMIC_BLOCK(){
-            ATOMIC_BLOCK(){
-
-            }
-        };
         fifo.init(buffer, size);
         rx_event.type = EVENT_MSG_QUE;
         tx_event.type = EVENT_MSG_QUE;
@@ -64,14 +59,13 @@ public:
     }
 
     /**
-     * @brief Enqueue from isr  
-     * @note  If yield_pend is set to true you must use yield
-     *        at the end of isr.
-     * 
+     * @brief Enqueue from isr.
+     * @note  Sets yield_pend to true if the calling code should yield at the 
+     *        end of isr.
      * 
      * @param  &item: 
-     * @retval  KERNEL_OK
-     *          KERNEL_ERR_FULL
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_FULL
      */
     kernel_errno_t enqueueISR(const T &item, bool &yield_pend) {
         task_data_t* unblocked;
@@ -95,13 +89,12 @@ public:
 
     /**
      * @brief Dequeue from isr  
-     * @note  If yield_pend is set to true you must use yield
-     *        at the end of isr.
-     * 
+     * @note  Sets yield_pend to true if the calling code should yield at the 
+     *        end of isr.
      * 
      * @param  &item: 
-     * @retval  KERNEL_OK
-     *          KERNEL_ERR_EMPTY
+     * @retval KERNEL_OK
+     * @retval KERNEL_ERR_EMPTY
      */
     kernel_errno_t dequeueISR(T &output, bool &yield_pend) {
         task_data_t* unblocked;

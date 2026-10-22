@@ -14,11 +14,11 @@
  */
 enum class adc_vref : uint8_t 
 {
-	// AREF, internal Vref turned off.
+	/**  AREF, internal Vref turned off. */
 	AREF		= (0 << REFS1) | (0 << REFS0),
-	// AVcc with external cap
+	/** AVcc with external cap */
 	AVCC		= (0 << REFS1) | (1 << REFS0),
-	// Internal 1.1 V reference
+	/** Internal 1.1 V reference */
 	INTERNAL	= (1 << REFS1) | (1 << REFS0)
 };
 
@@ -36,14 +36,14 @@ enum class adc_ch : uint8_t
 	ADC6	= (0 << MUX3) | (1 << MUX2) | (1 << MUX1) | (0 << MUX0),
 	ADC7	= (0 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0),
 	TEMP	= (1 << MUX3) | (0 << MUX2) | (0 << MUX1) | (0 << MUX0),
-	// 1.1 V (Vbg)
+	/**  1.1 V (Vbg) */
 	ONE		= (1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (0 << MUX0),
-	// Ground reference
+	/**  Ground reference */
 	GND		= (1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0)
 };
 
 /**
- * @brief Adc auto trigger source  
+ * @brief Adc auto trigger source.
  */
 enum class adc_auto_trig_src : uint8_t {
 	FREE_RUN		= (0 << ADTS2) | (0 << ADTS1) | (0 << ADTS0),
@@ -71,7 +71,6 @@ enum class adc_prescaler : uint8_t {
 
 /**
  * @brief Set adc pheriphals power state.  
- * @note   
  * @param  state: Logical one enables.
  * @retval None
  */
@@ -79,7 +78,6 @@ void adc_set_power(bool state);
 
 /**
  * @brief Set Adc's enable bit.
- * @note   
  * @param  state: 
  * @retval None
  */
@@ -97,7 +95,6 @@ void adc_set_auto_trig(bool state);
 
 /**
  * @brief Set ADC's auto trigger source.  
- * @note   
  * @param  source: 
  * @retval None
  */
@@ -105,7 +102,6 @@ void adc_set_auto_trig_src(adc_auto_trig_src source);
 
 /**
  * @brief Set ADC's voltage reference.  
- * @note   
  * @retval None
  */
 void adc_set_vref(adc_vref reference);
@@ -130,7 +126,6 @@ void adc_set_dbuffer(adc_ch channel, bool state);
 
 /**
  * @brief Set ADC's prescaler  
- * @note   
  * @param  scale: 
  * @retval None
  */
@@ -163,7 +158,7 @@ void adc_set_interrupt(bool state);
  * 			- The corresponding IO_PORTC pin must be input without pullups.
  * 
  * @param  channel: 
- * @retval 10 bit conversion result.
+ * @return 10 bit conversion result.
  */
 uint16_t adc_read(adc_ch channel);
 

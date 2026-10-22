@@ -13,8 +13,8 @@
  */
 void kernel_init_timer(void);
 
-/*
- * @brief Initializes subsystems  
+/**
+ * @brief Initializes subsystems
  * @retval None
  */
 void kernel_init(void);
@@ -34,14 +34,11 @@ void soft_yield(void);
 
 /**
  * @brief yields the currently running task immediately
- * @note
  */
 void __attribute__((naked, noinline)) yield(void);
 
 /**
  * @brief  Delay task specified ms
- * @note   If there isn't any task's remaining in READY state
- *         the scheduler will automatically enter the mcu in sleep state
  * @param  ms: 
  * @retval None
  */
