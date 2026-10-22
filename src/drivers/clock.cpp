@@ -2,6 +2,8 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
+#include <kernel/kernel.h>
 #include <kernel/drivers/timer.h>
 #include <kernel/atomic.h>
 #include "scheduling/sched.h"
@@ -11,7 +13,7 @@ volatile uint32_t timer0_overflow_count = 0;
 volatile uint32_t timer0_ms = 0;
 volatile uint8_t timer0_fractional_ms = 0;
 
-ISR(TIMER0_OVF_vect)
+ISR(TIMER0_OVF_vect, ISR_BLOCK)
 {
     // copy these to local variables so they can be stored in registers
 	// (volatile variables must be read from memory on every access)
@@ -31,6 +33,9 @@ ISR(TIMER0_OVF_vect)
 
     /* Do sleep tick */
     task_data_t * node;
+    uint8_t c_priority = 0;
+    bool yield_pend    = false;
+
     node = _sched_lists.sleep.get_head();
     if (node == nullptr) {
         return;
@@ -43,7 +48,15 @@ ISR(TIMER0_OVF_vect)
         _sched_lists.sleep.remove(node);
         _sched_lists.ready.add(node);
         _set_task_state(node, READY);
-        
+
+        if (_get_current_task() != nullptr)
+            c_priority = _get_current_task()->priority;
+        else
+            yield_pend = true;
+
+        if (node->priority > c_priority)
+            yield_pend = true;
+
         node = _sched_lists.sleep.get_head();
 
         /* Check if other tasks are ready*/
@@ -56,9 +69,17 @@ ISR(TIMER0_OVF_vect)
             _sched_lists.ready.add(node);
             _set_task_state(node, READY);
 
-            node = _sched_lists.sleep.get_next(node);
+            if (node->priority > c_priority)
+                yield_pend = true;
+
+            node = _sched_lists.sleep.get_head();
         }
     }
+
+    if (yield_pend)
+        soft_yield();   // using yield() seems to crash TODO: investigate
+    
+    return;
 }
 
 uint32_t get_ms(void)
