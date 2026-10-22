@@ -131,10 +131,10 @@ bool test_mutex_violation(avr_t *avr,
 
 int main(int argc, char *argv[]) {
 
-    bool result = 0;
-    avr_irq_t *base_irq = NULL;
-    avr_t *avr = NULL;
-    struct pin_state_change pb_state[2]= {0};
+    bool result                         = 0;
+    avr_t *avr                          = NULL;
+    avr_irq_t *base_irq                 = NULL;
+    struct pin_state_change pb_state[2] = {0};
 
     if (validate_args(argc, argv))
         return 1;
