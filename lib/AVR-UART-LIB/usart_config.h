@@ -26,7 +26,7 @@
 // lot of terminals sends only \r character as a newline terminator, instead of \r\n or even unix style \n
 // (BTW PuTTY doesn't allow to change this) but in return requires \r\n terminator to show not broken text
 
-//#define USART_NO_ABI_BREAKING_PREMATURES // do not use prematures that might break compilers ABI (non-gcc calling conventions), compilers that are not forcing constant number of call-used registers might generate even better code
+#define USART_NO_ABI_BREAKING_PREMATURES // do not use prematures that might break compilers ABI (non-gcc calling conventions), compilers that are not forcing constant number of call-used registers might generate even better code
 //#define USART_PUTHEX_IN_UPPERCASE // use uppercase letters in uart_puthex() function
 //#define USART_EXTEND_RX_BUFFER // extend RX buffer by hardware 2/3 byte FIFO // required for hardware and software RTS
 //#define USART_PUTC_FAST_INSERTIONS // skip FIFO procedure and write directly data to the UDR register when possible // probably required for full bus utilization at highest speed (f_cpu/8)
