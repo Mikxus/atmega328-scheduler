@@ -8,9 +8,9 @@
 #include <time.h>
 #include <string.h>
 
-#include "tools/cpu.h"
-#include "tools/debug.h"
-#include "tools/test.h"
+#include "sim_util/cpu.h"
+#include "sim_util/debug.h"
+#include "sim_util/test.h"
 
 #include "sim_elf.h"
 #include "sim_avr.h"

@@ -1,7 +1,6 @@
 # cmake files
 CMakeFiles
 CMakeCache.txt
-*.cmake
 
 # Ctest files
 Testing

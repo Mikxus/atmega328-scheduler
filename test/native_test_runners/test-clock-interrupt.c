@@ -10,9 +10,9 @@
 #include <float.h>
 
 /* internal tools */
-#include "tools/debug.h"
-#include "tools/math.h"
-#include "tools/test.h"
+#include "sim_util/debug.h"
+#include "sim_util/math.h"
+#include "sim_util/test.h"
 
 /* Simavr */
 #include "sim_elf.h"

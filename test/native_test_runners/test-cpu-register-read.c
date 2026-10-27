@@ -2,8 +2,8 @@
  *  test-cpu-register-read.c
  *  Test reading registers
  */
-#include "tools/test.h"
-#include "tools/cpu.h"
+#include "sim_util/test.h"
+#include "sim_util/cpu.h"
 
 #include "sim_elf.h"
 #include "sim_avr.h"
