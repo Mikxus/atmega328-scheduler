@@ -1,3 +1,4 @@
+#include <avr/interrupt.h>
 #include "tools/unittest.h"
 #include <kernel/kernel.h>
 #include <kernel/errno.h>
@@ -19,6 +20,7 @@ int main(void)
     kernel_errno_t errno = KERNEL_OK;
     kernel_init();
     init_unittest();
+    sei();
 
     errno = data_list.add_tail(&a);
     expect(errno == KERNEL_OK, "LIST add a");

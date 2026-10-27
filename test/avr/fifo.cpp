@@ -1,4 +1,5 @@
 #include <avr/sleep.h>
+#include <avr/interrupt.h>
 #include <kernel/data_types/fifo.h>
 #include <kernel/drivers/uart.h>
 #include "tools/unittest.h"
@@ -12,6 +13,7 @@ int main(void)
 
     init_unittest();
     uart_init();
+    sei();
 
 
     fifo.init(buffer, FIFO_SIZE);

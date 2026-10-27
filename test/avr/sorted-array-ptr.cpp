@@ -1,4 +1,5 @@
 #include <avr/sleep.h>
+#include <avr/interrupt.h>
 #include <kernel/task.h>
 #include <kernel/data_types/sorted_array_ptr.h>
 #include <kernel/drivers/uart.h>
@@ -28,6 +29,7 @@ int main(void)
 
     init_unittest();
     uart_init();
+    sei();
 
     sarray.init(buffer, ARRAY_SIZE);
 
