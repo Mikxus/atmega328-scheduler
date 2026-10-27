@@ -104,8 +104,7 @@ set(
   AVR_DEFAULT_FLAGS 
   -Wall -Wextra -Wpedantic
   -fpack-struct -fshort-enums -funsigned-char -funsigned-bitfields 
-  -ffunction-sections
-  -flto
+  -mrelax -ffunction-sections -flto
 )
 
 set_property(GLOBAL PROPERTY CMAKE_CXX_STANDARD_REQUIRED 23)
