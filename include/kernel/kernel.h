@@ -33,9 +33,19 @@ void __attribute__((noreturn)) kernel_start(void);
 void soft_yield(void);
 
 /**
- * @brief yields the currently running task immediately
+ * @brief yields the currently running task immediately.
+ * @note  Do not use inside interrupts to yield currently running task.
+ *      
  */
 void __attribute__((naked, noinline)) yield(void);
+
+/**
+ * @brief yields the interrupted task immediately. Use this instead of yield()
+ *        at the end of an isr.
+ * @note  Does nothing if no task is running (scheduler is idle or kernel
+ *        hasn't started).
+ */
+void yield_isr(void);
 
 /**
  * @brief  Delay task specified ms

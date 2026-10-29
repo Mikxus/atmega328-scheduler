@@ -20,6 +20,11 @@ void _sched_pick_next_rr(void)
 
     if (node == nullptr) {
         disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
+
+        /*
+         * Indicate that the scheduler is in a idle loop.
+         */
+        _c_task = nullptr;
         do 
         {
             sei();
@@ -82,6 +87,11 @@ void _sched_pick_next_prr(void)
          * Possibly completely mangling user's sampling rate.
          */
         disable_timer0_interrupt(tmr0_int_t::COMPB_INTERRUPT);
+
+        /*
+         * Indicate that the scheduler is in a idle loop.
+         */
+        _c_task = nullptr;
 
         do {
             sei();

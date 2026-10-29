@@ -77,7 +77,7 @@ ISR(TIMER0_OVF_vect, ISR_BLOCK)
     }
 
     if (yield_pend)
-        soft_yield();   // using yield() seems to crash TODO: investigate
+        yield_isr();
     
     return;
 }

@@ -411,13 +411,24 @@ void __attribute__((naked, noinline)) yield(void)
     asm volatile ("ret" ::: "memory");
 }
 
+void yield_isr(void)
+{
+    /* 
+     * While idle the scheduler runs on the previous task's stack with
+     * interrupts enabled. Yielding there would overwrite that task's
+     * saved context with the idle loop's.
+     */
+    if (_c_task != nullptr)
+        yield();
+}
+
 void delay_ms(uint16_t ms) {
     ATOMIC_BLOCK() {
         if (ms == 0) {
             return;
         }
 
-        task_data_t * c_task = get_current_task();
+        task_data_t * c_task = _get_current_task();
 
         c_task->sleep_tick = ms / MS_INC;
 
