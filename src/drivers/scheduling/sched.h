@@ -23,7 +23,7 @@ typedef struct
     // Tasks which are sleeping
     sched_delta_list<
         task_data_t,
-        &task_data_t::next_node,
+        &task_data_t::next_sleep_node,
         &task_data_t::sleep_tick
         > sleep;
     
